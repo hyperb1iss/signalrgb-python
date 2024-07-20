@@ -1,54 +1,47 @@
-from pydantic import BaseModel
-from typing import Any, Dict, List
-
+from pydantic import BaseModel, Field
+from typing import Any, Dict, List, Optional
+from enum import Enum
 
 class Attributes(BaseModel):
-    description: str = None
-    developer_effect: bool = False
-    image: str = None
-    name: str = None
-    parameters: Dict[str, Any] = {}
-    publisher: str = None
-    uses_audio: bool = False
-    uses_input: bool = False
-    uses_meters: bool = False
-    uses_video: bool = False
-
+    description: Optional[str] = Field(default=None, description="Description of the effect")
+    developer_effect: bool = Field(default=False, description="Whether this is a developer effect")
+    image: Optional[str] = Field(default=None, description="URL or path to the effect image")
+    name: str = Field(..., description="Name of the effect")
+    parameters: Dict[str, Any] = Field(default_factory=dict, description="Effect parameters")
+    publisher: Optional[str] = Field(default=None, description="Publisher of the effect")
+    uses_audio: bool = Field(default=False, description="Whether the effect uses audio")
+    uses_input: bool = Field(default=False, description="Whether the effect uses input")
+    uses_meters: bool = Field(default=False, description="Whether the effect uses meters")
+    uses_video: bool = Field(default=False, description="Whether the effect uses video")
 
 class Links(BaseModel):
-    apply: str = None
-    self: str = None
-
+    apply: Optional[str] = Field(default=None, description="URL to apply the effect")
+    self: Optional[str] = Field(default=None, description="URL of the effect itself")
 
 class Effect(BaseModel):
     attributes: Attributes
-    id: str
+    id: str = Field(..., description="Unique identifier of the effect")
     links: Links
-    type: str
-
+    #type: str = Field(..., description="Type of the object")
 
 class EffectList(BaseModel):
-    items: List[Effect] = []
-
+    items: List[Effect] = Field(default_factory=list, description="List of effects")
 
 class Error(BaseModel):
-    code: str = None
-    detail: str = None
-    title: str = None
-
+    code: Optional[str] = Field(default=None, description="Error code")
+    detail: Optional[str] = Field(default=None, description="Detailed error message")
+    title: str = Field(..., description="Error title")
 
 class SignalRGBResponse(BaseModel):
-    api_version: str
-    id: int
-    method: str
-    params: Dict[str, Any] = {}
-    status: str
-    errors: List[Error] = []
-
+    api_version: str = Field(..., description="API version")
+    id: int = Field(..., description="Response ID")
+    method: str = Field(..., description="HTTP method used")
+    params: Dict[str, Any] = Field(default_factory=dict, description="Request parameters")
+    status: str = Field(..., description="Response status")
+    errors: List[Error] = Field(default_factory=list, description="List of errors if any")
 
 class EffectDetailsResponse(SignalRGBResponse):
-    data: Effect = None
-
+    data: Optional[Effect] = Field(default=None, description="Effect details")
 
 class EffectListResponse(SignalRGBResponse):
-    data: EffectList = None
+    data: EffectList = Field(..., description="List of effects")
