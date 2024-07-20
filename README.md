@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![PyPI version](https://badge.fury.io/py/signalrgb.svg)](https://badge.fury.io/py/signalrgb)
 
-*A powerful Python client library and CLI for controlling [SignalRGB](https://signalrgb.com)*
+*A powerful Python client library and CLI for controlling [SignalRGB Pro](https://signalrgb.com)*
 
 [Features](#✨-features) • [Installation](#💻-installation) • [Usage](#🚀-usage) • [Development](#🛠️-development) • [Contributing](#👥-contributing) • [License](#📄-license)
 
@@ -33,6 +33,8 @@ Or if you prefer to use Poetry:
 ```bash
 poetry add signalrgb
 ```
+
+This library uses the SignalRGB REST API, which is only available in SignalRGB Pro.
 
 ## 🚀 Usage
 
