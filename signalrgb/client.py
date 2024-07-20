@@ -35,14 +35,14 @@ class SignalRGBClient:
             host (str): The host of the SignalRGB API. Defaults to 'localhost'.
             port (int): The port of the SignalRGB API. Defaults to 16038.
         """
-        self._base_url = f"http://{host}:{port}/"
+        self._base_url = f"http://{host}:{port}"
         self._session = requests.Session()
         self._cached_effects: Optional[List[Effect]] = None
         self._effects_by_name: Dict[str, Effect] = {}
 
     def _request(self, method: str, endpoint: str, **kwargs) -> requests.Response:
         """Make a request to the API."""
-        url = f"{self._base_url}/{endpoint}"
+        url = f"{self._base_url}{endpoint}"
         response = self._session.request(method, url, **kwargs)
         response.raise_for_status()
         return response
@@ -54,7 +54,7 @@ class SignalRGBClient:
 
     def refresh_effects(self) -> None:
         """Refresh the cached effects."""
-        response = self._request("GET", "api/v1/lighting/effects")
+        response = self._request("GET", "/api/v1/lighting/effects")
         effects = EffectListResponse.model_validate(response.json())
         self._ensure_response_ok(effects)
         self._effects_by_name.clear()
@@ -69,7 +69,7 @@ class SignalRGBClient:
 
     def get_effect(self, effect_id: str) -> Effect:
         """Get details of a specific effect."""
-        response = self._request("GET", f"api/v1/lighting/effects/{effect_id}")
+        response = self._request("GET", f"/api/v1/lighting/effects/{effect_id}")
         effect = EffectDetailsResponse.model_validate(response.json())
         self._ensure_response_ok(effect)
         return effect.data
@@ -84,14 +84,14 @@ class SignalRGBClient:
 
     def get_current_effect(self) -> Effect:
         """Get the current effect."""
-        response = self._request("GET", "api/v1/lighting")
+        response = self._request("GET", "/api/v1/lighting")
         effect = EffectDetailsResponse.model_validate(response.json())
         self._ensure_response_ok(effect)
         return effect.data
 
     def apply_effect(self, effect_id: str) -> None:
         """Apply an effect."""
-        response = self._request("POST", f"api/v1/effects/{effect_id}/apply")
+        response = self._request("POST", f"/api/v1/effects/{effect_id}/apply")
         result = SignalRGBResponse.model_validate(response.json())
         self._ensure_response_ok(result)
 
