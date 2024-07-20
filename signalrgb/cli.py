@@ -26,10 +26,9 @@ def list_effects(ctx: typer.Context):
         table = Table(title="Available Effects", box=box.ROUNDED)
         table.add_column("ID", style="cyan")
         table.add_column("Name", style="magenta")
-        table.add_column("Publisher", style="green")
 
         for effect in effects:
-            table.add_row(effect.id, effect.attributes.name, effect.attributes.publisher or "N/A")
+            table.add_row(effect.id, effect.attributes.name)
 
         console.print(table)
     except SignalRGBException as e:
