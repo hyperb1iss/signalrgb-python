@@ -1,0 +1,2322 @@
+{
+    "api_version": "1.0",
+    "data": {
+      "items": [
+        {
+          "attributes": {
+            "name": "4th Dimension"
+          },
+          "id": "-N-YhDDs2ZIGJ42azDgJ",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N-YhDDs2ZIGJ42azDgJ/apply",
+            "self": "/api/v1/lighting/effects/-N-YhDDs2ZIGJ42azDgJ"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "90's Effect"
+          },
+          "id": "-NM9xHPkitBz6ZTAsGbo",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NM9xHPkitBz6ZTAsGbo/apply",
+            "self": "/api/v1/lighting/effects/-NM9xHPkitBz6ZTAsGbo"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "AI Creator"
+          },
+          "id": "AI-Creator",
+          "links": {
+            "apply": "/api/v1/lighting/effects/AI-Creator/apply",
+            "self": "/api/v1/lighting/effects/AI-Creator"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Aqua"
+          },
+          "id": "-Nw6WmgFfWUQZxWqJL-e",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Nw6WmgFfWUQZxWqJL-e/apply",
+            "self": "/api/v1/lighting/effects/-Nw6WmgFfWUQZxWqJL-e"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Arctic"
+          },
+          "id": "-MUUef9Fu4_IZqoYlEkG",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MUUef9Fu4_IZqoYlEkG/apply",
+            "self": "/api/v1/lighting/effects/-MUUef9Fu4_IZqoYlEkG"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Asteroid Belt"
+          },
+          "id": "-MrwuXHNOffZEoQ_1Nhz",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MrwuXHNOffZEoQ_1Nhz/apply",
+            "self": "/api/v1/lighting/effects/-MrwuXHNOffZEoQ_1Nhz"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Aurora"
+          },
+          "id": "-M6kb-ZFTdoKW5tRxV8Y",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M6kb-ZFTdoKW5tRxV8Y/apply",
+            "self": "/api/v1/lighting/effects/-M6kb-ZFTdoKW5tRxV8Y"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Avatar: The Way of Water"
+          },
+          "id": "-NJQeZbNxiqwISaNoW0u",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NJQeZbNxiqwISaNoW0u/apply",
+            "self": "/api/v1/lighting/effects/-NJQeZbNxiqwISaNoW0u"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Azure"
+          },
+          "id": "-MVTsFscK41dwxq6Qj6a",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MVTsFscK41dwxq6Qj6a/apply",
+            "self": "/api/v1/lighting/effects/-MVTsFscK41dwxq6Qj6a"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Bacteria"
+          },
+          "id": "-NbXfv--od8rEeiMBKBd",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NbXfv--od8rEeiMBKBd/apply",
+            "self": "/api/v1/lighting/effects/-NbXfv--od8rEeiMBKBd"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Be Quiet!"
+          },
+          "id": "-N085AdN9jp8po52cR2-",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N085AdN9jp8po52cR2-/apply",
+            "self": "/api/v1/lighting/effects/-N085AdN9jp8po52cR2-"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Beach"
+          },
+          "id": "-MiTixm79wkwZivHzUv9",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MiTixm79wkwZivHzUv9/apply",
+            "self": "/api/v1/lighting/effects/-MiTixm79wkwZivHzUv9"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Biohazard"
+          },
+          "id": "-M6ojVXsfMF8BhRkGk9f",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M6ojVXsfMF8BhRkGk9f/apply",
+            "self": "/api/v1/lighting/effects/-M6ojVXsfMF8BhRkGk9f"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Black Hole"
+          },
+          "id": "-MlNEIr7xQbtD1-72lm9",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MlNEIr7xQbtD1-72lm9/apply",
+            "self": "/api/v1/lighting/effects/-MlNEIr7xQbtD1-72lm9"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Black Ice"
+          },
+          "id": "-MTwqhnV_LPbIrkfZOfo",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MTwqhnV_LPbIrkfZOfo/apply",
+            "self": "/api/v1/lighting/effects/-MTwqhnV_LPbIrkfZOfo"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Black Panther"
+          },
+          "id": "-NG_5fZcGLprqWYfSFIa",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NG_5fZcGLprqWYfSFIa/apply",
+            "self": "/api/v1/lighting/effects/-NG_5fZcGLprqWYfSFIa"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Bombing Run"
+          },
+          "id": "-MW7R-kknKFQ058XFxnd",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MW7R-kknKFQ058XFxnd/apply",
+            "self": "/api/v1/lighting/effects/-MW7R-kknKFQ058XFxnd"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Borealis"
+          },
+          "id": "-N1LC8HkC4fZ6IlFA30j",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N1LC8HkC4fZ6IlFA30j/apply",
+            "self": "/api/v1/lighting/effects/-N1LC8HkC4fZ6IlFA30j"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Bouncing Logo"
+          },
+          "id": "-N9QI89NBxnTcy5c0szU",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N9QI89NBxnTcy5c0szU/apply",
+            "self": "/api/v1/lighting/effects/-N9QI89NBxnTcy5c0szU"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Breathing Ripples"
+          },
+          "id": "-N85fUaNiYk7NYkdD0Iv",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N85fUaNiYk7NYkdD0Iv/apply",
+            "self": "/api/v1/lighting/effects/-N85fUaNiYk7NYkdD0Iv"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Brimstone"
+          },
+          "id": "-Mj6bfVcwP4VPbrBkrDT",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Mj6bfVcwP4VPbrBkrDT/apply",
+            "self": "/api/v1/lighting/effects/-Mj6bfVcwP4VPbrBkrDT"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Browser Integration"
+          },
+          "id": "-MjkuxfFxEBrIKj4adpV",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MjkuxfFxEBrIKj4adpV/apply",
+            "self": "/api/v1/lighting/effects/-MjkuxfFxEBrIKj4adpV"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Bubblegum"
+          },
+          "id": "-MUvT9qkfpS8OiQ4_sS5",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MUvT9qkfpS8OiQ4_sS5/apply",
+            "self": "/api/v1/lighting/effects/-MUvT9qkfpS8OiQ4_sS5"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Bubbles"
+          },
+          "id": "-M2dKKeFE9jJpfnixjbA",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M2dKKeFE9jJpfnixjbA/apply",
+            "self": "/api/v1/lighting/effects/-M2dKKeFE9jJpfnixjbA"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Bullet Hell"
+          },
+          "id": "-NxmtrBFmZtyGtNndfdx",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NxmtrBFmZtyGtNndfdx/apply",
+            "self": "/api/v1/lighting/effects/-NxmtrBFmZtyGtNndfdx"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Bursts"
+          },
+          "id": "-MeBte8sm9ksHq4gewiX",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MeBte8sm9ksHq4gewiX/apply",
+            "self": "/api/v1/lighting/effects/-MeBte8sm9ksHq4gewiX"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Calm Water"
+          },
+          "id": "-MkES4ONtPseIh34t2Ff",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MkES4ONtPseIh34t2Ff/apply",
+            "self": "/api/v1/lighting/effects/-MkES4ONtPseIh34t2Ff"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Camo Fade"
+          },
+          "id": "-MTx4p4km8qTOfn7YuSw",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MTx4p4km8qTOfn7YuSw/apply",
+            "self": "/api/v1/lighting/effects/-MTx4p4km8qTOfn7YuSw"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Candy Corn"
+          },
+          "id": "-Mknmq0sjw3g_zka7lyl",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Mknmq0sjw3g_zka7lyl/apply",
+            "self": "/api/v1/lighting/effects/-Mknmq0sjw3g_zka7lyl"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Cherry Berry"
+          },
+          "id": "-MWKi8gcBhqd0zDqfx0W",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MWKi8gcBhqd0zDqfx0W/apply",
+            "self": "/api/v1/lighting/effects/-MWKi8gcBhqd0zDqfx0W"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Christmas Tree"
+          },
+          "id": "-MNa4M1VyKcQHwdrbynY",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MNa4M1VyKcQHwdrbynY/apply",
+            "self": "/api/v1/lighting/effects/-MNa4M1VyKcQHwdrbynY"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Circuits"
+          },
+          "id": "-MgJ2qh-r5wgYKhqIA40",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MgJ2qh-r5wgYKhqIA40/apply",
+            "self": "/api/v1/lighting/effects/-MgJ2qh-r5wgYKhqIA40"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Cobalt"
+          },
+          "id": "-Mj2G85-sueJ6IlG80-H",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Mj2G85-sueJ6IlG80-H/apply",
+            "self": "/api/v1/lighting/effects/-Mj2G85-sueJ6IlG80-H"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Color Shift"
+          },
+          "id": "-M0irvuFzkzdLaL0cwSA",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M0irvuFzkzdLaL0cwSA/apply",
+            "self": "/api/v1/lighting/effects/-M0irvuFzkzdLaL0cwSA"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Color Wave"
+          },
+          "id": "-MaFmt8sokR-J2p-OHUP",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MaFmt8sokR-J2p-OHUP/apply",
+            "self": "/api/v1/lighting/effects/-MaFmt8sokR-J2p-OHUP"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Coral"
+          },
+          "id": "-MczyEWNItmkhZSH8dvg",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MczyEWNItmkhZSH8dvg/apply",
+            "self": "/api/v1/lighting/effects/-MczyEWNItmkhZSH8dvg"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Corrosive"
+          },
+          "id": "-MjCaViky2lHnSRue7Ql",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MjCaViky2lHnSRue7Ql/apply",
+            "self": "/api/v1/lighting/effects/-MjCaViky2lHnSRue7Ql"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Cosmic Portal"
+          },
+          "id": "-N30oDikQ3T7rxORUClG",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N30oDikQ3T7rxORUClG/apply",
+            "self": "/api/v1/lighting/effects/-N30oDikQ3T7rxORUClG"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Cotton Candy"
+          },
+          "id": "-MV-Zh27W7wpoAA11mn3",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MV-Zh27W7wpoAA11mn3/apply",
+            "self": "/api/v1/lighting/effects/-MV-Zh27W7wpoAA11mn3"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Crimson"
+          },
+          "id": "-N5HOxzFzULHR89qt0CA",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N5HOxzFzULHR89qt0CA/apply",
+            "self": "/api/v1/lighting/effects/-N5HOxzFzULHR89qt0CA"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Crooked Waves"
+          },
+          "id": "-MckKulFLpSaux_1ySC9",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MckKulFLpSaux_1ySC9/apply",
+            "self": "/api/v1/lighting/effects/-MckKulFLpSaux_1ySC9"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "CryptoFizz"
+          },
+          "id": "-MQOQ5E-wLOKNrdBPjTr",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MQOQ5E-wLOKNrdBPjTr/apply",
+            "self": "/api/v1/lighting/effects/-MQOQ5E-wLOKNrdBPjTr"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Cubes"
+          },
+          "id": "-NSwNLSsaQDixRJF5OEu",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NSwNLSsaQDixRJF5OEu/apply",
+            "self": "/api/v1/lighting/effects/-NSwNLSsaQDixRJF5OEu"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Custom Wave"
+          },
+          "id": "-M7cPj87OdhYqU_h1iCR",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M7cPj87OdhYqU_h1iCR/apply",
+            "self": "/api/v1/lighting/effects/-M7cPj87OdhYqU_h1iCR"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Cyber"
+          },
+          "id": "-MV-2R87VW2rSPwCVWzw",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MV-2R87VW2rSPwCVWzw/apply",
+            "self": "/api/v1/lighting/effects/-MV-2R87VW2rSPwCVWzw"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Cyber Rain"
+          },
+          "id": "-NHeMRLNs6E7MMpLonFx",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NHeMRLNs6E7MMpLonFx/apply",
+            "self": "/api/v1/lighting/effects/-NHeMRLNs6E7MMpLonFx"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Cyberpunk 2077"
+          },
+          "id": "-MB55mXkfhPfT4ZjH7EJ",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MB55mXkfhPfT4ZjH7EJ/apply",
+            "self": "/api/v1/lighting/effects/-MB55mXkfhPfT4ZjH7EJ"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "DC Universe"
+          },
+          "id": "-NQ2U3Nsos4Fjo7JeBa6",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NQ2U3Nsos4Fjo7JeBa6/apply",
+            "self": "/api/v1/lighting/effects/-NQ2U3Nsos4Fjo7JeBa6"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "DNA"
+          },
+          "id": "-NJGtIH-XFujgcwsws8I",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NJGtIH-XFujgcwsws8I/apply",
+            "self": "/api/v1/lighting/effects/-NJGtIH-XFujgcwsws8I"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Dark Magic"
+          },
+          "id": "-NIt9RINI5HwQ4_FjILd",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NIt9RINI5HwQ4_FjILd/apply",
+            "self": "/api/v1/lighting/effects/-NIt9RINI5HwQ4_FjILd"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Dark Matter"
+          },
+          "id": "-MUHArB7tsk1P6h8FUeZ",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MUHArB7tsk1P6h8FUeZ/apply",
+            "self": "/api/v1/lighting/effects/-MUHArB7tsk1P6h8FUeZ"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Drizzle"
+          },
+          "id": "-Mg1qujV9F4rabJxlSOS",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Mg1qujV9F4rabJxlSOS/apply",
+            "self": "/api/v1/lighting/effects/-Mg1qujV9F4rabJxlSOS"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Drones"
+          },
+          "id": "-Netk30s25bnJOekk3LU",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Netk30s25bnJOekk3LU/apply",
+            "self": "/api/v1/lighting/effects/-Netk30s25bnJOekk3LU"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Electric"
+          },
+          "id": "-NVpCeOFFNWNd41pKVF9",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NVpCeOFFNWNd41pKVF9/apply",
+            "self": "/api/v1/lighting/effects/-NVpCeOFFNWNd41pKVF9"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Electric Colors"
+          },
+          "id": "-M7OAItNVPWYTDCGZr2K",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M7OAItNVPWYTDCGZr2K/apply",
+            "self": "/api/v1/lighting/effects/-M7OAItNVPWYTDCGZr2K"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Electric Hex"
+          },
+          "id": "-N1o3ABsTt_cx6P1DCZC",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N1o3ABsTt_cx6P1DCZC/apply",
+            "self": "/api/v1/lighting/effects/-N1o3ABsTt_cx6P1DCZC"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Electric Neon"
+          },
+          "id": "-Md4MBQFp8uwzyx9iJK8",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Md4MBQFp8uwzyx9iJK8/apply",
+            "self": "/api/v1/lighting/effects/-Md4MBQFp8uwzyx9iJK8"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Electric Space"
+          },
+          "id": "-MUdvd2kRNNg0sFPpm3t",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MUdvd2kRNNg0sFPpm3t/apply",
+            "self": "/api/v1/lighting/effects/-MUdvd2kRNNg0sFPpm3t"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Electricity"
+          },
+          "id": "-MHsV7fFtd9vDp1swtkk",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MHsV7fFtd9vDp1swtkk/apply",
+            "self": "/api/v1/lighting/effects/-MHsV7fFtd9vDp1swtkk"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Elements"
+          },
+          "id": "-NeKIJN-xeT_p8C8hP1Y",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NeKIJN-xeT_p8C8hP1Y/apply",
+            "self": "/api/v1/lighting/effects/-NeKIJN-xeT_p8C8hP1Y"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Embers"
+          },
+          "id": "-Mv1yv5kDvq4CibuTcxs",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Mv1yv5kDvq4CibuTcxs/apply",
+            "self": "/api/v1/lighting/effects/-Mv1yv5kDvq4CibuTcxs"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Emerald Dream"
+          },
+          "id": "-NJGkhDs1lnhOZrWkTmU",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NJGkhDs1lnhOZrWkTmU/apply",
+            "self": "/api/v1/lighting/effects/-NJGkhDs1lnhOZrWkTmU"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Enigma"
+          },
+          "id": "-MTsd7Nkp20-S4uV_geE",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MTsd7Nkp20-S4uV_geE/apply",
+            "self": "/api/v1/lighting/effects/-MTsd7Nkp20-S4uV_geE"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Ethereal Dream"
+          },
+          "id": "-N0g_FGsFIMzLadPd_93",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N0g_FGsFIMzLadPd_93/apply",
+            "self": "/api/v1/lighting/effects/-N0g_FGsFIMzLadPd_93"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Explosion"
+          },
+          "id": "-Np_ehZ-yyxpTRULQC3b",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Np_ehZ-yyxpTRULQC3b/apply",
+            "self": "/api/v1/lighting/effects/-Np_ehZ-yyxpTRULQC3b"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Eye of Sauron"
+          },
+          "id": "-NBU6r6FtOQXMBQMJV39",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NBU6r6FtOQXMBQMJV39/apply",
+            "self": "/api/v1/lighting/effects/-NBU6r6FtOQXMBQMJV39"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Falling Stars"
+          },
+          "id": "-MHsbJ8VCYF7jSVKHpj5",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MHsbJ8VCYF7jSVKHpj5/apply",
+            "self": "/api/v1/lighting/effects/-MHsbJ8VCYF7jSVKHpj5"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Fine Arts"
+          },
+          "id": "-Np6G3JcXr8ENWiCZPRs",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Np6G3JcXr8ENWiCZPRs/apply",
+            "self": "/api/v1/lighting/effects/-Np6G3JcXr8ENWiCZPRs"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Fire"
+          },
+          "id": "-M6kJJl-tlZKQLjDg2ng",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M6kJJl-tlZKQLjDg2ng/apply",
+            "self": "/api/v1/lighting/effects/-M6kJJl-tlZKQLjDg2ng"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Fire Visualizer"
+          },
+          "id": "-MhzTU0NWjJ-vDhQ_rMo",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MhzTU0NWjJ-vDhQ_rMo/apply",
+            "self": "/api/v1/lighting/effects/-MhzTU0NWjJ-vDhQ_rMo"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Fire and Ice"
+          },
+          "id": "-MA7i1q7LSaYqe6s7C6K",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MA7i1q7LSaYqe6s7C6K/apply",
+            "self": "/api/v1/lighting/effects/-MA7i1q7LSaYqe6s7C6K"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Fireflies"
+          },
+          "id": "-MdUiirVGyQHk2t_BBan",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MdUiirVGyQHk2t_BBan/apply",
+            "self": "/api/v1/lighting/effects/-MdUiirVGyQHk2t_BBan"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Fireworks"
+          },
+          "id": "-M78jyg-FgYK9Pphqc0J",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M78jyg-FgYK9Pphqc0J/apply",
+            "self": "/api/v1/lighting/effects/-M78jyg-FgYK9Pphqc0J"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Fish Tank"
+          },
+          "id": "-MfFipM-0xuGLNorEvI8",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MfFipM-0xuGLNorEvI8/apply",
+            "self": "/api/v1/lighting/effects/-MfFipM-0xuGLNorEvI8"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Floating Bubbles"
+          },
+          "id": "-NeKHSvcb9gBiGJ2PprK",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NeKHSvcb9gBiGJ2PprK/apply",
+            "self": "/api/v1/lighting/effects/-NeKHSvcb9gBiGJ2PprK"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Flowing River"
+          },
+          "id": "-MzS4-1kIjQMy7VamGhg",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MzS4-1kIjQMy7VamGhg/apply",
+            "self": "/api/v1/lighting/effects/-MzS4-1kIjQMy7VamGhg"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Fractals"
+          },
+          "id": "-NIEyc9VeAe8jgxHIByW",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NIEyc9VeAe8jgxHIByW/apply",
+            "self": "/api/v1/lighting/effects/-NIEyc9VeAe8jgxHIByW"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Frost"
+          },
+          "id": "-MHsZ7HcIMtcKfPhute8",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MHsZ7HcIMtcKfPhute8/apply",
+            "self": "/api/v1/lighting/effects/-MHsZ7HcIMtcKfPhute8"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Galaxies"
+          },
+          "id": "-Ng1lYIFg2C-H8TxQQrn",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Ng1lYIFg2C-H8TxQQrn/apply",
+            "self": "/api/v1/lighting/effects/-Ng1lYIFg2C-H8TxQQrn"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Galaxy Ripples"
+          },
+          "id": "-MtfJ__FlEr_sOTrURqY",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MtfJ__FlEr_sOTrURqY/apply",
+            "self": "/api/v1/lighting/effects/-MtfJ__FlEr_sOTrURqY"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Gamer Advantage"
+          },
+          "id": "-NVFF9mk8FXuXgXJpCv_",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NVFF9mk8FXuXgXJpCv_/apply",
+            "self": "/api/v1/lighting/effects/-NVFF9mk8FXuXgXJpCv_"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Good Night!"
+          },
+          "id": "-M_bG5GkyerNU7v-7zZs",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M_bG5GkyerNU7v-7zZs/apply",
+            "self": "/api/v1/lighting/effects/-M_bG5GkyerNU7v-7zZs"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Gradient"
+          },
+          "id": "-MA7wCKkv_359cmwPOEK",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MA7wCKkv_359cmwPOEK/apply",
+            "self": "/api/v1/lighting/effects/-MA7wCKkv_359cmwPOEK"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Gradient Pinwheel"
+          },
+          "id": "-Np_fMIsPc8--Flm9G9h",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Np_fMIsPc8--Flm9G9h/apply",
+            "self": "/api/v1/lighting/effects/-Np_fMIsPc8--Flm9G9h"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Gradient Snakes"
+          },
+          "id": "-Mwcxu9-7XjV9ivim1Qj",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Mwcxu9-7XjV9ivim1Qj/apply",
+            "self": "/api/v1/lighting/effects/-Mwcxu9-7XjV9ivim1Qj"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Gradient Wave"
+          },
+          "id": "-Me3BsMN_hIlzeJwFbMs",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Me3BsMN_hIlzeJwFbMs/apply",
+            "self": "/api/v1/lighting/effects/-Me3BsMN_hIlzeJwFbMs"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Halloween Storm"
+          },
+          "id": "-MjXFTRNprh4pWE0mleC",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MjXFTRNprh4pWE0mleC/apply",
+            "self": "/api/v1/lighting/effects/-MjXFTRNprh4pWE0mleC"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Heart Monitor"
+          },
+          "id": "-NsUPKQ7Pd5JIM9N0Ppb",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NsUPKQ7Pd5JIM9N0Ppb/apply",
+            "self": "/api/v1/lighting/effects/-NsUPKQ7Pd5JIM9N0Ppb"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Heatmap"
+          },
+          "id": "-M0k9vv-NFE8rpM_-Br9",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M0k9vv-NFE8rpM_-Br9/apply",
+            "self": "/api/v1/lighting/effects/-M0k9vv-NFE8rpM_-Br9"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Hellfire"
+          },
+          "id": "-NXRddLN0h6ANjEH1adk",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NXRddLN0h6ANjEH1adk/apply",
+            "self": "/api/v1/lighting/effects/-NXRddLN0h6ANjEH1adk"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Hot and Cold"
+          },
+          "id": "-NqoHnGVSXdglRmwoLS2",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NqoHnGVSXdglRmwoLS2/apply",
+            "self": "/api/v1/lighting/effects/-NqoHnGVSXdglRmwoLS2"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "House of the Dragon"
+          },
+          "id": "-NErpC2NErQApfrWodQc",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NErpC2NErQApfrWodQc/apply",
+            "self": "/api/v1/lighting/effects/-NErpC2NErQApfrWodQc"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Hydrogen"
+          },
+          "id": "-NIc4SbcPndIx2dhVy9O",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NIc4SbcPndIx2dhVy9O/apply",
+            "self": "/api/v1/lighting/effects/-NIc4SbcPndIx2dhVy9O"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Hyperspace"
+          },
+          "id": "-MfpQxLcEqFtb5w5_tFY",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MfpQxLcEqFtb5w5_tFY/apply",
+            "self": "/api/v1/lighting/effects/-MfpQxLcEqFtb5w5_tFY"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Ice Storm"
+          },
+          "id": "-NQWcGNV8NvApNwAhkl7",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NQWcGNV8NvApNwAhkl7/apply",
+            "self": "/api/v1/lighting/effects/-NQWcGNV8NvApNwAhkl7"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Indigo Sky"
+          },
+          "id": "-NJGmUEkd-aagrRKwEuR",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NJGmUEkd-aagrRKwEuR/apply",
+            "self": "/api/v1/lighting/effects/-NJGmUEkd-aagrRKwEuR"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Jack O'Lantern"
+          },
+          "id": "-NFQWn9V6NdTn0CIm7S3",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NFQWn9V6NdTn0CIm7S3/apply",
+            "self": "/api/v1/lighting/effects/-NFQWn9V6NdTn0CIm7S3"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Jade"
+          },
+          "id": "-MlmUaQsYtq_jb8V8Inm",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MlmUaQsYtq_jb8V8Inm/apply",
+            "self": "/api/v1/lighting/effects/-MlmUaQsYtq_jb8V8Inm"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Jellyfish"
+          },
+          "id": "-MyJjUT-OFiKe2-vZb7V",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MyJjUT-OFiKe2-vZb7V/apply",
+            "self": "/api/v1/lighting/effects/-MyJjUT-OFiKe2-vZb7V"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Kaleidoscope"
+          },
+          "id": "-NuAf80kdK7y8sSPRpSQ",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NuAf80kdK7y8sSPRpSQ/apply",
+            "self": "/api/v1/lighting/effects/-NuAf80kdK7y8sSPRpSQ"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Koi Pond"
+          },
+          "id": "-N85e_F-Q1moRY2knJqS",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N85e_F-Q1moRY2knJqS/apply",
+            "self": "/api/v1/lighting/effects/-N85e_F-Q1moRY2knJqS"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "LSD"
+          },
+          "id": "-NetnLxs747yeVif7pg3",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NetnLxs747yeVif7pg3/apply",
+            "self": "/api/v1/lighting/effects/-NetnLxs747yeVif7pg3"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "LSD Ambience"
+          },
+          "id": "-NwRj3PVvEFwErS_VRx6",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NwRj3PVvEFwErS_VRx6/apply",
+            "self": "/api/v1/lighting/effects/-NwRj3PVvEFwErS_VRx6"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "LSD Visualizer"
+          },
+          "id": "-NuzKiqckys0O7wJkdFi",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NuzKiqckys0O7wJkdFi/apply",
+            "self": "/api/v1/lighting/effects/-NuzKiqckys0O7wJkdFi"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Lasers"
+          },
+          "id": "-NWJ0TBVzm7tOGzlVxsL",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NWJ0TBVzm7tOGzlVxsL/apply",
+            "self": "/api/v1/lighting/effects/-NWJ0TBVzm7tOGzlVxsL"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Lava"
+          },
+          "id": "-NZ7j5sF6GwW8MD04biA",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NZ7j5sF6GwW8MD04biA/apply",
+            "self": "/api/v1/lighting/effects/-NZ7j5sF6GwW8MD04biA"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Lava Lamp"
+          },
+          "id": "-MxkuIn-liG2UIWnGjsd",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MxkuIn-liG2UIWnGjsd/apply",
+            "self": "/api/v1/lighting/effects/-MxkuIn-liG2UIWnGjsd"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Lightsaber Duel"
+          },
+          "id": "-N1B9nAsiRQY23hakCO_",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N1B9nAsiRQY23hakCO_/apply",
+            "self": "/api/v1/lighting/effects/-N1B9nAsiRQY23hakCO_"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Liquid"
+          },
+          "id": "-M03jnAFdruOhhWbn3Ge",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M03jnAFdruOhhWbn3Ge/apply",
+            "self": "/api/v1/lighting/effects/-M03jnAFdruOhhWbn3Ge"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Logarithmic Visualizer"
+          },
+          "id": "-NZhF99k6cK__Zyh4yNx",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NZhF99k6cK__Zyh4yNx/apply",
+            "self": "/api/v1/lighting/effects/-NZhF99k6cK__Zyh4yNx"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Lollipop Rainbow"
+          },
+          "id": "-Np_f1nNxBa8_UdowdPD",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Np_f1nNxBa8_UdowdPD/apply",
+            "self": "/api/v1/lighting/effects/-Np_f1nNxBa8_UdowdPD"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Lucky Charms"
+          },
+          "id": "-NC1vEmsfJ6EQlpmSVBc",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NC1vEmsfJ6EQlpmSVBc/apply",
+            "self": "/api/v1/lighting/effects/-NC1vEmsfJ6EQlpmSVBc"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Magma"
+          },
+          "id": "-MUUh11VgH1ql3SG-UQ_",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MUUh11VgH1ql3SG-UQ_/apply",
+            "self": "/api/v1/lighting/effects/-MUUh11VgH1ql3SG-UQ_"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Mario"
+          },
+          "id": "-NRBUd3FXLmnMQRwCcK7",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NRBUd3FXLmnMQRwCcK7/apply",
+            "self": "/api/v1/lighting/effects/-NRBUd3FXLmnMQRwCcK7"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Marvel Universe"
+          },
+          "id": "-MeCTn5sidabTKWkkB3_",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MeCTn5sidabTKWkkB3_/apply",
+            "self": "/api/v1/lighting/effects/-MeCTn5sidabTKWkkB3_"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Matrix"
+          },
+          "id": "-NqEevh7KtU0y_MRK7eT",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NqEevh7KtU0y_MRK7eT/apply",
+            "self": "/api/v1/lighting/effects/-NqEevh7KtU0y_MRK7eT"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Meteors"
+          },
+          "id": "-NaN77T-hKN2-MVshBiW",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NaN77T-hKN2-MVshBiW/apply",
+            "self": "/api/v1/lighting/effects/-NaN77T-hKN2-MVshBiW"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Multiverse"
+          },
+          "id": "-N8ecrfsxsTVE5pD0B9P",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N8ecrfsxsTVE5pD0B9P/apply",
+            "self": "/api/v1/lighting/effects/-N8ecrfsxsTVE5pD0B9P"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Multizone"
+          },
+          "id": "-Mi7wTDNBKNRTSwAV0Pa",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Mi7wTDNBKNRTSwAV0Pa/apply",
+            "self": "/api/v1/lighting/effects/-Mi7wTDNBKNRTSwAV0Pa"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Nebula"
+          },
+          "id": "-NMfRfhsof6_gRmbiEWQ",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NMfRfhsof6_gRmbiEWQ/apply",
+            "self": "/api/v1/lighting/effects/-NMfRfhsof6_gRmbiEWQ"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Neon Fire"
+          },
+          "id": "-MVy5aR7JNPsL_9jOn2P",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MVy5aR7JNPsL_9jOn2P/apply",
+            "self": "/api/v1/lighting/effects/-MVy5aR7JNPsL_9jOn2P"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Neon Grid"
+          },
+          "id": "-NQgqg87Qleh9Mo4Xim5",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NQgqg87Qleh9Mo4Xim5/apply",
+            "self": "/api/v1/lighting/effects/-NQgqg87Qleh9Mo4Xim5"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Neon Nebula"
+          },
+          "id": "-Mjb1GEcNJhwbQxjTw-z",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Mjb1GEcNJhwbQxjTw-z/apply",
+            "self": "/api/v1/lighting/effects/-Mjb1GEcNJhwbQxjTw-z"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Neon Shift"
+          },
+          "id": "Neon Shift.html",
+          "links": {
+            "apply": "/api/v1/lighting/effects/Neon%20Shift.html/apply",
+            "self": "/api/v1/lighting/effects/Neon%20Shift.html"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Neon Storm"
+          },
+          "id": "-MTxC2ykcsYT_cwSS336",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MTxC2ykcsYT_cwSS336/apply",
+            "self": "/api/v1/lighting/effects/-MTxC2ykcsYT_cwSS336"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Neon Sunset"
+          },
+          "id": "-MUGVHMk4ah7wvctolMJ",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MUGVHMk4ah7wvctolMJ/apply",
+            "self": "/api/v1/lighting/effects/-MUGVHMk4ah7wvctolMJ"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Neon Sunset Wave"
+          },
+          "id": "-MUH1GeVmTH_ipk7NNRQ",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MUH1GeVmTH_ipk7NNRQ/apply",
+            "self": "/api/v1/lighting/effects/-MUH1GeVmTH_ipk7NNRQ"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Neurolink"
+          },
+          "id": "-N4iLWTNcokedjmMC8Bk",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N4iLWTNcokedjmMC8Bk/apply",
+            "self": "/api/v1/lighting/effects/-N4iLWTNcokedjmMC8Bk"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Night Sky"
+          },
+          "id": "-NdBfvkVho28WDYHG4w_",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NdBfvkVho28WDYHG4w_/apply",
+            "self": "/api/v1/lighting/effects/-NdBfvkVho28WDYHG4w_"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Nuclear"
+          },
+          "id": "-MjGsRxFd8wpX_T5G1YR",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MjGsRxFd8wpX_T5G1YR/apply",
+            "self": "/api/v1/lighting/effects/-MjGsRxFd8wpX_T5G1YR"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Nuke"
+          },
+          "id": "-NFzs2HcmA6dygYK0q5n",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NFzs2HcmA6dygYK0q5n/apply",
+            "self": "/api/v1/lighting/effects/-NFzs2HcmA6dygYK0q5n"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Nyan Cat"
+          },
+          "id": "-NoYBtQ-u0X59BkdJoxr",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NoYBtQ-u0X59BkdJoxr/apply",
+            "self": "/api/v1/lighting/effects/-NoYBtQ-u0X59BkdJoxr"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Pacman"
+          },
+          "id": "-Nge8g6cq5bVdcuMTwbi",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Nge8g6cq5bVdcuMTwbi/apply",
+            "self": "/api/v1/lighting/effects/-Nge8g6cq5bVdcuMTwbi"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Paint Splatters"
+          },
+          "id": "-N2SdkVc9RuLtlnda3Gx",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N2SdkVc9RuLtlnda3Gx/apply",
+            "self": "/api/v1/lighting/effects/-N2SdkVc9RuLtlnda3Gx"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Particle Visualizer"
+          },
+          "id": "-MSTVv5cU_4DEtVqrcrt",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MSTVv5cU_4DEtVqrcrt/apply",
+            "self": "/api/v1/lighting/effects/-MSTVv5cU_4DEtVqrcrt"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Party Parrot"
+          },
+          "id": "-NOzYrfsHpEkG1aorh9a",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NOzYrfsHpEkG1aorh9a/apply",
+            "self": "/api/v1/lighting/effects/-NOzYrfsHpEkG1aorh9a"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Pastel"
+          },
+          "id": "-MUH2ksF4toX6EAaniFr",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MUH2ksF4toX6EAaniFr/apply",
+            "self": "/api/v1/lighting/effects/-MUH2ksF4toX6EAaniFr"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Pastel Dream"
+          },
+          "id": "-MnnBd4kRPccXw1GRBJu",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MnnBd4kRPccXw1GRBJu/apply",
+            "self": "/api/v1/lighting/effects/-MnnBd4kRPccXw1GRBJu"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Peach"
+          },
+          "id": "-MkdtLoF0jTZ2oqTdbT6",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MkdtLoF0jTZ2oqTdbT6/apply",
+            "self": "/api/v1/lighting/effects/-MkdtLoF0jTZ2oqTdbT6"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Pink Lemonade"
+          },
+          "id": "-MTsQ7ccqFb4Snti-ljP",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MTsQ7ccqFb4Snti-ljP/apply",
+            "self": "/api/v1/lighting/effects/-MTsQ7ccqFb4Snti-ljP"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Pinwheel"
+          },
+          "id": "-MaFlwMFx2KxmnL7X1_6",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MaFlwMFx2KxmnL7X1_6/apply",
+            "self": "/api/v1/lighting/effects/-MaFlwMFx2KxmnL7X1_6"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Pipeline"
+          },
+          "id": "-MA8BatcnbSzsBrA0oEF",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MA8BatcnbSzsBrA0oEF/apply",
+            "self": "/api/v1/lighting/effects/-MA8BatcnbSzsBrA0oEF"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Pixel Drops"
+          },
+          "id": "-Nx-X_8kFdBHW0k-P-hJ",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Nx-X_8kFdBHW0k-P-hJ/apply",
+            "self": "/api/v1/lighting/effects/-Nx-X_8kFdBHW0k-P-hJ"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Pixel Fill"
+          },
+          "id": "-Np_f88cIVxerT61hLMr",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Np_f88cIVxerT61hLMr/apply",
+            "self": "/api/v1/lighting/effects/-Np_f88cIVxerT61hLMr"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Pixel Wave"
+          },
+          "id": "-N484OWcM71XOUik-l6q",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N484OWcM71XOUik-l6q/apply",
+            "self": "/api/v1/lighting/effects/-N484OWcM71XOUik-l6q"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Planetary Orbits"
+          },
+          "id": "-NL6QDq7DnNTydZHMN0_",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NL6QDq7DnNTydZHMN0_/apply",
+            "self": "/api/v1/lighting/effects/-NL6QDq7DnNTydZHMN0_"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Plasma"
+          },
+          "id": "-MgD_tyN6GeXM2OpGP-Z",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MgD_tyN6GeXM2OpGP-Z/apply",
+            "self": "/api/v1/lighting/effects/-MgD_tyN6GeXM2OpGP-Z"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Poison"
+          },
+          "id": "-Mir7bKkFQmd2LF_9Leg",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Mir7bKkFQmd2LF_9Leg/apply",
+            "self": "/api/v1/lighting/effects/-Mir7bKkFQmd2LF_9Leg"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Popping Bubbles"
+          },
+          "id": "-MaFmNvNg_fjXD5AXHhO",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MaFmNvNg_fjXD5AXHhO/apply",
+            "self": "/api/v1/lighting/effects/-MaFmNvNg_fjXD5AXHhO"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Psychedelic Dream"
+          },
+          "id": "-MVsw__kpQb4khQ6IOxZ",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MVsw__kpQb4khQ6IOxZ/apply",
+            "self": "/api/v1/lighting/effects/-MVsw__kpQb4khQ6IOxZ"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Pulsar"
+          },
+          "id": "-NYZipEkbX7tslbzuEpY",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NYZipEkbX7tslbzuEpY/apply",
+            "self": "/api/v1/lighting/effects/-NYZipEkbX7tslbzuEpY"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Pulses"
+          },
+          "id": "-NxmttNs2ppDrVyuPLrH",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NxmttNs2ppDrVyuPLrH/apply",
+            "self": "/api/v1/lighting/effects/-NxmttNs2ppDrVyuPLrH"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Pump Up Beats"
+          },
+          "id": "-MhwiL3cQgnjhqzS0g2L",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MhwiL3cQgnjhqzS0g2L/apply",
+            "self": "/api/v1/lighting/effects/-MhwiL3cQgnjhqzS0g2L"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Quad-Color Breath"
+          },
+          "id": "-M_q1iI-843ttc56sSiL",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M_q1iI-843ttc56sSiL/apply",
+            "self": "/api/v1/lighting/effects/-M_q1iI-843ttc56sSiL"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "RGBarz"
+          },
+          "id": "-MHSORPNC_XTXkJeXsL0",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MHSORPNC_XTXkJeXsL0/apply",
+            "self": "/api/v1/lighting/effects/-MHSORPNC_XTXkJeXsL0"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Rain"
+          },
+          "id": "-M6WukXcVHx7HQC8djXA",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M6WukXcVHx7HQC8djXA/apply",
+            "self": "/api/v1/lighting/effects/-M6WukXcVHx7HQC8djXA"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Rain Visualizer"
+          },
+          "id": "-Nt3T6McPIJQyQvrE6dS",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Nt3T6McPIJQyQvrE6dS/apply",
+            "self": "/api/v1/lighting/effects/-Nt3T6McPIJQyQvrE6dS"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Rainbow"
+          },
+          "id": "Rainbow.html",
+          "links": {
+            "apply": "/api/v1/lighting/effects/Rainbow.html/apply",
+            "self": "/api/v1/lighting/effects/Rainbow.html"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Rainbow Data"
+          },
+          "id": "-MUBx0zNCCXAgZi3qQNy",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MUBx0zNCCXAgZi3qQNy/apply",
+            "self": "/api/v1/lighting/effects/-MUBx0zNCCXAgZi3qQNy"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Rainbow Pulse"
+          },
+          "id": "-M0UFswVDMt3aqpseqOX",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M0UFswVDMt3aqpseqOX/apply",
+            "self": "/api/v1/lighting/effects/-M0UFswVDMt3aqpseqOX"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Rainbow Rise"
+          },
+          "id": "-MDR1wa7FsvZFpaaqgmB",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MDR1wa7FsvZFpaaqgmB/apply",
+            "self": "/api/v1/lighting/effects/-MDR1wa7FsvZFpaaqgmB"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Rainbow Tap"
+          },
+          "id": "-Mof09C-c5QA4qMDvAGQ",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Mof09C-c5QA4qMDvAGQ/apply",
+            "self": "/api/v1/lighting/effects/-Mof09C-c5QA4qMDvAGQ"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Rainbow Tunnel"
+          },
+          "id": "-MhLTUi-oxPWtl1yksuM",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MhLTUi-oxPWtl1yksuM/apply",
+            "self": "/api/v1/lighting/effects/-MhLTUi-oxPWtl1yksuM"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Rainstorm"
+          },
+          "id": "-M6p1Jt-Z8Lv0kzrZ2-a",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M6p1Jt-Z8Lv0kzrZ2-a/apply",
+            "self": "/api/v1/lighting/effects/-M6p1Jt-Z8Lv0kzrZ2-a"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Rave Visualizer"
+          },
+          "id": "-Mam2KMcces4G1Bl2_2Y",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Mam2KMcces4G1Bl2_2Y/apply",
+            "self": "/api/v1/lighting/effects/-Mam2KMcces4G1Bl2_2Y"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Rick and Morty"
+          },
+          "id": "-NC1t0Cs_BFxL8Quq5Ry",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NC1t0Cs_BFxL8Quq5Ry/apply",
+            "self": "/api/v1/lighting/effects/-NC1t0Cs_BFxL8Quq5Ry"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Ripple Visualizer"
+          },
+          "id": "-MUZgLncyN_f1oaT3Nrr",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MUZgLncyN_f1oaT3Nrr/apply",
+            "self": "/api/v1/lighting/effects/-MUZgLncyN_f1oaT3Nrr"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Riptide"
+          },
+          "id": "-MSTWFpF9JE1XpwjRfSe",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MSTWFpF9JE1XpwjRfSe/apply",
+            "self": "/api/v1/lighting/effects/-MSTWFpF9JE1XpwjRfSe"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Ruby"
+          },
+          "id": "-N1LBzH7yP0sxN61fixq",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N1LBzH7yP0sxN61fixq/apply",
+            "self": "/api/v1/lighting/effects/-N1LBzH7yP0sxN61fixq"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Sakura"
+          },
+          "id": "-MDQO57Fk4e-H8nrKkrr",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MDQO57Fk4e-H8nrKkrr/apply",
+            "self": "/api/v1/lighting/effects/-MDQO57Fk4e-H8nrKkrr"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Screen Ambience"
+          },
+          "id": "Screen Ambience.html",
+          "links": {
+            "apply": "/api/v1/lighting/effects/Screen%20Ambience.html/apply",
+            "self": "/api/v1/lighting/effects/Screen%20Ambience.html"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Sea Foam"
+          },
+          "id": "-N07f0MN4g_MtzCURbCo",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N07f0MN4g_MtzCURbCo/apply",
+            "self": "/api/v1/lighting/effects/-N07f0MN4g_MtzCURbCo"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Side to Side"
+          },
+          "id": "Side To Side.html",
+          "links": {
+            "apply": "/api/v1/lighting/effects/Side%20To%20Side.html/apply",
+            "self": "/api/v1/lighting/effects/Side%20To%20Side.html"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Smoke"
+          },
+          "id": "-Nh7RSPk1UQpE58jfhaj",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Nh7RSPk1UQpE58jfhaj/apply",
+            "self": "/api/v1/lighting/effects/-Nh7RSPk1UQpE58jfhaj"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Soda"
+          },
+          "id": "-MyrVxdFMCGrLH5yx90t",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MyrVxdFMCGrLH5yx90t/apply",
+            "self": "/api/v1/lighting/effects/-MyrVxdFMCGrLH5yx90t"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Solid Color"
+          },
+          "id": "Solid Color.html",
+          "links": {
+            "apply": "/api/v1/lighting/effects/Solid%20Color.html/apply",
+            "self": "/api/v1/lighting/effects/Solid%20Color.html"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Sonic Bubbles"
+          },
+          "id": "-M5inqP-b-qzPGgF0JVb",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M5inqP-b-qzPGgF0JVb/apply",
+            "self": "/api/v1/lighting/effects/-M5inqP-b-qzPGgF0JVb"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Space"
+          },
+          "id": "-M6NpYksqaKLHatGQqNo",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M6NpYksqaKLHatGQqNo/apply",
+            "self": "/api/v1/lighting/effects/-M6NpYksqaKLHatGQqNo"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Space Visualizer"
+          },
+          "id": "-NkvIvss2k4jAw1tkuFL",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NkvIvss2k4jAw1tkuFL/apply",
+            "self": "/api/v1/lighting/effects/-NkvIvss2k4jAw1tkuFL"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Spin"
+          },
+          "id": "-MdDOaykoA7jHwcb2e0r",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MdDOaykoA7jHwcb2e0r/apply",
+            "self": "/api/v1/lighting/effects/-MdDOaykoA7jHwcb2e0r"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Squares Visualizer"
+          },
+          "id": "-NfXqmyFJoUmrMbJhLFO",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NfXqmyFJoUmrMbJhLFO/apply",
+            "self": "/api/v1/lighting/effects/-NfXqmyFJoUmrMbJhLFO"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Stained Glass"
+          },
+          "id": "-NECdT5-a-T03SiESK3I",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NECdT5-a-T03SiESK3I/apply",
+            "self": "/api/v1/lighting/effects/-NECdT5-a-T03SiESK3I"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Starlight"
+          },
+          "id": "-MDRF1yNuxmbjNg7jjX5",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MDRF1yNuxmbjNg7jjX5/apply",
+            "self": "/api/v1/lighting/effects/-MDRF1yNuxmbjNg7jjX5"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Stranger Things"
+          },
+          "id": "-N3a50SFFrfqojjizi-A",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N3a50SFFrfqojjizi-A/apply",
+            "self": "/api/v1/lighting/effects/-N3a50SFFrfqojjizi-A"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Sunrise Visualizer"
+          },
+          "id": "-MdKQH17oE7oDNKOoyWM",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MdKQH17oE7oDNKOoyWM/apply",
+            "self": "/api/v1/lighting/effects/-MdKQH17oE7oDNKOoyWM"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Sunset Visualizer"
+          },
+          "id": "-MiTr18-L0s9NjNR2phQ",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MiTr18-L0s9NjNR2phQ/apply",
+            "self": "/api/v1/lighting/effects/-MiTr18-L0s9NjNR2phQ"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Super Saiyan"
+          },
+          "id": "-MgNDZWkx66oJ1O26vl0",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MgNDZWkx66oJ1O26vl0/apply",
+            "self": "/api/v1/lighting/effects/-MgNDZWkx66oJ1O26vl0"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Supernova"
+          },
+          "id": "-NiLIc0cPCi63vkg8DF-",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NiLIc0cPCi63vkg8DF-/apply",
+            "self": "/api/v1/lighting/effects/-NiLIc0cPCi63vkg8DF-"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Swirl"
+          },
+          "id": "-NdBjEQN2pf4CiNRoeu6",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NdBjEQN2pf4CiNRoeu6/apply",
+            "self": "/api/v1/lighting/effects/-NdBjEQN2pf4CiNRoeu6"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Synth Sun"
+          },
+          "id": "-NPYp7xk_oOdpWAxxhUk",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NPYp7xk_oOdpWAxxhUk/apply",
+            "self": "/api/v1/lighting/effects/-NPYp7xk_oOdpWAxxhUk"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "TV Static"
+          },
+          "id": "-M_0i3Zs7qGIiYIpDQAu",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M_0i3Zs7qGIiYIpDQAu/apply",
+            "self": "/api/v1/lighting/effects/-M_0i3Zs7qGIiYIpDQAu"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Terminal"
+          },
+          "id": "-M0UK0pcnuXzoqaS7-48",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M0UK0pcnuXzoqaS7-48/apply",
+            "self": "/api/v1/lighting/effects/-M0UK0pcnuXzoqaS7-48"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Tesla Coil"
+          },
+          "id": "-MhpMxoks0IOIXEwVvyp",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MhpMxoks0IOIXEwVvyp/apply",
+            "self": "/api/v1/lighting/effects/-MhpMxoks0IOIXEwVvyp"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Tetris"
+          },
+          "id": "-NNIk14Vo6BKWFtrw_Kk",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NNIk14Vo6BKWFtrw_Kk/apply",
+            "self": "/api/v1/lighting/effects/-NNIk14Vo6BKWFtrw_Kk"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Thermal"
+          },
+          "id": "-O0A7eXcK97yfvwx0su3",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-O0A7eXcK97yfvwx0su3/apply",
+            "self": "/api/v1/lighting/effects/-O0A7eXcK97yfvwx0su3"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Thunder Cloud"
+          },
+          "id": "-NUcoZXVNVkyQVXxHiLz",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NUcoZXVNVkyQVXxHiLz/apply",
+            "self": "/api/v1/lighting/effects/-NUcoZXVNVkyQVXxHiLz"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Tiles"
+          },
+          "id": "-O0QZkWcKLhpb4bMh4OD",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-O0QZkWcKLhpb4bMh4OD/apply",
+            "self": "/api/v1/lighting/effects/-O0QZkWcKLhpb4bMh4OD"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Titanium"
+          },
+          "id": "-N--Ma4s4V5fQrlP0irI",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-N--Ma4s4V5fQrlP0irI/apply",
+            "self": "/api/v1/lighting/effects/-N--Ma4s4V5fQrlP0irI"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Touch Grass"
+          },
+          "id": "-Nx-WQANhjQ5YF4UQPNd",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Nx-WQANhjQ5YF4UQPNd/apply",
+            "self": "/api/v1/lighting/effects/-Nx-WQANhjQ5YF4UQPNd"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Underwater"
+          },
+          "id": "-M7DfOgkz34CHWDtnXDM",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M7DfOgkz34CHWDtnXDM/apply",
+            "self": "/api/v1/lighting/effects/-M7DfOgkz34CHWDtnXDM"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Valentine's Hearts"
+          },
+          "id": "-MSjKWvstIvyTNOw4CXM",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-MSjKWvstIvyTNOw4CXM/apply",
+            "self": "/api/v1/lighting/effects/-MSjKWvstIvyTNOw4CXM"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Vapor Wave"
+          },
+          "id": "-NJGr4QsiM3JknSa9TkF",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NJGr4QsiM3JknSa9TkF/apply",
+            "self": "/api/v1/lighting/effects/-NJGr4QsiM3JknSa9TkF"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Vibe"
+          },
+          "id": "-NyghEBs8-mYkxU6qRFv",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NyghEBs8-mYkxU6qRFv/apply",
+            "self": "/api/v1/lighting/effects/-NyghEBs8-mYkxU6qRFv"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Visor"
+          },
+          "id": "-M6IRGbcnL4HQaVooCgs",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-M6IRGbcnL4HQaVooCgs/apply",
+            "self": "/api/v1/lighting/effects/-M6IRGbcnL4HQaVooCgs"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Voronoi"
+          },
+          "id": "-Np_eqpkcFrKV0YGowRj",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Np_eqpkcFrKV0YGowRj/apply",
+            "self": "/api/v1/lighting/effects/-Np_eqpkcFrKV0YGowRj"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Vortex"
+          },
+          "id": "-NbXf6EVv6EET_JEhFRS",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NbXf6EVv6EET_JEhFRS/apply",
+            "self": "/api/v1/lighting/effects/-NbXf6EVv6EET_JEhFRS"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Watercolor"
+          },
+          "id": "-Maff4R7j2CwDcO6V_62",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-Maff4R7j2CwDcO6V_62/apply",
+            "self": "/api/v1/lighting/effects/-Maff4R7j2CwDcO6V_62"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "WaveScope"
+          },
+          "id": "-NWroKAstQjYoYHVDLmt",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NWroKAstQjYoYHVDLmt/apply",
+            "self": "/api/v1/lighting/effects/-NWroKAstQjYoYHVDLmt"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Waves"
+          },
+          "id": "-NTUSSE-Jo2bs8ia0A04",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NTUSSE-Jo2bs8ia0A04/apply",
+            "self": "/api/v1/lighting/effects/-NTUSSE-Jo2bs8ia0A04"
+          },
+          "type": "effect"
+        },
+        {
+          "attributes": {
+            "name": "Wormhole"
+          },
+          "id": "-NV84tC-FOWBT1Tvw4uR",
+          "links": {
+            "apply": "/api/v1/lighting/effects/-NV84tC-FOWBT1Tvw4uR/apply",
+            "self": "/api/v1/lighting/effects/-NV84tC-FOWBT1Tvw4uR"
+          },
+          "type": "effect"
+        }
+      ],
+      "type": "effects"
+    },
+    "id": 3,
+    "method": "/api/v1/lighting/effects",
+    "params": {},
+    "status": "ok"
+  }

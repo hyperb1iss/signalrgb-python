@@ -1,0 +1,35 @@
+{
+    "api_version": "1.0",
+    "data": {
+      "attributes": {
+        "description": "If the 4th dimension was an RGB effect, this would be it.",
+        "developer_effect": false,
+        "image": "https://imagedelivery.net/uPA_EtOZxmT3DaI0aRG2mQ/-N-YhDDs2ZIGJ42azDgJ/main/dashcard",
+        "name": "4th Dimension",
+        "parameters": {
+          "bgColor": "#1b1b1b",
+          "boxBorders": false,
+          "colorMode": "Rainbow",
+          "hexColor": "#66ff00",
+          "speed": 50
+        },
+        "publisher": "SignalRGB",
+        "uses_audio": false,
+        "uses_input": false,
+        "uses_meters": false,
+        "uses_video": false
+      },
+      "id": "-N-YhDDs2ZIGJ42azDgJ",
+      "links": {
+        "apply": "/api/v1/lighting/effects/-N-YhDDs2ZIGJ42azDgJ/apply",
+        "self": "/api/v1/lighting/effects/-N-YhDDs2ZIGJ42azDgJ"
+      },
+      "type": "effect"
+    },
+    "id": 4,
+    "method": "/api/v1/lighting/effects/-N-YhDDs2ZIGJ42azDgJ",
+    "params": {
+      "id": "-N-YhDDs2ZIGJ42azDgJ"
+    },
+    "status": "ok"
+  }

@@ -1,0 +1,16 @@
+{
+    "api_version": "1.0",
+    "errors": [
+        {
+            "code": "404",
+            "detail": "The requested effect was not found",
+            "title": "Not Found"
+        }
+    ],
+    "id": 2,
+    "method": "/api/v1/lighting/effects/-Mg1qujV9F4rabJxlSO",
+    "params": {
+        "id": "-Mg1qujV9F4rabJxlSO"
+    },
+    "status": "error"
+}
