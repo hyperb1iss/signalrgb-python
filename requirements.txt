@@ -1,3 +1,5 @@
 aiohttp
 pydantic
 pytest
+rich
+typer
