@@ -1,7 +1,10 @@
 """Simple client for interacting with the SignalRGB API."""
 
+from __future__ import annotations
+
 import requests
 from typing import Dict, List, Optional
+from functools import lru_cache
 from .model import (
     EffectListResponse,
     Error,
@@ -18,11 +21,19 @@ class SignalRGBException(Exception):
 
     def __init__(self, error: Optional[Error] = None):
         super().__init__(error.title if error else "Unknown error")
+        self.error = error
 
-        if error is not None:
-            self.code = error.code
-            self.title = error.title
-            self.detail = error.detail
+    @property
+    def code(self) -> Optional[str]:
+        return self.error.code if self.error else None
+
+    @property
+    def title(self) -> Optional[str]:
+        return self.error.title if self.error else None
+
+    @property
+    def detail(self) -> Optional[str]:
+        return self.error.detail if self.error else None
 
 
 class SignalRGBClient:
@@ -37,75 +48,67 @@ class SignalRGBClient:
         """
         self._base_url = f"http://{host}:{port}"
         self._session = requests.Session()
-        self._cached_effects: Optional[List[Effect]] = None
-        self._effects_by_name: Dict[str, Effect] = {}
+        self._effects_cache: Dict[str, Effect] = {}
 
-    def _request(self, method: str, endpoint: str, **kwargs) -> requests.Response:
-        """Make a request to the API."""
+    def _request(self, method: str, endpoint: str, **kwargs) -> dict:
+        """Make a request to the API and return the JSON response."""
         url = f"{self._base_url}{endpoint}"
         response = self._session.request(method, url, **kwargs)
         response.raise_for_status()
-        return response
+        return response.json()
 
-    def _ensure_cached(self) -> None:
-        """Ensure the effects are cached."""
-        if self._cached_effects is None:
-            self.refresh_effects()
-
-    def refresh_effects(self) -> None:
-        """Refresh the cached effects."""
-        response = self._request("GET", "/api/v1/lighting/effects")
-        effects = EffectListResponse.model_validate(response.json())
-        self._ensure_response_ok(effects)
-        self._effects_by_name.clear()
-        for effect in effects.data.items:
-            self._effects_by_name[effect.attributes.name] = effect
-        self._cached_effects = effects.data.items
-
+    @lru_cache(maxsize=1)
     def get_effects(self) -> List[Effect]:
         """List available effects."""
-        self._ensure_cached()
-        return self._cached_effects
+        response = EffectListResponse.model_validate(self._request("GET", "/api/v1/lighting/effects"))
+        self._ensure_response_ok(response)
+        effects = response.data.items
+        self._effects_cache = {effect.attributes.name: effect for effect in effects}
+        return effects
 
     def get_effect(self, effect_id: str) -> Effect:
         """Get details of a specific effect."""
-        response = self._request("GET", f"/api/v1/lighting/effects/{effect_id}")
-        effect = EffectDetailsResponse.model_validate(response.json())
-        self._ensure_response_ok(effect)
-        return effect.data
+        response = EffectDetailsResponse.model_validate(
+            self._request("GET", f"/api/v1/lighting/effects/{effect_id}")
+        )
+        self._ensure_response_ok(response)
+        return response.data
 
     def get_effect_by_name(self, effect_name: str) -> Effect:
         """Get details of a specific effect by name."""
-        self._ensure_cached()
-        cached = self._effects_by_name.get(effect_name)
-        if cached is None:
-            raise SignalRGBException(Error(title=f"Effect \"{effect_name}\" not found"))
-        return self.get_effect(cached.id)
+        if not self._effects_cache:
+            self.get_effects()
+
+        effect = self._effects_cache.get(effect_name)
+        if effect is None:
+            raise SignalRGBException(Error(title=f"Effect '{effect_name}' not found"))
+        return self.get_effect(effect.id)
 
     def get_current_effect(self) -> Effect:
         """Get the current effect."""
-        response = self._request("GET", "/api/v1/lighting")
-        effect = EffectDetailsResponse.model_validate(response.json())
-        self._ensure_response_ok(effect)
-        return effect.data
+        response = EffectDetailsResponse.model_validate(self._request("GET", "/api/v1/lighting"))
+        self._ensure_response_ok(response)
+        return response.data
 
     def apply_effect(self, effect_id: str) -> None:
         """Apply an effect."""
-        response = self._request("POST", f"/api/v1/effects/{effect_id}/apply")
-        result = SignalRGBResponse.model_validate(response.json())
-        self._ensure_response_ok(result)
+        response = SignalRGBResponse.model_validate(
+            self._request("POST", f"/api/v1/effects/{effect_id}/apply")
+        )
+        self._ensure_response_ok(response)
 
     def apply_effect_by_name(self, effect_name: str) -> None:
         """Apply an effect by name."""
-        self._ensure_cached()
-        cached = self._effects_by_name.get(effect_name)
-        if cached is None:
-            raise SignalRGBException(Error(title=f"Effect \"{effect_name}\" not found"))
-        response = self._request("POST", cached.links.apply)
-        result = SignalRGBResponse.model_validate(response.json())
-        self._ensure_response_ok(result)
+        effect = self.get_effect_by_name(effect_name)
+        self._request("POST", effect.links.apply)
 
-    def _ensure_response_ok(self, response: SignalRGBResponse) -> None:
+    @staticmethod
+    def _ensure_response_ok(response: SignalRGBResponse) -> None:
         """Ensure the response is ok."""
         if response.status != "ok":
             raise SignalRGBException(response.errors[0] if response.errors else None)
+
+    def refresh_effects(self) -> None:
+        """Refresh the cached effects."""
+        self.get_effects.cache_clear()
+        self.get_effects()
