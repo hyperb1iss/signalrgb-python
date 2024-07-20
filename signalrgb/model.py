@@ -16,8 +16,8 @@ class Attributes(BaseModel):
 
 
 class Links(BaseModel):
-    apply: str
-    self: str
+    apply: str = None
+    self: str = None
 
 
 class Effect(BaseModel):
@@ -32,9 +32,9 @@ class EffectList(BaseModel):
 
 
 class Error(BaseModel):
-    code: str
-    detail: str
-    title: str
+    code: str = None
+    detail: str = None
+    title: str = None
 
 
 class SignalRGBResponse(BaseModel):
