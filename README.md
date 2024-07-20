@@ -57,7 +57,7 @@ signalrgb current-effect
 You can also specify a custom host and port:
 
 ```bash
-signalrgb --host 192.168.1.100 --port 16038 list-effects
+signalrgb --host hyperia.home --port 16038 list-effects
 ```
 
 ### Python Library
@@ -128,7 +128,7 @@ This project is not officially associated with SignalRGB- it's an independent cl
 ---
 <div align="center">
 
-Made with 💜 by [Stefanie Jane 🌠](https://github.com/hyperb1iss)
+Created by [Stefanie Jane 🌠](https://github.com/hyperb1iss)
 
 </div>
 
