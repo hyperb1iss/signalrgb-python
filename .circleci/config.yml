@@ -17,6 +17,53 @@ jobs:
       - store_test_results:
           path: test-results
 
+  build-docs:
+    docker:
+      - image: cimg/python:3.12
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: poetry
+      - run:
+          name: Install MkDocs and plugins
+          command: poetry add mkdocs mkdocs-material mkdocstrings[python]
+      - run:
+          name: Build documentation
+          command: poetry run mkdocs build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - site
+
+  deploy-docs:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Deploy to GitHub Pages
+          command: |
+            ls -al
+            git clone -b gh-pages https://github.com/hyperb1iss/signalrgb-python.git gh-pages
+            rm -rf gh-pages/*
+            mv -f site/* gh-pages/
+            pushd gh-pages
+            git config user.email "ci-bot@hyperbliss.tech"
+            git config user.name "signalrgb-python CI bot"
+            git add .
+            echo "commit"
+            if ! git diff-index --quiet HEAD; then
+            git commit -m ":books: Update documentation for ${CIRCLE_TAG} [skip ci]"
+              echo "push to github"
+              GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=accept-new" git push git@github.com:hyperb1iss/signalrgb-python.git gh-pages
+            else
+              echo "nothing to deploy"
+            fi
+            echo "done"
+            popd
+
   release:
     docker:
       - image: cimg/python:3.12
@@ -49,9 +96,24 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - build-docs:
+          requires:
+            - build-and-test
+          filters:
+            tags:
+              only: /.*/
+      - deploy-docs:
+          requires:
+            - build-docs
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
       - release:
           requires:
             - build-and-test
+            - deploy-docs
           filters:
             tags:
               only: /v[0-9]+(\.[0-9]+)*/
