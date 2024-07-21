@@ -1,4 +1,4 @@
-# 🌈 SignalRGB Python Client
+# 🌈 signalrgb-python
 
 <div align="center">
 
@@ -24,7 +24,7 @@
 
 ## 💻 Installation
 
-You can install the SignalRGB Python Client using pip:
+You can install signalrgb-python using pip:
 
 ```bash
 pip install signalrgb
@@ -47,7 +47,7 @@ This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-
 
 ### Command-line Interface
 
-The SignalRGB Python Client comes with an intuitive command-line interface for easy interaction with your SignalRGB setup.
+signalrgb-python comes with an intuitive command-line interface for easy interaction with your SignalRGB setup.
 
 ```bash
 # List all available effects
@@ -77,10 +77,10 @@ signalrgb --help
 
 ### Python Library
 
-Integrate the SignalRGB Python Client into your own Python projects with ease:
+Integrate signalrgb-python into your own Python projects with ease:
 
 ```python
-from signalrgb import SignalRGBClient
+from signalrgb.client import SignalRGBClient
 
 # Initialize the client
 client = SignalRGBClient(host="hyperia.home", port=16038)
@@ -103,7 +103,7 @@ print(f"Current effect: {current_effect.attributes.name}")
 The client provides custom exceptions for different types of errors:
 
 ```python
-from signalrgb import SignalRGBClient, ConnectionError, APIError, EffectNotFoundError
+from signalrgb.client import SignalRGBClient, ConnectionError, APIError, EffectNotFoundError
 
 client = SignalRGBClient()
 
@@ -148,7 +148,7 @@ flake8
 
 ## 👥 Contributing
 
-We welcome contributions from the community! Here's how you can help:
+Have a fix or new feature that you want to add? That's amazing! You're amazing!
 
 1. Fork the repository
 2. Create a new branch: `git checkout -b feature-branch-name`

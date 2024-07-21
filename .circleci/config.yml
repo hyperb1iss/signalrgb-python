@@ -17,6 +17,45 @@ jobs:
       - store_test_results:
           path: test-results
 
+  build-docs:
+    docker:
+      - image: cimg/python:3.12
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: poetry
+      - run:
+          name: Install MkDocs and plugins
+          command: poetry add mkdocs mkdocs-material mkdocstrings[python]
+      - run:
+          name: Build documentation
+          command: poetry run mkdocs build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - site
+
+  deploy-docs:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Deploy to GitHub Pages
+          command: |
+            git config user.email "ci-bot@hyperbliss.tech"
+            git config user.name "signalrgb-python CI bot"
+            git checkout gh-pages
+            git pull origin gh-pages
+            rm -rf *
+            mv site/* .
+            rm -rf site
+            git add .
+            git commit -m "Update documentation [ci skip]"
+            git push https://${GITHUB_TOKEN}@github.com/hyperb1iss/signalrgb-python.git gh-pages
+
   release:
     docker:
       - image: cimg/python:3.12
@@ -49,9 +88,22 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - build-docs:
+          requires:
+            - build-and-test
+          filters:
+            tags:
+              only: /.*/
+      - deploy-docs:
+          requires:
+            - build-docs
+          filters:
+            branches:
+              only: main
       - release:
           requires:
             - build-and-test
+            - deploy-docs
           filters:
             tags:
               only: /v[0-9]+(\.[0-9]+)*/
