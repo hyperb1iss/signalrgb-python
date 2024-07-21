@@ -3,24 +3,12 @@ from unittest.mock import patch, Mock
 from requests.exceptions import ConnectionError as RequestsConnectionError, HTTPError
 from signalrgb.client import (
     SignalRGBClient,
-    SignalRGBException,
-    ConnectionError,
     APIError,
     EffectNotFoundError,
-)
-from signalrgb.model import (
-    Effect,
-    Attributes,
-    Links,
-    EffectListResponse,
-    EffectDetailsResponse,
-    SignalRGBResponse,
-    Error,
 )
 
 
 class TestSignalRGBClient(unittest.TestCase):
-
     def setUp(self):
         self.client = SignalRGBClient("testhost", 12345)
 
