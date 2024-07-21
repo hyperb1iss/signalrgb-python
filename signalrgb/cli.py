@@ -2,20 +2,22 @@ import typer
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
-from rich.syntax import Syntax
 from rich import box
-from typing import Optional
 from .client import SignalRGBClient, DEFAULT_PORT, SignalRGBException
 
 app = typer.Typer(help="Command line interface for SignalRGB API")
 console = Console()
 
+
 @app.callback()
-def callback(ctx: typer.Context,
-             host: str = typer.Option("localhost", help="SignalRGB API host"),
-             port: int = typer.Option(DEFAULT_PORT, help="SignalRGB API port")):
+def callback(
+    ctx: typer.Context,
+    host: str = typer.Option("localhost", help="SignalRGB API host"),
+    port: int = typer.Option(DEFAULT_PORT, help="SignalRGB API port"),
+):
     """Initialize SignalRGB client"""
     ctx.obj = SignalRGBClient(host, port)
+
 
 @app.command()
 def list_effects(ctx: typer.Context):
@@ -34,6 +36,7 @@ def list_effects(ctx: typer.Context):
     except SignalRGBException as e:
         console.print(f"[bold red]Error:[/bold red] {str(e)}")
 
+
 @app.command()
 def get_effect(ctx: typer.Context, effect_name: str):
     """Get details of a specific effect"""
@@ -50,7 +53,7 @@ def get_effect(ctx: typer.Context, effect_name: str):
             f"[bold blue]Uses Input:[/bold blue] {effect.attributes.uses_input}\n"
             f"[bold blue]Uses Meters:[/bold blue] {effect.attributes.uses_meters}",
             title="Effect Details",
-            expand=False
+            expand=False,
         )
         console.print(panel)
 
@@ -64,6 +67,7 @@ def get_effect(ctx: typer.Context, effect_name: str):
     except SignalRGBException as e:
         console.print(f"[bold red]Error:[/bold red] {str(e)}")
 
+
 @app.command()
 def current_effect(ctx: typer.Context):
     """Get the current effect"""
@@ -75,11 +79,12 @@ def current_effect(ctx: typer.Context):
             f"[bold magenta]Name:[/bold magenta] {effect.attributes.name}\n"
             f"[bold green]Publisher:[/bold green] {effect.attributes.publisher or 'N/A'}",
             title="Current Effect",
-            expand=False
+            expand=False,
         )
         console.print(panel)
     except SignalRGBException as e:
         console.print(f"[bold red]Error:[/bold red] {str(e)}")
+
 
 @app.command()
 def apply_effect(ctx: typer.Context, effect_name: str):
@@ -87,9 +92,12 @@ def apply_effect(ctx: typer.Context, effect_name: str):
     client: SignalRGBClient = ctx.obj
     try:
         client.apply_effect_by_name(effect_name)
-        console.print(f"[bold green]Successfully applied effect:[/bold green] {effect_name}")
+        console.print(
+            f"[bold green]Successfully applied effect:[/bold green] {effect_name}"
+        )
     except SignalRGBException as e:
         console.print(f"[bold red]Error:[/bold red] {str(e)}")
+
 
 if __name__ == "__main__":
     app()

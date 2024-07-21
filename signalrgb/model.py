@@ -7,7 +7,6 @@ used in the SignalRGB API, including effects, responses, and error information.
 
 from pydantic import BaseModel, Field
 from typing import Any, Dict, List, Optional
-from enum import Enum
 
 
 class Attributes(BaseModel):
