@@ -1,0 +1,48 @@
+site_name: signalrgb-python
+site_description: A Python client library and CLI for controlling SignalRGB Pro
+repo_url: https://github.com/hyperb1iss/signalrgb-python
+theme:
+  name: material
+  palette:
+    primary: indigo
+    accent: pink
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Usage:
+    - CLI: usage/cli.md
+    - Python Library: usage/library.md
+  - API Reference:
+    - Client: api/client.md
+    - Models: api/models.md
+  - Development: development.md
+  - Contributing: contributing.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options:
+            docstring_style: google
+            show_source: true

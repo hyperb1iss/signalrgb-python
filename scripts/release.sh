@@ -16,12 +16,15 @@ read -p "Current version is $current_version. What should the new version be? " 
 # Update the version in pyproject.toml
 poetry version $new_version
 
+# Update documentation version
+sed -i "s/version: $current_version/version: $new_version/" docs/index.md
+
 # Commit the changes
-git add pyproject.toml
-git commit -m "Release: $new_version"
+git add pyproject.toml docs/index.md
+git commit -m ":bookmark: Release: $new_version"
 
 # Create and push the new tag
 git tag -a v$new_version -m "Release: $new_version"
 git push origin main --tags
 
-echo "Release $new_version has been created and pushed. CircleCI will handle the rest."
+echo "Release $new_version has been created and pushed. CircleCI will handle the rest, including documentation deployment."
