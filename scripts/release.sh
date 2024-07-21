@@ -16,8 +16,11 @@ read -p "Current version is $current_version. What should the new version be? " 
 # Update the version in pyproject.toml
 poetry version $new_version
 
+# Update documentation version
+sed -i "s/release = '.*'/release = '$new_version'/" docs/source/conf.py
+
 # Commit the changes
-git add pyproject.toml
+git add pyproject.toml docs/source/conf.py
 git commit -m "Bump version to $new_version"
 
 # Create and push the new tag
