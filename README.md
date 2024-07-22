@@ -8,11 +8,12 @@
 
 *A powerful Python client library and CLI for controlling [SignalRGB Pro](https://signalrgb.com)*
 
-[Features](#✨-features) • [Installation](#💻-installation) • [Usage](#🚀-usage) • [API Reference](#📘-api-reference) • [Development](#🛠️-development) • [Contributing](#👥-contributing) • [License](#📄-license)
+[Features](#features) • [Installation](#installation) • [Usage](#usage) • [API Reference](#api-reference) • [Development](#development) • [Contributing](#contributing) • [License](#license)
 
 </div>
 
 ## ✨ Features
+<a name="features"></a>
 
 - 📋 List available lighting effects
 - 🔍 Get detailed information about specific effects
@@ -23,6 +24,7 @@
 - 🔄 Automatic effect caching for improved performance
 
 ## 💻 Installation
+<a name="installation"></a>
 
 You can install signalrgb-python using pip:
 
@@ -44,6 +46,7 @@ poetry add signalrgb
 This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-api), which is only available in SignalRGB Pro.
 
 ## 🚀 Usage
+<a name="usage"></a>
 
 ### Command-line Interface
 
@@ -118,10 +121,12 @@ except APIError as e:
 ```
 
 ## 📘 API Reference
+<a name="api-reference"></a>
 
 For detailed information about the available methods and classes, please refer to our [API Documentation](https://hyperb1iss.github.io/signalrgb-python/).
 
 ## 🛠️ Development
+<a name="development"></a>
 
 To set up the development environment:
 
@@ -143,6 +148,7 @@ pytest
 Check out our [Development Guide](https://hyperb1iss.github.io/signalrgb-python/development/) for more information!
 
 ## 👥 Contributing
+<a name="contributing"></a>
 
 Have a fix or new feature that you want to add? That's amazing! You're amazing!
 
@@ -155,6 +161,7 @@ Have a fix or new feature that you want to add? That's amazing! You're amazing!
 Please make sure to update tests as appropriate and adhere to the project's coding standards.
 
 ## 📄 License
+<a name="license"></a>
 
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
 
