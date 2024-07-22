@@ -158,7 +158,7 @@ class SignalRGBClient:
             self._ensure_response_ok(response)
             if response.data is None:
                 raise APIError("No current effect data in the response")
-            return response.data
+            return self.get_effect(response.data.id)
         except Exception as e:
             raise APIError(
                 f"Failed to retrieve current effect: {e}", Error(title=str(e))
