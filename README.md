@@ -140,11 +140,7 @@ To run tests:
 pytest
 ```
 
-To run linting:
-
-```bash
-flake8
-```
+Check out our [Development Guide](https://hyperb1iss.github.io/signalrgb-python/development/) for more information!
 
 ## 👥 Contributing
 

@@ -5,8 +5,9 @@ This module contains Pydantic models that represent various data structures
 used in the SignalRGB API, including effects, responses, and error information.
 """
 
-from pydantic import BaseModel, Field
 from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field
 
 
 class Attributes(BaseModel):

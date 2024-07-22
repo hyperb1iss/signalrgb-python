@@ -1,9 +1,10 @@
 import typer
-from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
 from rich import box
-from .client import SignalRGBClient, DEFAULT_PORT, SignalRGBException
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+
+from .client import DEFAULT_PORT, SignalRGBClient, SignalRGBException
 
 app = typer.Typer(help="Command line interface for SignalRGB API")
 console = Console()

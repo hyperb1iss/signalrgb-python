@@ -2,16 +2,20 @@
 
 from __future__ import annotations
 
-import requests
-from typing import Dict, List, Optional
 from functools import lru_cache
+from typing import List, Optional, cast
+
+import requests
+from requests.exceptions import RequestException, Timeout
+
 from .model import (
+    Effect,
+    EffectDetailsResponse,
     EffectListResponse,
     Error,
-    EffectDetailsResponse,
-    Effect,
     SignalRGBResponse,
 )
+
 
 DEFAULT_PORT = 16038
 
@@ -57,33 +61,42 @@ class EffectNotFoundError(SignalRGBException):
 class SignalRGBClient:
     """Client for interacting with the SignalRGB API."""
 
-    def __init__(self, host: str = "localhost", port: int = DEFAULT_PORT):
+    def __init__(
+        self, host: str = "localhost", port: int = DEFAULT_PORT, timeout: float = 10.0
+    ):
         """Initialize the SignalRGBClient.
 
         Args:
             host (str): The host of the SignalRGB API. Defaults to 'localhost'.
             port (int): The port of the SignalRGB API. Defaults to 16038.
+            timeout (float): The timeout for API requests in seconds. Defaults to 10.0.
         """
         self._base_url = f"http://{host}:{port}"
         self._session = requests.Session()
-        self._effects_cache: Dict[str, Effect] = {}
+        self._timeout = timeout
 
     def _request(self, method: str, endpoint: str, **kwargs) -> dict:
         """Make a request to the API and return the JSON response."""
         url = f"{self._base_url}{endpoint}"
         try:
-            response = self._session.request(method, url, **kwargs)
+            response = self._session.request(
+                method, url, timeout=self._timeout, **kwargs
+            )
             response.raise_for_status()
             return response.json()
         except requests.ConnectionError as e:
-            raise ConnectionError(f"Failed to connect to SignalRGB API: {e}")
+            raise ConnectionError(
+                f"Failed to connect to SignalRGB API: {e}", Error(title=str(e))
+            )
+        except Timeout:
+            raise ConnectionError("Request timed out", Error(title="Request Timeout"))
         except requests.HTTPError as e:
             if e.response is not None:
                 error_data = e.response.json().get("errors", [{}])[0]
                 error = Error(**error_data)
                 raise APIError(f"HTTP error occurred: {e}", error)
-            raise APIError(f"HTTP error occurred: {e}", e)
-        except requests.RequestException as e:
+            raise APIError(f"HTTP error occurred: {e}", Error(title=str(e)))
+        except RequestException as e:
             raise SignalRGBException(f"An error occurred while making the request: {e}")
 
     @lru_cache(maxsize=1)
@@ -94,11 +107,16 @@ class SignalRGBClient:
                 self._request("GET", "/api/v1/lighting/effects")
             )
             self._ensure_response_ok(response)
-            effects = response.data.items
-            self._effects_cache = {effect.attributes.name: effect for effect in effects}
-            return effects
+            effects = response.data
+            if effects is None or effects.items is None:
+                raise APIError("No effects data in the response")
+            return effects.items
+        except (ConnectionError, Timeout):
+            raise
+        except APIError:
+            raise
         except Exception as e:
-            raise APIError(f"Failed to retrieve effects: {e}", e)
+            raise APIError(f"Failed to retrieve effects: {e}", Error(title=str(e)))
 
     def get_effect(self, effect_id: str) -> Effect:
         """Get details of a specific effect."""
@@ -107,20 +125,28 @@ class SignalRGBClient:
                 self._request("GET", f"/api/v1/lighting/effects/{effect_id}")
             )
             self._ensure_response_ok(response)
+            if response.data is None:
+                raise APIError("No effect data in the response")
             return response.data
-        except Exception as e:
+        except APIError as e:
             if e.error and e.error.code == "not_found":
-                raise EffectNotFoundError(f"Effect with ID '{effect_id}' not found", e)
+                raise EffectNotFoundError(
+                    f"Effect with ID '{effect_id}' not found", e.error
+                )
             raise
+
+    def _find_effect_by_name(self, effect_name: str) -> Optional[str]:
+        return next(
+            (e for e in self.get_effects() if e.attributes.name == effect_name), None
+        )
 
     def get_effect_by_name(self, effect_name: str) -> Effect:
         """Get details of a specific effect by name."""
-        if not self._effects_cache:
-            self.get_effects()
 
-        effect = self._effects_cache.get(effect_name)
+        effect = self._find_effect_by_name(effect_name)
         if effect is None:
             raise EffectNotFoundError(f"Effect '{effect_name}' not found")
+
         return self.get_effect(effect.id)
 
     def get_current_effect(self) -> Effect:
@@ -130,9 +156,13 @@ class SignalRGBClient:
                 self._request("GET", "/api/v1/lighting")
             )
             self._ensure_response_ok(response)
+            if response.data is None:
+                raise APIError("No current effect data in the response")
             return response.data
         except Exception as e:
-            raise APIError(f"Failed to retrieve current effect: {e}", e)
+            raise APIError(
+                f"Failed to retrieve current effect: {e}", Error(title=str(e))
+            )
 
     def apply_effect(self, effect_id: str) -> None:
         """Apply an effect."""
@@ -143,20 +173,26 @@ class SignalRGBClient:
             self._ensure_response_ok(response)
         except APIError as e:
             if e.error and e.error.code == "not_found":
-                raise EffectNotFoundError(f"Effect with ID '{effect_id}' not found", e)
+                raise EffectNotFoundError(
+                    f"Effect with ID '{effect_id}' not found", e.error
+                )
             raise
         except Exception as e:
-            raise SignalRGBException(f"Failed to apply effect: {e}", e)
+            raise SignalRGBException(
+                f"Failed to apply effect: {e}", Error(title=str(e))
+            )
 
     def apply_effect_by_name(self, effect_name: str) -> None:
         """Apply an effect by name."""
         try:
             effect = self.get_effect_by_name(effect_name)
-            self._request("POST", effect.links.apply)
+            self._request("POST", cast(str, effect.links.apply))
         except EffectNotFoundError:
             raise
         except Exception as e:
-            raise SignalRGBException(f"Failed to apply effect '{effect_name}': {e}")
+            raise SignalRGBException(
+                f"Failed to apply effect '{effect_name}': {e}", Error(title=str(e))
+            )
 
     @staticmethod
     def _ensure_response_ok(response: SignalRGBResponse) -> None:
@@ -168,4 +204,3 @@ class SignalRGBClient:
     def refresh_effects(self) -> None:
         """Refresh the cached effects."""
         self.get_effects.cache_clear()
-        self.get_effects()
