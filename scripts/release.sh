@@ -27,4 +27,4 @@ git commit -m ":bookmark: Release: $new_version"
 git tag -a v$new_version -m "Release: $new_version"
 git push origin main --tags
 
-echo "Release $new_version has been created and pushed. CircleCI will handle the rest, including documentation deployment."
+echo "Release $new_version has been created and pushed. CI will handle the rest, including documentation deployment."

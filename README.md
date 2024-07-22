@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/circleci/HnjwXsMN4bebM2B2r69BKp/A9i1RqBjrUCp2Prq5brJgh/tree/main.svg?style=shield&circle-token=CCIPRJ_3zJ7eJJi16hxx8JGuNxZtP_907df1eecb62b96f7dbc93bdd9c239d0cd4674c6)](https://dl.circleci.com/status-badge/redirect/circleci/HnjwXsMN4bebM2B2r69BKp/A9i1RqBjrUCp2Prq5brJgh/tree/main)
+[![CI/CD](https://github.com/hyperb1iss/signalrgb-python/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/hyperb1iss/signalrgb-python/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![PyPI version](https://badge.fury.io/py/signalrgb.svg)](https://badge.fury.io/py/signalrgb)
 
