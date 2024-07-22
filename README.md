@@ -4,7 +4,7 @@
 
 [![CI/CD](https://github.com/hyperb1iss/signalrgb-python/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/hyperb1iss/signalrgb-python/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![PyPI version](https://badge.fury.io/py/signalrgb.svg)](https://badge.fury.io/py/signalrgb)
+[![PyPI version](https://img.shields.io/pypi/v/signalrgb)](https://pypi.org/project/signalrgb)
 
 *A powerful Python client library and CLI for controlling [SignalRGB Pro](https://signalrgb.com)*
 
