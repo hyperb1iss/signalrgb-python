@@ -184,6 +184,6 @@ This project is not officially associated with SignalRGB. It's an independent cl
 
 Created by [Stefanie Jane 🌠](https://github.com/hyperb1iss)
 
-If you find this project helpful, consider [buying me a coffee](https://ko-fi.com/hyperb1iss)! ☕
+If you find this project useful, consider [buying me a Monster Ultra Violet!](https://ko-fi.com/hyperb1iss)! ⚡️
 
 </div>
