@@ -21,7 +21,7 @@ class TestModel(unittest.TestCase):
 
     def test_effect_deserialization(self):
         data = self.load_json_data("effect.json")
-        response = EffectDetailsResponse.model_validate(data)
+        response = EffectDetailsResponse.from_dict(data)
         self.assertEqual(response.status, "ok")
         self.assertIsInstance(response.data, Effect)
 
@@ -49,7 +49,7 @@ class TestModel(unittest.TestCase):
 
     def test_effect_list_deserialization(self):
         data = self.load_json_data("effect_list.json")
-        response = EffectListResponse.model_validate(data)
+        response = EffectListResponse.from_dict(data)
         self.assertEqual(response.status, "ok")
         self.assertIsInstance(response.data, EffectList)
 
@@ -64,7 +64,7 @@ class TestModel(unittest.TestCase):
 
     def test_effect_error_deserialization(self):
         data = self.load_json_data("error.json")
-        response = EffectDetailsResponse.model_validate(data)
+        response = EffectDetailsResponse.from_dict(data)
         self.assertEqual(response.status, "error")
         self.assertIsInstance(response.errors, list)
         self.assertGreater(len(response.errors), 0)
@@ -88,7 +88,7 @@ class TestModel(unittest.TestCase):
             "uses_meters": True,
             "uses_video": False,
         }
-        attrs = Attributes.model_validate(attrs_data)
+        attrs = Attributes.from_dict(attrs_data)
         for field, value in attrs_data.items():
             self.assertEqual(getattr(attrs, field), value)
 
@@ -97,7 +97,7 @@ class TestModel(unittest.TestCase):
             "apply": "http://api.example.com/apply",
             "self": "http://api.example.com/effect/1",
         }
-        links = Links.model_validate(links_data)
+        links = Links.from_dict(links_data)
         self.assertEqual(links.apply, links_data["apply"])
         self.assertEqual(links.self, links_data["self"])
 
@@ -110,7 +110,7 @@ class TestModel(unittest.TestCase):
             "status": "ok",
             "errors": [],
         }
-        response = SignalRGBResponse.model_validate(response_data)
+        response = SignalRGBResponse.from_dict(response_data)
         self.assertEqual(response.api_version, "1.0")
         self.assertEqual(response.id, 12345)
         self.assertEqual(response.method, "GET")
@@ -124,7 +124,7 @@ class TestModel(unittest.TestCase):
             "title": "Internal Server Error",
             "detail": "An unexpected error occurred",
         }
-        error = Error.model_validate(error_data)
+        error = Error.from_dict(error_data)
         self.assertEqual(error.code, "500")
         self.assertEqual(error.title, "Internal Server Error")
         self.assertEqual(error.detail, "An unexpected error occurred")
