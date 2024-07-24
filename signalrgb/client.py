@@ -1,5 +1,5 @@
 """
-C lient for interacting with the SignalRGB API.
+Client for interacting with the SignalRGB API.
 
 This module provides a client class for interacting with the SignalRGB API,
 allowing users to retrieve, apply, and manage lighting effects.
@@ -139,7 +139,7 @@ class SignalRGBClient:
         except requests.HTTPError as e:
             if e.response is not None:
                 error_data = e.response.json().get("errors", [{}])[0]
-                error = Error(**error_data)
+                error = Error.from_dict(error_data)
                 raise APIError(f"HTTP error occurred: {e}", error)
             raise APIError(f"HTTP error occurred: {e}", Error(title=str(e)))
         except RequestException as e:
@@ -161,9 +161,8 @@ class SignalRGBClient:
             >>> print(f"Found {len(effects)} effects")
         """
         try:
-            response = EffectListResponse.model_validate(
-                self._request("GET", "/api/v1/lighting/effects")
-            )
+            response_data = self._request("GET", "/api/v1/lighting/effects")
+            response = EffectListResponse.from_dict(response_data)
             self._ensure_response_ok(response)
             effects = response.data
             if effects is None or effects.items is None:
@@ -195,9 +194,10 @@ class SignalRGBClient:
             >>> print(f"Effect name: {effect.attributes.name}")
         """
         try:
-            response = EffectDetailsResponse.model_validate(
-                self._request("GET", f"/api/v1/lighting/effects/{effect_id}")
+            response_data = self._request(
+                "GET", f"/api/v1/lighting/effects/{effect_id}"
             )
+            response = EffectDetailsResponse.from_dict(response_data)
             self._ensure_response_ok(response)
             if response.data is None:
                 raise APIError("No effect data in the response")
@@ -260,9 +260,8 @@ class SignalRGBClient:
             >>> print(f"Current effect: {current_effect.attributes.name}")
         """
         try:
-            response = EffectDetailsResponse.model_validate(
-                self._request("GET", "/api/v1/lighting")
-            )
+            response_data = self._request("GET", "/api/v1/lighting")
+            response = EffectDetailsResponse.from_dict(response_data)
             self._ensure_response_ok(response)
             if response.data is None:
                 raise APIError("No current effect data in the response")
@@ -288,9 +287,8 @@ class SignalRGBClient:
             >>> print("Effect applied successfully")
         """
         try:
-            response = SignalRGBResponse.model_validate(
-                self._request("POST", f"/api/v1/effects/{effect_id}/apply")
-            )
+            response_data = self._request("POST", f"/api/v1/effects/{effect_id}/apply")
+            response = SignalRGBResponse.from_dict(response_data)
             self._ensure_response_ok(response)
         except APIError as e:
             if e.error and e.error.code == "not_found":
