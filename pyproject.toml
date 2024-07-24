@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "signalrgb"
-version = "0.9.0"
+version = "0.9.3"
 description = "A Python client for SignalRGB"
 authors = ["Stefanie Jane <stef@hyperbliss.tech>"]
 license = "Apache-2.0"
