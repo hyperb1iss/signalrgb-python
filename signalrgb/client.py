@@ -2,7 +2,12 @@ from typing import List, Optional, cast
 
 import aiohttp
 import asyncio
-from aiohttp import ClientError, ClientTimeout
+from aiohttp import (
+    ClientConnectorError,
+    ClientError,
+    ClientResponseError,
+    ClientTimeout,
+)
 
 from .model import (
     Effect,
@@ -134,16 +139,16 @@ class SignalRGBClient:
             ) as response:
                 response.raise_for_status()
                 return await response.json()
-        except aiohttp.ClientConnectorError as e:
+        except ClientConnectorError as e:
             raise ConnectionError(
                 f"Failed to connect to SignalRGB API: {e}", Error(title=str(e))
             )
         except asyncio.TimeoutError:
             raise ConnectionError("Request timed out", Error(title="Request Timeout"))
-        except aiohttp.ClientResponseError as e:
-            error_data = await response.json()
-            error = Error.from_dict(error_data.get("errors", [{}])[0])
-            raise APIError(f"HTTP error occurred: {e}", error)
+        except ClientResponseError as e:
+            raise APIError(
+                f"HTTP error occurred: {e}", Error(title=str(e), code=str(e.status))
+            )
         except ClientError as e:
             raise SignalRGBException(f"An error occurred while making the request: {e}")
 
@@ -170,11 +175,15 @@ class SignalRGBClient:
                 if effects is None or effects.items is None:
                     raise APIError("No effects data in the response")
                 self._effects_cache = effects.items
-        except APIError:
+            return self._effects_cache
+        except ClientConnectorError as e:
+            raise ConnectionError(f"Failed to connect to SignalRGB API: {e}")
+        except asyncio.TimeoutError:
+            raise ConnectionError("Request timed out")
+        except (APIError, ConnectionError):
             raise
         except Exception as e:
             raise APIError(f"Failed to retrieve effects: {e}", Error(title=str(e)))
-        return self._effects_cache
 
     async def get_effect(self, effect_id: str) -> Effect:
         """Get details of a specific effect.
