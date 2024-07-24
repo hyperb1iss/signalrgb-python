@@ -1,17 +1,8 @@
-"""
-Client for interacting with the SignalRGB API.
-
-This module provides a client class for interacting with the SignalRGB API,
-allowing users to retrieve, apply, and manage lighting effects.
-"""
-
-from __future__ import annotations
-
-from functools import lru_cache
 from typing import List, Optional, cast
 
-import requests
-from requests.exceptions import RequestException, Timeout
+import aiohttp
+import asyncio
+from aiohttp import ClientError, ClientTimeout
 
 from .model import (
     Effect,
@@ -20,7 +11,6 @@ from .model import (
     Error,
     SignalRGBResponse,
 )
-
 
 DEFAULT_PORT = 16038
 
@@ -104,11 +94,22 @@ class SignalRGBClient:
             >>> client = SignalRGBClient("192.168.1.100", 8080, 5.0)
         """
         self._base_url = f"http://{host}:{port}"
-        self._session = requests.Session()
-        self._timeout = timeout
+        self._timeout = ClientTimeout(total=timeout)
+        self._session: Optional[aiohttp.ClientSession] = None
+        self._effects_cache: Optional[List[Effect]] = None
 
-    def _request(self, method: str, endpoint: str, **kwargs) -> dict:
-        """Make a request to the API and return the JSON response.
+    async def __aenter__(self):
+        if self._session is None:
+            self._session = aiohttp.ClientSession()
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if self._session:
+            await self._session.close()
+            self._session = None
+
+    async def _request(self, method: str, endpoint: str, **kwargs) -> dict:
+        """Make an asynchronous request to the API and return the JSON response.
 
         Args:
             method (str): The HTTP method to use for the request.
@@ -123,30 +124,30 @@ class SignalRGBClient:
             APIError: If the API returns an error response.
             SignalRGBException: For any other request-related errors.
         """
+        if self._session is None:
+            self._session = aiohttp.ClientSession()
+
         url = f"{self._base_url}{endpoint}"
         try:
-            response = self._session.request(
+            async with self._session.request(
                 method, url, timeout=self._timeout, **kwargs
-            )
-            response.raise_for_status()
-            return response.json()
-        except requests.ConnectionError as e:
+            ) as response:
+                response.raise_for_status()
+                return await response.json()
+        except aiohttp.ClientConnectorError as e:
             raise ConnectionError(
                 f"Failed to connect to SignalRGB API: {e}", Error(title=str(e))
             )
-        except Timeout:
+        except asyncio.TimeoutError:
             raise ConnectionError("Request timed out", Error(title="Request Timeout"))
-        except requests.HTTPError as e:
-            if e.response is not None:
-                error_data = e.response.json().get("errors", [{}])[0]
-                error = Error.from_dict(error_data)
-                raise APIError(f"HTTP error occurred: {e}", error)
-            raise APIError(f"HTTP error occurred: {e}", Error(title=str(e)))
-        except RequestException as e:
+        except aiohttp.ClientResponseError as e:
+            error_data = await response.json()
+            error = Error.from_dict(error_data.get("errors", [{}])[0])
+            raise APIError(f"HTTP error occurred: {e}", error)
+        except ClientError as e:
             raise SignalRGBException(f"An error occurred while making the request: {e}")
 
-    @lru_cache(maxsize=1)
-    def get_effects(self) -> List[Effect]:
+    async def get_effects(self) -> List[Effect]:
         """List available effects.
 
         Returns:
@@ -156,26 +157,26 @@ class SignalRGBClient:
             APIError: If there's an error retrieving the effects.
 
         Example:
-            >>> client = SignalRGBClient()
-            >>> effects = client.get_effects()
-            >>> print(f"Found {len(effects)} effects")
+            >>> async with SignalRGBClient() as client:
+            ...     effects = await client.get_effects()
+            ...     print(f"Found {len(effects)} effects")
         """
         try:
-            response_data = self._request("GET", "/api/v1/lighting/effects")
-            response = EffectListResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
-            effects = response.data
-            if effects is None or effects.items is None:
-                raise APIError("No effects data in the response")
-            return effects.items
-        except (ConnectionError, Timeout):
-            raise
+            if self._effects_cache is None:
+                response_data = await self._request("GET", "/api/v1/lighting/effects")
+                response = EffectListResponse.from_dict(response_data)
+                self._ensure_response_ok(response)
+                effects = response.data
+                if effects is None or effects.items is None:
+                    raise APIError("No effects data in the response")
+                self._effects_cache = effects.items
         except APIError:
             raise
         except Exception as e:
             raise APIError(f"Failed to retrieve effects: {e}", Error(title=str(e)))
+        return self._effects_cache
 
-    def get_effect(self, effect_id: str) -> Effect:
+    async def get_effect(self, effect_id: str) -> Effect:
         """Get details of a specific effect.
 
         Args:
@@ -189,12 +190,12 @@ class SignalRGBClient:
             APIError: If there's an error retrieving the effect.
 
         Example:
-            >>> client = SignalRGBClient()
-            >>> effect = client.get_effect("example_effect_id")
-            >>> print(f"Effect name: {effect.attributes.name}")
+            >>> async with SignalRGBClient() as client:
+            ...     effect = await client.get_effect("example_effect_id")
+            ...     print(f"Effect name: {effect.attributes.name}")
         """
         try:
-            response_data = self._request(
+            response_data = await self._request(
                 "GET", f"/api/v1/lighting/effects/{effect_id}"
             )
             response = EffectDetailsResponse.from_dict(response_data)
@@ -209,7 +210,7 @@ class SignalRGBClient:
                 )
             raise
 
-    def _find_effect_by_name(self, effect_name: str) -> Optional[Effect]:
+    async def _find_effect_by_name(self, effect_name: str) -> Optional[Effect]:
         """Find an effect by its name.
 
         Args:
@@ -218,11 +219,10 @@ class SignalRGBClient:
         Returns:
             Optional[Effect]: The found effect, or None if not found.
         """
-        return next(
-            (e for e in self.get_effects() if e.attributes.name == effect_name), None
-        )
+        effects = await self.get_effects()
+        return next((e for e in effects if e.attributes.name == effect_name), None)
 
-    def get_effect_by_name(self, effect_name: str) -> Effect:
+    async def get_effect_by_name(self, effect_name: str) -> Effect:
         """Get details of a specific effect by name.
 
         Args:
@@ -235,17 +235,17 @@ class SignalRGBClient:
             EffectNotFoundError: If the effect with the given name is not found.
 
         Example:
-            >>> client = SignalRGBClient()
-            >>> effect = client.get_effect_by_name("Rainbow Wave")
-            >>> print(f"Effect ID: {effect.id}")
+            >>> async with SignalRGBClient() as client:
+            ...     effect = await client.get_effect_by_name("Rainbow Wave")
+            ...     print(f"Effect ID: {effect.id}")
         """
-        effect = self._find_effect_by_name(effect_name)
+        effect = await self._find_effect_by_name(effect_name)
         if effect is None:
             raise EffectNotFoundError(f"Effect '{effect_name}' not found")
 
-        return self.get_effect(effect.id)
+        return await self.get_effect(effect.id)
 
-    def get_current_effect(self) -> Effect:
+    async def get_current_effect(self) -> Effect:
         """Get the current effect.
 
         Returns:
@@ -255,23 +255,23 @@ class SignalRGBClient:
             APIError: If there's an error retrieving the current effect.
 
         Example:
-            >>> client = SignalRGBClient()
-            >>> current_effect = client.get_current_effect()
-            >>> print(f"Current effect: {current_effect.attributes.name}")
+            >>> async with SignalRGBClient() as client:
+            ...     current_effect = await client.get_current_effect()
+            ...     print(f"Current effect: {current_effect.attributes.name}")
         """
         try:
-            response_data = self._request("GET", "/api/v1/lighting")
+            response_data = await self._request("GET", "/api/v1/lighting")
             response = EffectDetailsResponse.from_dict(response_data)
             self._ensure_response_ok(response)
             if response.data is None:
                 raise APIError("No current effect data in the response")
-            return self.get_effect(response.data.id)
+            return await self.get_effect(response.data.id)
         except Exception as e:
             raise APIError(
                 f"Failed to retrieve current effect: {e}", Error(title=str(e))
             )
 
-    def apply_effect(self, effect_id: str) -> None:
+    async def apply_effect(self, effect_id: str) -> None:
         """Apply an effect.
 
         Args:
@@ -282,12 +282,14 @@ class SignalRGBClient:
             SignalRGBException: If there's an error applying the effect.
 
         Example:
-            >>> client = SignalRGBClient()
-            >>> client.apply_effect("example_effect_id")
-            >>> print("Effect applied successfully")
+            >>> async with SignalRGBClient() as client:
+            ...     await client.apply_effect("example_effect_id")
+            ...     print("Effect applied successfully")
         """
         try:
-            response_data = self._request("POST", f"/api/v1/effects/{effect_id}/apply")
+            response_data = await self._request(
+                "POST", f"/api/v1/effects/{effect_id}/apply"
+            )
             response = SignalRGBResponse.from_dict(response_data)
             self._ensure_response_ok(response)
         except APIError as e:
@@ -301,7 +303,7 @@ class SignalRGBClient:
                 f"Failed to apply effect: {e}", Error(title=str(e))
             )
 
-    def apply_effect_by_name(self, effect_name: str) -> None:
+    async def apply_effect_by_name(self, effect_name: str) -> None:
         """Apply an effect by name.
 
         Args:
@@ -312,13 +314,13 @@ class SignalRGBClient:
             SignalRGBException: If there's an error applying the effect.
 
         Example:
-            >>> client = SignalRGBClient()
-            >>> client.apply_effect_by_name("Rainbow Wave")
-            >>> print("Effect applied successfully")
+            >>> async with SignalRGBClient() as client:
+            ...     await client.apply_effect_by_name("Rainbow Wave")
+            ...     print("Effect applied successfully")
         """
         try:
-            effect = self.get_effect_by_name(effect_name)
-            self._request("POST", cast(str, effect.links.apply))
+            effect = await self.get_effect_by_name(effect_name)
+            await self._request("POST", cast(str, effect.links.apply))
         except EffectNotFoundError:
             raise
         except Exception as e:
@@ -347,8 +349,8 @@ class SignalRGBClient:
         retrieval of effects on the next call.
 
         Example:
-            >>> client = SignalRGBClient()
-            >>> client.refresh_effects()
-            >>> fresh_effects = client.get_effects()
+            >>> async with SignalRGBClient() as client:
+            ...     client.refresh_effects()
+            ...     fresh_effects = await client.get_effects()
         """
-        self.get_effects.cache_clear()
+        self._effects_cache = None
