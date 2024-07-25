@@ -23,6 +23,7 @@ from .model import (
 
 
 DEFAULT_PORT = 16038
+LIGHTING_V1 = "/api/v1/lighting"
 
 
 class SignalRGBException(Exception):
@@ -161,7 +162,7 @@ class SignalRGBClient:
             >>> print(f"Found {len(effects)} effects")
         """
         try:
-            response_data = self._request("GET", "/api/v1/lighting/effects")
+            response_data = self._request("GET", f"{LIGHTING_V1}/effects")
             response = EffectListResponse.from_dict(response_data)
             self._ensure_response_ok(response)
             effects = response.data
@@ -194,9 +195,7 @@ class SignalRGBClient:
             >>> print(f"Effect name: {effect.attributes.name}")
         """
         try:
-            response_data = self._request(
-                "GET", f"/api/v1/lighting/effects/{effect_id}"
-            )
+            response_data = self._request("GET", f"{LIGHTING_V1}/effects/{effect_id}")
             response = EffectDetailsResponse.from_dict(response_data)
             self._ensure_response_ok(response)
             if response.data is None:
@@ -260,7 +259,7 @@ class SignalRGBClient:
             >>> print(f"Current effect: {current_effect.attributes.name}")
         """
         try:
-            response_data = self._request("GET", "/api/v1/lighting")
+            response_data = self._request("GET", f"{LIGHTING_V1}")
             response = EffectDetailsResponse.from_dict(response_data)
             self._ensure_response_ok(response)
             if response.data is None:
@@ -287,7 +286,9 @@ class SignalRGBClient:
             >>> print("Effect applied successfully")
         """
         try:
-            response_data = self._request("POST", f"/api/v1/effects/{effect_id}/apply")
+            response_data = self._request(
+                "POST", f"{LIGHTING_V1}/effects/{effect_id}/apply"
+            )
             response = SignalRGBResponse.from_dict(response_data)
             self._ensure_response_ok(response)
         except APIError as e:
