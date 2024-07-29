@@ -64,6 +64,7 @@ def create_effect_panel(effect: Effect, title: str) -> Panel:
             f"[bold magenta]Name:[/bold magenta] {effect.attributes.name}",
             f"[bold green]Publisher:[/bold green] {effect.attributes.publisher or 'N/A'}",
             f"[bold yellow]Description:[/bold yellow] {effect.attributes.description or 'N/A'}",
+            f"[bold purple]Image:[/bold purple] {effect.attributes.image or 'N/A'}",
             f"[bold blue]Uses Audio:[/bold blue] {effect.attributes.uses_audio}",
             f"[bold blue]Uses Video:[/bold blue] {effect.attributes.uses_video}",
             f"[bold blue]Uses Input:[/bold blue] {effect.attributes.uses_input}",
