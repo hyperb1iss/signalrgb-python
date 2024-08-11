@@ -9,11 +9,170 @@ from signalrgb.client import (
     ConnectionError,
     SignalRGBClient,
 )
+from signalrgb.model import SignalRGBResponse
+
 
 
 class TestSignalRGBClient(unittest.TestCase):
     def setUp(self):
         self.client = SignalRGBClient("testhost", 12345)
+
+    @patch("requests.Session.request")
+    def test_get_effects(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+            "data": {
+                "items": [
+                    {
+                        "id": "effect1",
+                        "type": "lighting",
+                        "attributes": {"name": "Effect 1"},
+                        "links": {},
+                    },
+                    {
+                        "id": "effect2",
+                        "type": "lighting",
+                        "attributes": {"name": "Effect 2"},
+                        "links": {},
+                    },
+                ]
+            },
+        }
+        mock_request.return_value = mock_response
+
+        effects = self.client.get_effects()
+        self.assertEqual(len(effects), 2)
+        self.assertEqual(effects[0].id, "effect1")
+        self.assertEqual(effects[1].id, "effect2")
+
+    @patch("requests.Session.request")
+    def test_get_effect(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+            "data": {
+                "id": "effect1",
+                "type": "lighting",
+                "attributes": {"name": "Effect 1"},
+                "links": {},
+            },
+        }
+        mock_request.return_value = mock_response
+
+        effect = self.client.get_effect("effect1")
+        self.assertEqual(effect.id, "effect1")
+        self.assertEqual(effect.attributes.name, "Effect 1")
+
+    @patch("requests.Session.request")
+    def test_get_effect_by_name(self, mock_request):
+        mock_response_get_effects = Mock()
+        mock_response_get_effects.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+            "data": {
+                "items": [
+                    {
+                        "id": "effect1",
+                        "type": "lighting",
+                        "attributes": {"name": "Test Effect 1"},
+                        "links": {},
+                    }
+                ]
+            },
+        }
+
+        mock_response_get_effect = Mock()
+        mock_response_get_effect.json.return_value = {
+            "api_version": "1.0",
+            "id": 2,
+            "method": "GET",
+            "status": "ok",
+            "data": {
+                "id": "effect1",
+                "type": "lighting",
+                "attributes": {"name": "Test Effect 1"},
+                "links": {},
+            },
+        }
+
+        mock_request.side_effect = [
+            mock_response_get_effects,
+            mock_response_get_effect,
+        ]
+
+        effect = self.client.get_effect_by_name("Test Effect 1")
+        self.assertEqual(effect.id, "effect1")
+        self.assertEqual(effect.attributes.name, "Test Effect 1")
+
+    @patch("requests.Session.request")
+    def test_get_current_effect(self, mock_request):
+        mock_response_current_state = Mock()
+        mock_response_current_state.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+            "data": {
+                "attributes": {
+                    "name": "Current Effect",
+                    "enabled": True,
+                    "global_brightness": 50,
+                },
+                "id": "current_state",
+                "links": {},
+                "type": "current_state",
+            },
+        }
+
+        mock_response_get_effect = Mock()
+        mock_response_get_effect.json.return_value = {
+            "api_version": "1.0",
+            "id": 2,
+            "method": "GET",
+            "status": "ok",
+            "data": {
+                "id": "current_state",
+                "type": "lighting",
+                "attributes": {"name": "Current Effect"},
+                "links": {},
+            },
+        }
+
+        mock_request.side_effect = [
+            mock_response_current_state,
+            mock_response_get_effect,
+        ]
+
+        effect = self.client.get_current_effect()
+        self.assertEqual(effect.id, "current_state")
+        self.assertEqual(effect.attributes.name, "Current Effect")
+
+    @patch("requests.Session.request")
+    def test_apply_effect(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "POST",
+            "status": "ok",
+        }
+        mock_request.return_value = mock_response
+
+        self.client.apply_effect("effect1")
+        mock_request.assert_called_with(
+            "POST",
+            "http://testhost:12345/api/v1/lighting/effects/effect1/apply",
+            timeout=10.0,
+        )
 
     @patch("requests.Session.request")
     def test_apply_effect_by_name(self, mock_request):
@@ -248,6 +407,36 @@ class TestSignalRGBClient(unittest.TestCase):
         }
         enabled = self.client.enabled
         self.assertTrue(enabled)
+
+    @patch("requests.Session.request")
+    def test_ensure_response_ok(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+        }
+        mock_request.return_value = mock_response
+
+        response_data = self.client._request("GET", "/api/v1/lighting/effects")
+        response = SignalRGBResponse.from_dict(response_data)
+        self.client._ensure_response_ok(response)
+
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "error",
+            "errors": [{"code": "404", "title": "Not Found"}],
+        }
+
+        with self.assertRaises(APIError) as context:
+            response_data = self.client._request("GET", "/api/v1/lighting/effects")
+            response = SignalRGBResponse.from_dict(response_data)
+            self.client._ensure_response_ok(response)
+
+        self.assertIn("API returned non-OK status", str(context.exception))
 
 
 if __name__ == "__main__":
