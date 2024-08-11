@@ -3,14 +3,23 @@ from unittest.mock import Mock, patch
 
 from requests.exceptions import ConnectionError as RequestsConnectionError
 from requests.exceptions import Timeout
+import requests
 
 from signalrgb.client import (
     APIError,
     ConnectionError,
     SignalRGBClient,
+    EffectNotFoundError,
+    SignalRGBException,
 )
-from signalrgb.model import SignalRGBResponse
-
+from signalrgb.model import (
+    Effect,
+    Attributes,
+    Links,
+    CurrentStateHolder,
+    CurrentState,
+    SignalRGBResponse,
+)
 
 
 class TestSignalRGBClient(unittest.TestCase):
@@ -437,6 +446,298 @@ class TestSignalRGBClient(unittest.TestCase):
             self.client._ensure_response_ok(response)
 
         self.assertIn("API returned non-OK status", str(context.exception))
+
+    @patch("requests.Session.request")
+    def test_request_success(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+        }
+        mock_response.raise_for_status.return_value = None
+        mock_request.return_value = mock_response
+
+        response = self.client._request("GET", "/api/v1/lighting/effects")
+        self.assertEqual(response["status"], "ok")
+
+    @patch("requests.Session.request")
+    def test_request_connection_error(self, mock_request):
+        mock_request.side_effect = RequestsConnectionError("Connection failed")
+
+        with self.assertRaises(ConnectionError) as context:
+            self.client._request("GET", "/api/v1/lighting/effects")
+
+        self.assertIn("Failed to connect to SignalRGB API", str(context.exception))
+
+    @patch("requests.Session.request")
+    def test_request_timeout(self, mock_request):
+        mock_request.side_effect = Timeout("Request timed out")
+
+        with self.assertRaises(ConnectionError) as context:
+            self.client._request("GET", "/api/v1/lighting/effects")
+
+        self.assertIn("Request timed out", str(context.exception))
+
+    @patch("requests.Session.request")
+    def test_request_http_error(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "error",
+            "errors": [{"code": "404", "title": "Not Found"}],
+        }
+        mock_response.raise_for_status.side_effect = requests.HTTPError("HTTP error")
+        mock_request.return_value = mock_response
+
+        with self.assertRaises(APIError) as context:
+            self.client._request("GET", "/api/v1/lighting/effects")
+
+        self.assertIn("HTTP error occurred", str(context.exception))
+
+    @patch("requests.Session.request")
+    def test_request_generic_error(self, mock_request):
+        mock_request.side_effect = Exception("Unexpected error")
+
+        with self.assertRaises(SignalRGBException) as context:
+            self.client._request("GET", "/api/v1/lighting/effects")
+
+        self.assertIn("An unexpected error occurred", str(context.exception))
+
+    @patch("requests.Session.request")
+    def test_get_effects_error(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "error",
+            "errors": [{"code": "500", "title": "Internal Server Error"}],
+        }
+        mock_request.return_value = mock_response
+
+        with self.assertRaises(APIError) as context:
+            self.client.get_effects()
+
+        self.assertIn("API returned non-OK status", str(context.exception))
+
+    @patch("requests.Session.request")
+    def test_get_effect_error(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "error",
+            "errors": [{"code": "404", "title": "Not Found"}],
+        }
+        mock_request.return_value = mock_response
+
+        with self.assertRaises(APIError) as context:
+            self.client.get_effect("nonexistent_effect")
+
+        self.assertIn("API returned non-OK status", str(context.exception))
+
+    @patch("requests.Session.request")
+    def test_get_effect_by_name_error(self, mock_request):
+        mock_response_get_effects = Mock()
+        mock_response_get_effects.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+            "data": {"items": []},
+        }
+
+        mock_request.return_value = mock_response_get_effects
+
+        with self.assertRaises(EffectNotFoundError) as context:
+            self.client.get_effect_by_name("Nonexistent Effect")
+
+        self.assertIn("Effect 'Nonexistent Effect' not found", str(context.exception))
+
+    @patch("requests.Session.request")
+    def test_get_current_effect_error(self, mock_request):
+        mock_response_current_state = Mock()
+        mock_response_current_state.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "error",
+            "errors": [{"code": "500", "title": "Internal Server Error"}],
+        }
+        mock_request.return_value = mock_response_current_state
+
+        with self.assertRaises(APIError) as context:
+            self.client.get_current_effect()
+
+        self.assertIn("API returned non-OK status", str(context.exception))
+
+    @patch("requests.Session.request")
+    def test_apply_effect_error(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "POST",
+            "status": "error",
+            "errors": [{"code": "404", "title": "Not Found"}],
+        }
+        mock_request.return_value = mock_response
+
+        with self.assertRaises(APIError) as context:
+            self.client.apply_effect("nonexistent_effect")
+
+        self.assertIn("API returned non-OK status", str(context.exception))
+
+    @patch("requests.Session.request")
+    def test_apply_effect_by_name_error(self, mock_request):
+        mock_response_get_effects = Mock()
+        mock_response_get_effects.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+            "data": {"items": []},
+        }
+
+        mock_request.return_value = mock_response_get_effects
+
+        with self.assertRaises(EffectNotFoundError) as context:
+            self.client.apply_effect_by_name("Nonexistent Effect")
+
+        self.assertIn("Effect 'Nonexistent Effect' not found", str(context.exception))
+
+    @patch("requests.Session.request")
+    def test_refresh_effects(self, mock_request):
+        # Set up mock responses
+        mock_response1 = Mock()
+        mock_response1.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+            "data": {
+                "items": [
+                    {
+                        "id": "effect1",
+                        "type": "lighting",
+                        "attributes": {"name": "Effect 1"},
+                        "links": {},
+                    },
+                    {
+                        "id": "effect2",
+                        "type": "lighting",
+                        "attributes": {"name": "Effect 2"},
+                        "links": {},
+                    },
+                ]
+            },
+        }
+        mock_response2 = Mock()
+        mock_response2.json.return_value = {
+            "api_version": "1.0",
+            "id": 2,
+            "method": "GET",
+            "status": "ok",
+            "data": {
+                "items": [
+                    {
+                        "id": "effect3",
+                        "type": "lighting",
+                        "attributes": {"name": "Effect 3"},
+                        "links": {},
+                    },
+                    {
+                        "id": "effect4",
+                        "type": "lighting",
+                        "attributes": {"name": "Effect 4"},
+                        "links": {},
+                    },
+                ]
+            },
+        }
+
+        mock_request.side_effect = [mock_response1, mock_response2]
+
+        # First call to get_effects
+        effects1 = self.client.get_effects()
+        self.assertEqual(len(effects1), 2)
+        self.assertEqual(effects1[0].id, "effect1")
+        self.assertEqual(effects1[1].id, "effect2")
+
+        # Second call to get_effects (should use cached result)
+        effects2 = self.client.get_effects()
+        self.assertEqual(effects1, effects2)
+
+        # Verify that _request was only called once
+        self.assertEqual(mock_request.call_count, 1)
+
+        # Refresh effects
+        self.client.refresh_effects()
+
+        # Call get_effects again (should fetch new data)
+        effects3 = self.client.get_effects()
+        self.assertEqual(len(effects3), 2)
+        self.assertEqual(effects3[0].id, "effect3")
+        self.assertEqual(effects3[1].id, "effect4")
+
+        # Verify that _request was called twice in total
+        self.assertEqual(mock_request.call_count, 2)
+
+    @patch("requests.Session.request")
+    def test_get_current_state(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+            "data": {
+                "attributes": {
+                    "name": "Current Effect",
+                    "enabled": True,
+                    "global_brightness": 50,
+                },
+                "id": "current_state",
+                "links": {},
+                "type": "current_state",
+            },
+        }
+        mock_request.return_value = mock_response
+
+        state = self.client._get_current_state()
+        self.assertEqual(state.id, "current_state")
+        self.assertEqual(state.attributes.name, "Current Effect")
+
+    @patch("requests.Session.request")
+    def test_get_current_state_attributes(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+            "data": {
+                "attributes": {
+                    "name": "Current Effect",
+                    "enabled": True,
+                    "global_brightness": 50,
+                },
+                "id": "current_state",
+                "links": {},
+                "type": "current_state",
+            },
+        }
+        mock_request.return_value = mock_response
+
+        attributes = self.client._get_current_state_attributes()
+        self.assertEqual(attributes.name, "Current Effect")
+        self.assertTrue(attributes.enabled)
+        self.assertEqual(attributes.global_brightness, 50)
 
 
 if __name__ == "__main__":

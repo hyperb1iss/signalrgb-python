@@ -149,6 +149,8 @@ class SignalRGBClient:
             raise APIError(f"HTTP error occurred: {e}", Error(title=str(e)))
         except RequestException as e:
             raise SignalRGBException(f"An error occurred while making the request: {e}")
+        except Exception as e:
+            raise SignalRGBException(f"An unexpected error occurred: {e}")
 
     @lru_cache(maxsize=1)
     def get_effects(self) -> List[Effect]:
