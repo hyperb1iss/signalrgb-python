@@ -67,6 +67,43 @@ class Links(DataClassDictMixin):
 
 
 @dataclass
+class CurrentState(DataClassDictMixin):
+    """
+    Represents the current state of a SignalRGB instance.
+
+    This class includes the current state of the instance, such as the current effect,
+    whether the canvas is enabled, and the global brightness level.
+
+    Attributes:
+        name (str): The name of the current effect.
+        enabled (bool): Indicates whether the canvas is currently enabled.
+        global_brightness (int): The global brightness level of the canvas.
+    """
+
+    name: Optional[str] = None
+    enabled: bool = False
+    global_brightness: int = 0
+
+
+@dataclass
+class CurrentStateHolder(DataClassDictMixin):
+    """
+    Holds the current state and metadata
+
+    Attributes:
+        attributes (Attributes): The attributes of the state.
+        id (str): Unique identifier of the current effect.
+        links (Links): Links associated with the current effect.
+        type (str): Type of the object, typically 'effect'.
+    """
+
+    attributes: CurrentState
+    id: str
+    links: Links
+    type: str
+
+
+@dataclass
 class Effect(DataClassDictMixin):
     """
     Represents a single effect in SignalRGB.
@@ -78,7 +115,7 @@ class Effect(DataClassDictMixin):
         attributes (Attributes): The attributes of the effect.
         id (str): Unique identifier of the effect.
         links (Links): Links associated with the effect.
-        type (str): Type of the object, typically 'lighting'.
+        type (str): Type of the object, typically 'effect'.
     """
 
     attributes: Attributes
@@ -160,6 +197,21 @@ class EffectDetailsResponse(SignalRGBResponse):
     """
 
     data: Optional[Effect] = None
+
+
+@dataclass
+class CurrentStateResponse(SignalRGBResponse):
+    """
+    Response model for requests that return the current state of the canvas.
+
+    This class extends SignalRGBResponse and includes an additional field for
+    the current state of the canvas.
+
+    Attributes:
+        data (Optional[CurrentStateHolder]): The current state of the canvas, if available.
+    """
+
+    data: Optional[CurrentStateHolder] = None
 
 
 @dataclass

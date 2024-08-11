@@ -224,5 +224,49 @@ def search_effects(ctx: typer.Context, query: str):
     handle_signalrgb_exception(command)
 
 
+@app.command()
+def brightness(ctx: typer.Context, value: int = typer.Argument(None, min=0, max=100)):
+    """Set or get the brightness level"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        if value is not None:
+            client.brightness = value
+            console.print(
+                f"[bold green]Brightness set to:[/bold green] [cyan]{value}[/cyan]"
+            )
+        else:
+            current_brightness = client.brightness
+            console.print(
+                f"[bold green]Current brightness:[/bold green] [cyan]{current_brightness}[/cyan]"
+            )
+
+    handle_signalrgb_exception(command)
+
+
+@app.command()
+def enable(ctx: typer.Context):
+    """Enable the canvas"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        client.enabled = True
+        console.print("[bold green]Canvas enabled successfully[/bold green]")
+
+    handle_signalrgb_exception(command)
+
+
+@app.command()
+def disable(ctx: typer.Context):
+    """Disable the canvas"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        client.enabled = False
+        console.print("[bold green]Canvas disabled successfully[/bold green]")
+
+    handle_signalrgb_exception(command)
+
+
 if __name__ == "__main__":
     app()

@@ -120,6 +120,34 @@ def test_search_effects(runner, mock_client):
     assert "Found 2 matching effects" in result.output
 
 
+def test_brightness(runner, mock_client):
+    mock_client.return_value.brightness = 50
+
+    result = runner.invoke(app, ["brightness", "50"])
+    assert result.exit_code == 0
+    assert "Brightness set to: 50" in result.output
+
+    result = runner.invoke(app, ["brightness"])
+    assert result.exit_code == 0
+    assert "Current brightness: 50" in result.output
+
+
+def test_enable(runner, mock_client):
+    mock_client.return_value.enabled = True
+
+    result = runner.invoke(app, ["enable"])
+    assert result.exit_code == 0
+    assert "Canvas enabled successfully" in result.output
+
+
+def test_disable(runner, mock_client):
+    mock_client.return_value.enabled = False
+
+    result = runner.invoke(app, ["disable"])
+    assert result.exit_code == 0
+    assert "Canvas disabled successfully" in result.output
+
+
 def test_error_handling(runner, mock_client):
     mock_client.return_value.get_effects.side_effect = SignalRGBException("Test error")
 

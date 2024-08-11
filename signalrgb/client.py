@@ -8,12 +8,16 @@ allowing users to retrieve, apply, and manage lighting effects.
 from __future__ import annotations
 
 from functools import lru_cache
+import os
 from typing import List, Optional, cast
 
 import requests
 from requests.exceptions import RequestException, Timeout
 
 from .model import (
+    CurrentState,
+    CurrentStateHolder,
+    CurrentStateResponse,
     Effect,
     EffectDetailsResponse,
     EffectListResponse,
@@ -109,27 +113,27 @@ class SignalRGBClient:
         self._timeout = timeout
 
     def _request(self, method: str, endpoint: str, **kwargs) -> dict:
-        """Make a request to the API and return the JSON response.
-
-        Args:
-            method (str): The HTTP method to use for the request.
-            endpoint (str): The API endpoint to request.
-            **kwargs: Additional keyword arguments to pass to the request.
-
-        Returns:
-            dict: The JSON response from the API.
-
-        Raises:
-            ConnectionError: If there's an issue connecting to the API.
-            APIError: If the API returns an error response.
-            SignalRGBException: For any other request-related errors.
-        """
+        """Make a request to the API and return the JSON response."""
         url = f"{self._base_url}{endpoint}"
+        debug = os.getenv("SIGNALRGB_DEBUG", "0") == "1"
+
+        if debug:
+            print(f"DEBUG: Request URL: {url}")
+            print(f"DEBUG: Request Method: {method}")
+            print(f"DEBUG: Request Headers: {kwargs.get('headers', {})}")
+            print(f"DEBUG: Request Data: {kwargs.get('json', {})}")
+
         try:
             response = self._session.request(
                 method, url, timeout=self._timeout, **kwargs
             )
             response.raise_for_status()
+
+            if debug:
+                print(f"DEBUG: Response Status Code: {response.status_code}")
+                print(f"DEBUG: Response Headers: {response.headers}")
+                print(f"DEBUG: Response Content: {response.text}")
+
             return response.json()
         except requests.ConnectionError as e:
             raise ConnectionError(
@@ -259,15 +263,119 @@ class SignalRGBClient:
             >>> print(f"Current effect: {current_effect.attributes.name}")
         """
         try:
-            response_data = self._request("GET", f"{LIGHTING_V1}")
-            response = EffectDetailsResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
-            if response.data is None:
+            state = self._get_current_state()
+            if state.attributes is None:
                 raise APIError("No current effect data in the response")
-            return self.get_effect(response.data.id)
+            return self.get_effect(state.id)
         except Exception as e:
             raise APIError(
                 f"Failed to retrieve current effect: {e}", Error(title=str(e))
+            )
+
+    def _get_current_state(self) -> CurrentStateHolder:
+        try:
+            response_data = self._request("GET", f"{LIGHTING_V1}")
+            response = CurrentStateResponse.from_dict(response_data)
+            self._ensure_response_ok(response)
+            if response.data is None:
+                raise APIError("No current state data in the response")
+            return response.data
+        except Exception as e:
+            raise APIError(
+                f"Failed to retrieve current state: {e}", Error(title=str(e))
+            )
+
+    def _get_current_state_attributes(self) -> CurrentState:
+        try:
+            state = self._get_current_state()
+            if state.attributes is None:
+                raise APIError("No current state attributes in the response")
+            return state.attributes
+        except Exception as e:
+            raise SignalRGBException(
+                f"Failed to retrieve current state: {e}", Error(title=str(e))
+            )
+
+    @property
+    def brightness(self) -> int:
+        """Get the current brightness level.
+
+        Returns:
+            int: The current brightness level.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> brightness = client.brightness
+            >>> print(f"Current brightness: {brightness}")
+        """
+        return self._get_current_state_attributes().global_brightness
+
+    @brightness.setter
+    def brightness(self, value: int) -> None:
+        """Set the brightness level.
+
+        Args:
+            value (int): The brightness level to set.
+
+        Raises:
+            SignalRGBException: If there's an error setting the brightness.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> client.brightness = 50
+            >>> print("Brightness set successfully")
+        """
+        try:
+            response_data = self._request(
+                "PATCH",
+                f"{LIGHTING_V1}/global_brightness",
+                json={"global_brightness": value},
+            )
+            response = SignalRGBResponse.from_dict(response_data)
+            self._ensure_response_ok(response)
+        except Exception as e:
+            raise SignalRGBException(
+                f"Failed to set brightness: {e}", Error(title=str(e))
+            )
+
+    @property
+    def enabled(self) -> bool:
+        """Get the current enabled state.
+
+        Returns:
+            bool: The current enabled state.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> enabled = client.enabled
+            >>> print(f"Canvas enabled: {enabled}")
+        """
+        return self._get_current_state_attributes().enabled
+
+    @enabled.setter
+    def enabled(self, value: bool) -> None:
+        """Set the enabled state.
+
+        Args:
+            value (bool): The enabled state to set.
+
+        Raises:
+            SignalRGBException: If there's an error setting the enabled state.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> client.enabled = True
+            >>> print("Canvas enabled successfully")
+        """
+        try:
+            response_data = self._request(
+                "PATCH", f"{LIGHTING_V1}/enabled", json={"enabled": value}
+            )
+            response = SignalRGBResponse.from_dict(response_data)
+            self._ensure_response_ok(response)
+        except Exception as e:
+            raise SignalRGBException(
+                f"Failed to set enabled state: {e}", Error(title=str(e))
             )
 
     def apply_effect(self, effect_id: str) -> None:

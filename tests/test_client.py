@@ -15,8 +15,6 @@ class TestSignalRGBClient(unittest.TestCase):
     def setUp(self):
         self.client = SignalRGBClient("testhost", 12345)
 
-    # ... (keep other test methods unchanged)
-
     @patch("requests.Session.request")
     def test_apply_effect_by_name(self, mock_request):
         # Mock get_effects
@@ -182,6 +180,74 @@ class TestSignalRGBClient(unittest.TestCase):
             self.client.get_effects()
 
         self.assertIn("Request timed out", str(context.exception))
+
+    @patch("requests.Session.request")
+    def test_brightness(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "PATCH",
+            "status": "ok",
+        }
+        mock_request.return_value = mock_response
+
+        self.client.brightness = 50
+        mock_request.assert_called_with(
+            "PATCH",
+            "http://testhost:12345/api/v1/lighting/global_brightness",
+            json={"global_brightness": 50},
+            timeout=10.0,
+        )
+
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+            "data": {
+                "attributes": {"global_brightness": 50, "enabled": False, "name": None},
+                "id": "current_state",
+                "links": {},
+                "type": "current_state",
+            },
+        }
+        brightness = self.client.brightness
+        self.assertEqual(brightness, 50)
+
+    @patch("requests.Session.request")
+    def test_enabled(self, mock_request):
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "PATCH",
+            "status": "ok",
+        }
+        mock_request.return_value = mock_response
+
+        self.client.enabled = True
+        mock_request.assert_called_with(
+            "PATCH",
+            "http://testhost:12345/api/v1/lighting/enabled",
+            json={"enabled": True},
+            timeout=10.0,
+        )
+
+        mock_response.json.return_value = {
+            "api_version": "1.0",
+            "id": 1,
+            "method": "GET",
+            "status": "ok",
+            "data": {
+                "attributes": {"global_brightness": 0, "enabled": True, "name": None},
+                "id": "current_state",
+                "links": {},
+                "type": "current_state",
+            },
+        }
+        enabled = self.client.enabled
+        self.assertTrue(enabled)
 
 
 if __name__ == "__main__":
