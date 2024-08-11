@@ -7,6 +7,8 @@ Welcome to the documentation for signalrgb-python. This library provides a power
 - 📋 List available lighting effects
 - 🔍 Get detailed information about specific effects
 - 🎨 Apply effects to your devices with ease
+- 🔆 Control brightness levels
+- 🔌 Enable or disable the canvas
 - 🖥️ User-friendly command-line interface
 - 🐍 Python client library for seamless integration into your projects
 - 🔐 Error handling and connection management
@@ -35,6 +37,14 @@ client = SignalRGBClient()
 effects = client.get_effects()
 for effect in effects:
     print(f"Effect: {effect.attributes.name}")
+
+# Control brightness
+client.brightness = 75
+print(f"Current brightness: {client.brightness}")
+
+# Enable/disable the canvas
+client.enabled = True
+print(f"Canvas enabled: {client.enabled}")
 ```
 
 For more detailed information, check out the [Installation](installation.md) and [Usage](usage/cli.md) guides.

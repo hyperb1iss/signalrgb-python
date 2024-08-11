@@ -52,6 +52,34 @@ To see which effect is currently active:
 signalrgb current-effect
 ```
 
+### Control Brightness
+
+To set the brightness level (0-100):
+
+```bash
+signalrgb brightness 75
+```
+
+To get the current brightness level:
+
+```bash
+signalrgb brightness
+```
+
+### Enable/Disable Canvas
+
+To enable the canvas:
+
+```bash
+signalrgb enable
+```
+
+To disable the canvas:
+
+```bash
+signalrgb disable
+```
+
 ## Global Options
 
 You can specify a custom host and port for all commands:
@@ -80,6 +108,18 @@ Here are some example use cases:
 
    ```bash
    signalrgb current-effect > current_effect.txt
+   ```
+
+4. Set the brightness to 50%:
+
+   ```bash
+   signalrgb brightness 50
+   ```
+
+5. Enable the canvas:
+
+   ```bash
+   signalrgb enable
    ```
 
 Remember to refer to the `--help` option for each command to see all available options and arguments.

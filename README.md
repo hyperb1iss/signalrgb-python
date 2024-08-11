@@ -18,6 +18,8 @@
 - 📋 List available lighting effects
 - 🔍 Get detailed information about specific effects
 - 🎨 Apply effects to your devices with ease
+- 🔆 Control brightness levels
+- 🔌 Enable or disable the canvas
 - 🖥️ User-friendly command-line interface
 - 🐍 Python client library for seamless integration into your projects
 - 🔐 Error handling and connection management
@@ -64,6 +66,18 @@ signalrgb apply-effect "Rave Visualizer"
 
 # Get the current effect
 signalrgb current-effect
+
+# Set brightness level (0-100)
+signalrgb brightness 75
+
+# Get current brightness level
+signalrgb brightness
+
+# Enable the canvas
+signalrgb enable
+
+# Disable the canvas
+signalrgb disable
 ```
 
 You can also specify a custom host and port:
@@ -99,6 +113,14 @@ client.apply_effect_by_name("Rain")
 # Get current effect
 current_effect = client.get_current_effect()
 print(f"Current effect: {current_effect.attributes.name}")
+
+# Control brightness
+client.brightness = 50
+print(f"Current brightness: {client.brightness}")
+
+# Enable/disable the canvas
+client.enabled = True
+print(f"Canvas enabled: {client.enabled}")
 ```
 
 ### Error Handling
