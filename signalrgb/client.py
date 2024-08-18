@@ -2,20 +2,20 @@
 Client for interacting with the SignalRGB API.
 
 This module provides a client class for interacting with the SignalRGB API,
-allowing users to retrieve, apply, and manage lighting effects.
+allowing users to retrieve, apply, and manage lighting effects and layouts.
 """
 
 from __future__ import annotations
 
 from functools import lru_cache
 import os
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, Iterator
+from contextlib import contextmanager
 
 import requests
 from requests.exceptions import RequestException, Timeout
 
 from .model import (
-    CurrentState,
     CurrentStateHolder,
     CurrentStateResponse,
     Effect,
@@ -68,16 +68,12 @@ class ConnectionError(SignalRGBException):
     This exception is raised when there's an issue connecting to the SignalRGB API.
     """
 
-    pass
-
 
 class APIError(SignalRGBException):
     """Exception raised for API errors.
 
     This exception is raised when the API returns an error response.
     """
-
-    pass
 
 
 class EffectNotFoundError(SignalRGBException):
@@ -86,14 +82,12 @@ class EffectNotFoundError(SignalRGBException):
     This exception is raised when trying to retrieve or apply a non-existent effect.
     """
 
-    pass
-
 
 class SignalRGBClient:
     """Client for interacting with the SignalRGB API.
 
     This class provides methods to interact with the SignalRGB API, allowing users
-    to retrieve, apply, and manage lighting effects.
+    to retrieve, apply, and manage lighting effects and layouts.
     """
 
     def __init__(
@@ -102,9 +96,9 @@ class SignalRGBClient:
         """Initialize the SignalRGBClient.
 
         Args:
-            host (str): The host of the SignalRGB API. Defaults to 'localhost'.
-            port (int): The port of the SignalRGB API. Defaults to 16038.
-            timeout (float): The timeout for API requests in seconds. Defaults to 10.0.
+            host: The host of the SignalRGB API. Defaults to 'localhost'.
+            port: The port of the SignalRGB API. Defaults to DEFAULT_PORT.
+            timeout: The timeout for API requests in seconds. Defaults to 10.0.
 
         Example:
             >>> client = SignalRGBClient()
@@ -114,8 +108,27 @@ class SignalRGBClient:
         self._session = requests.Session()
         self._timeout = timeout
 
-    def _request(self, method: str, endpoint: str, **kwargs) -> dict:
-        """Make a request to the API and return the JSON response."""
+    @contextmanager
+    def _request_context(
+        self, method: str, endpoint: str, **kwargs: Any
+    ) -> Iterator[Dict[str, Any]]:
+        """Context manager for making API requests.
+
+        This method handles common exception cases and debug logging.
+
+        Args:
+            method: The HTTP method to use for the request.
+            endpoint: The API endpoint to request.
+            **kwargs: Additional arguments to pass to the request.
+
+        Yields:
+            The JSON response from the API.
+
+        Raises:
+            ConnectionError: If there's a connection error.
+            APIError: If there's an API error.
+            SignalRGBException: For any other unexpected errors.
+        """
         url = f"{self._base_url}{endpoint}"
         debug = os.getenv("SIGNALRGB_DEBUG", "0") == "1"
 
@@ -136,7 +149,7 @@ class SignalRGBClient:
                 print(f"DEBUG: Response Headers: {response.headers}")
                 print(f"DEBUG: Response Content: {response.text}")
 
-            return response.json()
+            yield response.json()
         except requests.ConnectionError as e:
             raise ConnectionError(
                 f"Failed to connect to SignalRGB API: {e}", Error(title=str(e))
@@ -162,6 +175,7 @@ class SignalRGBClient:
             List[Effect]: A list of available effects.
 
         Raises:
+            ConnectionError: If there's a connection error.
             APIError: If there's an error retrieving the effects.
 
         Example:
@@ -170,16 +184,14 @@ class SignalRGBClient:
             >>> print(f"Found {len(effects)} effects")
         """
         try:
-            response_data = self._request("GET", f"{LIGHTING_V1}/effects")
-            response = EffectListResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
-            effects = response.data
-            if effects is None or effects.items is None:
-                raise APIError("No effects data in the response")
-            return effects.items
-        except (ConnectionError, Timeout):
-            raise
-        except APIError:
+            with self._request_context("GET", f"{LIGHTING_V1}/effects") as data:
+                response = EffectListResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                effects = response.data
+                if effects is None or effects.items is None:
+                    raise APIError("No effects data in the response")
+                return effects.items
+        except (ConnectionError, APIError):
             raise
         except Exception as e:
             raise APIError(f"Failed to retrieve effects: {e}", Error(title=str(e)))
@@ -188,7 +200,7 @@ class SignalRGBClient:
         """Get details of a specific effect.
 
         Args:
-            effect_id (str): The ID of the effect to retrieve.
+            effect_id: The ID of the effect to retrieve.
 
         Returns:
             Effect: The requested effect.
@@ -203,12 +215,14 @@ class SignalRGBClient:
             >>> print(f"Effect name: {effect.attributes.name}")
         """
         try:
-            response_data = self._request("GET", f"{LIGHTING_V1}/effects/{effect_id}")
-            response = EffectDetailsResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
-            if response.data is None:
-                raise APIError("No effect data in the response")
-            return response.data
+            with self._request_context(
+                "GET", f"{LIGHTING_V1}/effects/{effect_id}"
+            ) as data:
+                response = EffectDetailsResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                if response.data is None:
+                    raise APIError("No effect data in the response")
+                return response.data
         except APIError as e:
             if e.error and e.error.code == "not_found":
                 raise EffectNotFoundError(
@@ -216,24 +230,11 @@ class SignalRGBClient:
                 )
             raise
 
-    def _find_effect_by_name(self, effect_name: str) -> Optional[Effect]:
-        """Find an effect by its name.
-
-        Args:
-            effect_name (str): The name of the effect to find.
-
-        Returns:
-            Optional[Effect]: The found effect, or None if not found.
-        """
-        return next(
-            (e for e in self.get_effects() if e.attributes.name == effect_name), None
-        )
-
     def get_effect_by_name(self, effect_name: str) -> Effect:
         """Get details of a specific effect by name.
 
         Args:
-            effect_name (str): The name of the effect to retrieve.
+            effect_name: The name of the effect to retrieve.
 
         Returns:
             Effect: The requested effect.
@@ -246,11 +247,24 @@ class SignalRGBClient:
             >>> effect = client.get_effect_by_name("Rainbow Wave")
             >>> print(f"Effect ID: {effect.id}")
         """
-        effect = self._find_effect_by_name(effect_name)
+        effect = next(
+            (e for e in self.get_effects() if e.attributes.name == effect_name), None
+        )
         if effect is None:
             raise EffectNotFoundError(f"Effect '{effect_name}' not found")
-
         return self.get_effect(effect.id)
+
+    @property
+    def current_effect(self) -> Effect:
+        """Get the current effect.
+
+        Returns:
+            Effect: The currently active effect.
+
+        Raises:
+            APIError: If there's an error retrieving the current effect.
+        """
+        return self.get_current_effect()
 
     def get_current_effect(self) -> Effect:
         """Get the current effect.
@@ -277,66 +291,53 @@ class SignalRGBClient:
             )
 
     def _get_current_state(self) -> CurrentStateHolder:
+        """Get the current state of the SignalRGB instance.
+
+        Returns:
+            CurrentStateHolder: The current state of the SignalRGB instance.
+
+        Raises:
+            APIError: If there's an error retrieving the current state.
+        """
         try:
-            response_data = self._request("GET", f"{LIGHTING_V1}")
-            response = CurrentStateResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
-            if response.data is None:
-                raise APIError("No current state data in the response")
-            return response.data
+            with self._request_context("GET", LIGHTING_V1) as data:
+                response = CurrentStateResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                if response.data is None:
+                    raise APIError("No current state data in the response")
+                return response.data
         except Exception as e:
             raise APIError(
                 f"Failed to retrieve current state: {e}", Error(title=str(e))
             )
 
-    def _get_current_state_attributes(self) -> CurrentState:
-        try:
-            state = self._get_current_state()
-            if state.attributes is None:
-                raise APIError("No current state attributes in the response")
-            return state.attributes
-        except Exception as e:
-            raise SignalRGBException(
-                f"Failed to retrieve current state: {e}", Error(title=str(e))
-            )
-
     @property
     def brightness(self) -> int:
-        """Get the current brightness level.
+        """Get or set the current brightness level.
 
         Returns:
-            int: The current brightness level.
+            int: The current brightness level (0-100).
+
+        Raises:
+            APIError: If there's an error retrieving or setting the brightness.
 
         Example:
             >>> client = SignalRGBClient()
-            >>> brightness = client.brightness
-            >>> print(f"Current brightness: {brightness}")
+            >>> print(f"Current brightness: {client.brightness}")
+            >>> client.brightness = 75
+            >>> print(f"New brightness: {client.brightness}")
         """
-        return self._get_current_state_attributes().global_brightness
+        return self._get_current_state().attributes.global_brightness
 
     @brightness.setter
     def brightness(self, value: int) -> None:
-        """Set the brightness level.
-
-        Args:
-            value (int): The brightness level to set.
-
-        Raises:
-            SignalRGBException: If there's an error setting the brightness.
-
-        Example:
-            >>> client = SignalRGBClient()
-            >>> client.brightness = 50
-            >>> print("Brightness set successfully")
-        """
         try:
-            response_data = self._request(
+            with self._request_context(
                 "PATCH",
                 f"{LIGHTING_V1}/global_brightness",
                 json={"global_brightness": value},
-            )
-            response = SignalRGBResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
+            ):
+                pass
         except Exception as e:
             raise SignalRGBException(
                 f"Failed to set brightness: {e}", Error(title=str(e))
@@ -344,39 +345,29 @@ class SignalRGBClient:
 
     @property
     def enabled(self) -> bool:
-        """Get the current enabled state.
+        """Get or set the current enabled state of the canvas.
 
         Returns:
             bool: The current enabled state.
 
+        Raises:
+            APIError: If there's an error retrieving or setting the enabled state.
+
         Example:
             >>> client = SignalRGBClient()
-            >>> enabled = client.enabled
-            >>> print(f"Canvas enabled: {enabled}")
+            >>> print(f"Canvas enabled: {client.enabled}")
+            >>> client.enabled = False
+            >>> print(f"Canvas now disabled: {not client.enabled}")
         """
-        return self._get_current_state_attributes().enabled
+        return self._get_current_state().attributes.enabled
 
     @enabled.setter
     def enabled(self, value: bool) -> None:
-        """Set the enabled state.
-
-        Args:
-            value (bool): The enabled state to set.
-
-        Raises:
-            SignalRGBException: If there's an error setting the enabled state.
-
-        Example:
-            >>> client = SignalRGBClient()
-            >>> client.enabled = True
-            >>> print("Canvas enabled successfully")
-        """
         try:
-            response_data = self._request(
+            with self._request_context(
                 "PATCH", f"{LIGHTING_V1}/enabled", json={"enabled": value}
-            )
-            response = SignalRGBResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
+            ):
+                pass
         except Exception as e:
             raise SignalRGBException(
                 f"Failed to set enabled state: {e}", Error(title=str(e))
@@ -386,7 +377,7 @@ class SignalRGBClient:
         """Apply an effect.
 
         Args:
-            effect_id (str): The ID of the effect to apply.
+            effect_id: The ID of the effect to apply.
 
         Raises:
             EffectNotFoundError: If the effect with the given ID is not found.
@@ -398,11 +389,10 @@ class SignalRGBClient:
             >>> print("Effect applied successfully")
         """
         try:
-            response_data = self._request(
+            with self._request_context(
                 "POST", f"{LIGHTING_V1}/effects/{effect_id}/apply"
-            )
-            response = SignalRGBResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
+            ):
+                pass
         except APIError as e:
             if e.error and e.error.code == "not_found":
                 raise EffectNotFoundError(
@@ -418,7 +408,7 @@ class SignalRGBClient:
         """Apply an effect by name.
 
         Args:
-            effect_name (str): The name of the effect to apply.
+            effect_name: The name of the effect to apply.
 
         Raises:
             EffectNotFoundError: If the effect with the given name is not found.
@@ -431,7 +421,8 @@ class SignalRGBClient:
         """
         try:
             effect = self.get_effect_by_name(effect_name)
-            self._request("POST", cast(str, effect.links.apply))
+            with self._request_context("POST", effect.links.apply):
+                pass
         except EffectNotFoundError:
             raise
         except Exception as e:
@@ -443,7 +434,7 @@ class SignalRGBClient:
         """Get presets for a specific effect.
 
         Args:
-            effect_id (str): The ID of the effect to retrieve presets for.
+            effect_id: The ID of the effect to retrieve presets for.
 
         Returns:
             List[Dict[str, Any]]: A list of preset dictionaries, each containing 'id' and 'type'.
@@ -459,14 +450,14 @@ class SignalRGBClient:
             ...     print(f"Preset ID: {preset['id']}, Type: {preset['type']}")
         """
         try:
-            response_data = self._request(
+            with self._request_context(
                 "GET", f"{LIGHTING_V1}/effects/{effect_id}/presets"
-            )
-            response = SignalRGBResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
-            if "data" not in response_data or "items" not in response_data["data"]:
-                raise APIError("No preset data in the response")
-            return response_data["data"]["items"]
+            ) as data:
+                response = SignalRGBResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                if "data" not in data or "items" not in data["data"]:
+                    raise APIError("No preset data in the response")
+                return data["data"]["items"]
         except APIError as e:
             if e.error and e.error.code == "not_found":
                 raise EffectNotFoundError(
@@ -478,8 +469,8 @@ class SignalRGBClient:
         """Apply a preset for a specific effect.
 
         Args:
-            effect_id (str): The ID of the effect to apply the preset to.
-            preset_id (str): The ID of the preset to apply.
+            effect_id: The ID of the effect to apply the preset to.
+            preset_id: The ID of the preset to apply.
 
         Raises:
             EffectNotFoundError: If the effect with the given ID is not found.
@@ -491,13 +482,12 @@ class SignalRGBClient:
             >>> print("Preset applied successfully")
         """
         try:
-            response_data = self._request(
+            with self._request_context(
                 "PATCH",
                 f"{LIGHTING_V1}/effects/{effect_id}/presets",
                 json={"preset": preset_id},
-            )
-            response = SignalRGBResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
+            ):
+                pass
         except APIError as e:
             if e.error and e.error.code == "not_found":
                 raise EffectNotFoundError(
@@ -529,10 +519,10 @@ class SignalRGBClient:
             ...     print("No next effect available")
         """
         try:
-            response_data = self._request("GET", f"{LIGHTING_V1}/next")
-            response = EffectDetailsResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
-            return response.data
+            with self._request_context("GET", f"{LIGHTING_V1}/next") as data:
+                response = EffectDetailsResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                return response.data
         except APIError as e:
             if e.error and e.error.code == "409":
                 return None
@@ -552,12 +542,15 @@ class SignalRGBClient:
             >>> new_effect = client.apply_next_effect()
             >>> print(f"Applied effect: {new_effect.attributes.name}")
         """
-        response_data = self._request("POST", f"{LIGHTING_V1}/next")
-        response = EffectDetailsResponse.from_dict(response_data)
-        self._ensure_response_ok(response)
-        if response.data is None:
-            raise APIError("No effect data in the response")
-        return response.data
+        try:
+            with self._request_context("POST", f"{LIGHTING_V1}/next") as data:
+                response = EffectDetailsResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                if response.data is None:
+                    raise APIError("No effect data in the response")
+                return response.data
+        except Exception as e:
+            raise APIError(f"Failed to apply next effect: {e}", Error(title=str(e)))
 
     def get_previous_effect(self) -> Optional[Effect]:
         """Get information about the previous effect in history.
@@ -577,10 +570,10 @@ class SignalRGBClient:
             ...     print("No previous effect available")
         """
         try:
-            response_data = self._request("GET", f"{LIGHTING_V1}/previous")
-            response = EffectDetailsResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
-            return response.data
+            with self._request_context("GET", f"{LIGHTING_V1}/previous") as data:
+                response = EffectDetailsResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                return response.data
         except APIError as e:
             if e.error and e.error.code == "409":
                 return None
@@ -600,12 +593,15 @@ class SignalRGBClient:
             >>> new_effect = client.apply_previous_effect()
             >>> print(f"Applied effect: {new_effect.attributes.name}")
         """
-        response_data = self._request("POST", f"{LIGHTING_V1}/previous")
-        response = EffectDetailsResponse.from_dict(response_data)
-        self._ensure_response_ok(response)
-        if response.data is None:
-            raise APIError("No effect data in the response")
-        return response.data
+        try:
+            with self._request_context("POST", f"{LIGHTING_V1}/previous") as data:
+                response = EffectDetailsResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                if response.data is None:
+                    raise APIError("No effect data in the response")
+                return response.data
+        except Exception as e:
+            raise APIError(f"Failed to apply previous effect: {e}", Error(title=str(e)))
 
     def apply_random_effect(self) -> Effect:
         """Apply a random effect.
@@ -621,14 +617,18 @@ class SignalRGBClient:
             >>> random_effect = client.apply_random_effect()
             >>> print(f"Applied random effect: {random_effect.attributes.name}")
         """
-        response_data = self._request("POST", f"{LIGHTING_V1}/shuffle")
-        response = EffectDetailsResponse.from_dict(response_data)
-        self._ensure_response_ok(response)
-        if response.data is None:
-            raise APIError("No effect data in the response")
-        return response.data
+        try:
+            with self._request_context("POST", f"{LIGHTING_V1}/shuffle") as data:
+                response = EffectDetailsResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                if response.data is None:
+                    raise APIError("No effect data in the response")
+                return response.data
+        except Exception as e:
+            raise APIError(f"Failed to apply random effect: {e}", Error(title=str(e)))
 
-    def get_current_layout(self) -> Layout:
+    @property
+    def current_layout(self) -> Layout:
         """Get the current layout.
 
         Returns:
@@ -639,45 +639,48 @@ class SignalRGBClient:
 
         Example:
             >>> client = SignalRGBClient()
-            >>> current_layout = client.get_current_layout()
+            >>> current_layout = client.current_layout
             >>> print(f"Current layout: {current_layout.id}")
         """
         try:
-            response_data = self._request("GET", f"{SCENES_V1}/current_layout")
-            response = SignalRGBResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
-            if 'data' not in response_data or 'current_layout' not in response_data['data']:
-                raise APIError("No current layout data in the response")
-            layout_data = response_data['data']['current_layout']
-            return Layout(id=layout_data['id'], type=layout_data['type'])
+            with self._request_context("GET", f"{SCENES_V1}/current_layout") as data:
+                response = SignalRGBResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                if "data" not in data or "current_layout" not in data["data"]:
+                    raise APIError("No current layout data in the response")
+                layout_data = data["data"]["current_layout"]
+                return Layout.from_dict(layout_data)
         except Exception as e:
-            raise APIError(f"Failed to retrieve current layout: {e}", Error(title=str(e)))
+            raise APIError(
+                f"Failed to retrieve current layout: {e}", Error(title=str(e))
+            )
 
-    def set_current_layout(self, layout_id: str) -> Layout:
+    @current_layout.setter
+    def current_layout(self, layout_id: str) -> None:
         """Set the current layout.
 
         Args:
-            layout_id (str): The ID of the layout to set as current.
-
-        Returns:
-            Layout: The newly set current layout.
+            layout_id: The ID of the layout to set as current.
 
         Raises:
             APIError: If there's an error setting the current layout.
 
         Example:
             >>> client = SignalRGBClient()
-            >>> new_layout = client.set_current_layout("My Layout 1")
-            >>> print(f"New current layout: {new_layout.id}")
+            >>> client.current_layout = "My Layout 1"
+            >>> print(f"New current layout: {client.current_layout.id}")
         """
         try:
-            response_data = self._request("PATCH", f"{SCENES_V1}/current_layout", json={"layout": layout_id})
-            response = SignalRGBResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
-            if 'data' not in response_data or 'current_layout' not in response_data['data']:
-                raise APIError("No current layout data in the response")
-            layout_data = response_data['data']['current_layout']
-            return Layout(id=layout_data['id'], type=layout_data['type'])
+            with self._request_context(
+                "PATCH", f"{SCENES_V1}/current_layout", json={"layout": layout_id}
+            ) as data:
+                response = SignalRGBResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                if "data" not in data or "current_layout" not in data["data"]:
+                    raise APIError("No current layout data in the response")
+                layout_data = data["data"]["current_layout"]
+                if layout_data["id"] != layout_id:
+                    raise APIError(f"Failed to set layout to '{layout_id}'")
         except Exception as e:
             raise APIError(f"Failed to set current layout: {e}", Error(title=str(e)))
 
@@ -697,20 +700,21 @@ class SignalRGBClient:
             ...     print(f"Layout: {layout.id}")
         """
         try:
-            response_data = self._request("GET", f"{SCENES_V1}/layouts")
-            response = SignalRGBResponse.from_dict(response_data)
-            self._ensure_response_ok(response)
-            if 'data' not in response_data or 'items' not in response_data['data']:
-                raise APIError("No layouts data in the response")
-            return [Layout(id=item['id'], type=item['type']) for item in response_data['data']['items']]
+            with self._request_context("GET", f"{SCENES_V1}/layouts") as data:
+                response = SignalRGBResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                if "data" not in data or "items" not in data["data"]:
+                    raise APIError("No layouts data in the response")
+                return [Layout.from_dict(item) for item in data["data"]["items"]]
         except Exception as e:
             raise APIError(f"Failed to retrieve layouts: {e}", Error(title=str(e)))
+
     @staticmethod
     def _ensure_response_ok(response: SignalRGBResponse) -> None:
         """Ensure the response status is 'ok'.
 
         Args:
-            response (SignalRGBResponse): The response to check.
+            response: The response to check.
 
         Raises:
             APIError: If the response status is not 'ok'.
@@ -731,3 +735,33 @@ class SignalRGBClient:
             >>> fresh_effects = client.get_effects()
         """
         self.get_effects.cache_clear()
+
+    def __repr__(self) -> str:
+        return f"SignalRGBClient(base_url='{self._base_url}')"
+
+
+class EffectIterator:
+    """Iterator for effects in SignalRGB."""
+
+    def __init__(self, client: SignalRGBClient):
+        self._client = client
+        self._effects = iter(client.get_effects())
+
+    def __iter__(self) -> Iterator[Effect]:
+        return self
+
+    def __next__(self) -> Effect:
+        return next(self._effects)
+
+
+# Usage example
+if __name__ == "__main__":
+    client = SignalRGBClient()
+    print(f"Current layout: {client.current_layout}")
+    print(f"Current effect: {client.current_effect}")
+    print(f"Brightness: {client.brightness}")
+    print(f"Enabled: {client.enabled}")
+
+    print("\nAll effects:")
+    for effect in EffectIterator(client):
+        print(effect)
