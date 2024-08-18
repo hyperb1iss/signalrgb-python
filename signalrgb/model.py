@@ -140,6 +140,22 @@ class EffectList(DataClassDictMixin):
 
 
 @dataclass
+class Layout(DataClassDictMixin):
+    """
+    Represents a layout in SignalRGB.
+
+    This class represents a layout, which is a configuration of devices and their positions.
+
+    Attributes:
+        id (str): The unique identifier of the layout.
+        type (str): The type of the layout, typically 'layout'.
+    """
+
+    id: str
+    type: str
+
+
+@dataclass
 class Error(DataClassDictMixin):
     """
     Represents an error returned by the SignalRGB API.
@@ -227,3 +243,33 @@ class EffectListResponse(SignalRGBResponse):
     """
 
     data: Optional[EffectList] = None
+
+
+@dataclass
+class LayoutListResponse(SignalRGBResponse):
+    """
+    Response model for requests that return a list of layouts.
+
+    This class extends SignalRGBResponse and includes an additional field for
+    the list of layouts.
+
+    Attributes:
+        data (Optional[Dict[str, Any]]): The data containing the list of layouts returned by the API, if available.
+    """
+
+    data: Optional[Dict[str, Any]] = None
+
+
+@dataclass
+class CurrentLayoutResponse(SignalRGBResponse):
+    """
+    Response model for requests that return the current layout.
+
+    This class extends SignalRGBResponse and includes an additional field for
+    the current layout.
+
+    Attributes:
+        data (Optional[Dict[str, Any]]): The data containing the current layout returned by the API, if available.
+    """
+
+    data: Optional[Dict[str, Any]] = None

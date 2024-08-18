@@ -22,12 +22,14 @@ from .model import (
     EffectDetailsResponse,
     EffectListResponse,
     Error,
+    Layout,
     SignalRGBResponse,
 )
 
 
 DEFAULT_PORT = 16038
 LIGHTING_V1 = "/api/v1/lighting"
+SCENES_V1 = "/api/v1/scenes"
 
 
 class SignalRGBException(Exception):
@@ -626,6 +628,83 @@ class SignalRGBClient:
             raise APIError("No effect data in the response")
         return response.data
 
+    def get_current_layout(self) -> Layout:
+        """Get the current layout.
+
+        Returns:
+            Layout: The currently active layout.
+
+        Raises:
+            APIError: If there's an error retrieving the current layout.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> current_layout = client.get_current_layout()
+            >>> print(f"Current layout: {current_layout.id}")
+        """
+        try:
+            response_data = self._request("GET", f"{SCENES_V1}/current_layout")
+            response = SignalRGBResponse.from_dict(response_data)
+            self._ensure_response_ok(response)
+            if 'data' not in response_data or 'current_layout' not in response_data['data']:
+                raise APIError("No current layout data in the response")
+            layout_data = response_data['data']['current_layout']
+            return Layout(id=layout_data['id'], type=layout_data['type'])
+        except Exception as e:
+            raise APIError(f"Failed to retrieve current layout: {e}", Error(title=str(e)))
+
+    def set_current_layout(self, layout_id: str) -> Layout:
+        """Set the current layout.
+
+        Args:
+            layout_id (str): The ID of the layout to set as current.
+
+        Returns:
+            Layout: The newly set current layout.
+
+        Raises:
+            APIError: If there's an error setting the current layout.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> new_layout = client.set_current_layout("My Layout 1")
+            >>> print(f"New current layout: {new_layout.id}")
+        """
+        try:
+            response_data = self._request("PATCH", f"{SCENES_V1}/current_layout", json={"layout": layout_id})
+            response = SignalRGBResponse.from_dict(response_data)
+            self._ensure_response_ok(response)
+            if 'data' not in response_data or 'current_layout' not in response_data['data']:
+                raise APIError("No current layout data in the response")
+            layout_data = response_data['data']['current_layout']
+            return Layout(id=layout_data['id'], type=layout_data['type'])
+        except Exception as e:
+            raise APIError(f"Failed to set current layout: {e}", Error(title=str(e)))
+
+    def get_layouts(self) -> List[Layout]:
+        """Get all available layouts.
+
+        Returns:
+            List[Layout]: A list of all available layouts.
+
+        Raises:
+            APIError: If there's an error retrieving the layouts.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> layouts = client.get_layouts()
+            >>> for layout in layouts:
+            ...     print(f"Layout: {layout.id}")
+        """
+        try:
+            response_data = self._request("GET", f"{SCENES_V1}/layouts")
+            response = SignalRGBResponse.from_dict(response_data)
+            self._ensure_response_ok(response)
+            if 'data' not in response_data or 'items' not in response_data['data']:
+                raise APIError("No layouts data in the response")
+            return [Layout(id=item['id'], type=item['type']) for item in response_data['data']['items']]
+        except Exception as e:
+            raise APIError(f"Failed to retrieve layouts: {e}", Error(title=str(e)))
     @staticmethod
     def _ensure_response_ok(response: SignalRGBResponse) -> None:
         """Ensure the response status is 'ok'.

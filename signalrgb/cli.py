@@ -380,5 +380,53 @@ def disable(ctx: typer.Context):
     handle_signalrgb_exception(command)
 
 
+@app.command()
+def get_current_layout(ctx: typer.Context):
+    """Get the current layout"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        current_layout = client.get_current_layout()
+        console.print(
+            f"[bold green]Current layout:[/bold green] [cyan]{current_layout.id}[/cyan]"
+        )
+
+    handle_signalrgb_exception(command)
+
+
+@app.command()
+def set_current_layout(ctx: typer.Context, layout_id: str):
+    """Set the current layout"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        new_layout = client.set_current_layout(layout_id)
+        console.print(
+            f"[bold green]Successfully set current layout to:[/bold green] [cyan]{new_layout.id}[/cyan]"
+        )
+
+    handle_signalrgb_exception(command)
+
+
+@app.command()
+def list_layouts(ctx: typer.Context):
+    """List all available layouts"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        layouts = client.get_layouts()
+        table = Table(
+            title="Available Layouts", box=box.ROUNDED, border_style="bold white"
+        )
+        table.add_column("Layout ID", style="bold cyan")
+        table.add_column("Type", style="magenta")
+        for layout in layouts:
+            table.add_row(layout.id, layout.type)
+        console.print(table)
+        console.print(f"Total layouts: [bold green]{len(layouts)}[/bold green]")
+
+    handle_signalrgb_exception(command)
+
+
 if __name__ == "__main__":
     app()
