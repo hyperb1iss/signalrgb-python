@@ -245,6 +245,118 @@ def brightness(ctx: typer.Context, value: int = typer.Argument(None, min=0, max=
 
 
 @app.command()
+def list_presets(ctx: typer.Context, effect_name: str):
+    """List available presets for a specific effect"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        effect = client.get_effect_by_name(effect_name)
+        presets = client.get_effect_presets(effect.id)
+        table = Table(
+            title=f"Presets for '{effect_name}'",
+            box=box.ROUNDED,
+            border_style="bold white",
+        )
+        table.add_column("Preset ID", style="bold cyan")
+        table.add_column("Type", style="magenta")
+        for preset in presets:
+            table.add_row(preset["id"], preset["type"])
+        console.print(table)
+        console.print(f"Total presets: [bold green]{len(presets)}[/bold green]")
+
+    handle_signalrgb_exception(command)
+
+
+@app.command()
+def apply_preset(ctx: typer.Context, effect_name: str, preset_id: str):
+    """Apply a preset to a specific effect"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        effect = client.get_effect_by_name(effect_name)
+        client.apply_effect_preset(effect.id, preset_id)
+        console.print(
+            f"[bold green]Successfully applied preset:[/bold green] [cyan]{preset_id}[/cyan] to effect [cyan]{effect_name}[/cyan]"
+        )
+
+    handle_signalrgb_exception(command)
+
+
+@app.command()
+def next_effect(ctx: typer.Context):
+    """Get information about the next effect in history"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        next_effect = client.get_next_effect()
+        if next_effect:
+            console.print(create_effect_panel(next_effect, "[bold]Next Effect[/bold]"))
+        else:
+            console.print("[yellow]No next effect available[/yellow]")
+
+    handle_signalrgb_exception(command)
+
+
+@app.command()
+def apply_next(ctx: typer.Context):
+    """Apply the next effect in history or a random effect if there's no next effect"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        new_effect = client.apply_next_effect()
+        console.print(
+            f"[bold green]Successfully applied next effect:[/bold green] [cyan]{new_effect.attributes.name}[/cyan]"
+        )
+
+    handle_signalrgb_exception(command)
+
+
+@app.command()
+def previous_effect(ctx: typer.Context):
+    """Get information about the previous effect in history"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        prev_effect = client.get_previous_effect()
+        if prev_effect:
+            console.print(
+                create_effect_panel(prev_effect, "[bold]Previous Effect[/bold]")
+            )
+        else:
+            console.print("[yellow]No previous effect available[/yellow]")
+
+    handle_signalrgb_exception(command)
+
+
+@app.command()
+def apply_previous(ctx: typer.Context):
+    """Apply the previous effect in history"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        new_effect = client.apply_previous_effect()
+        console.print(
+            f"[bold green]Successfully applied previous effect:[/bold green] [cyan]{new_effect.attributes.name}[/cyan]"
+        )
+
+    handle_signalrgb_exception(command)
+
+
+@app.command()
+def apply_random(ctx: typer.Context):
+    """Apply a random effect"""
+
+    def command():
+        client: SignalRGBClient = ctx.obj
+        random_effect = client.apply_random_effect()
+        console.print(
+            f"[bold green]Successfully applied random effect:[/bold green] [cyan]{random_effect.attributes.name}[/cyan]"
+        )
+
+    handle_signalrgb_exception(command)
+
+
+@app.command()
 def enable(ctx: typer.Context):
     """Enable the canvas"""
 

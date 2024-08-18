@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 import os
-from typing import List, Optional, cast
+from typing import Any, Dict, List, Optional, cast
 
 import requests
 from requests.exceptions import RequestException, Timeout
@@ -436,6 +436,195 @@ class SignalRGBClient:
             raise SignalRGBException(
                 f"Failed to apply effect '{effect_name}': {e}", Error(title=str(e))
             )
+
+    def get_effect_presets(self, effect_id: str) -> List[Dict[str, Any]]:
+        """Get presets for a specific effect.
+
+        Args:
+            effect_id (str): The ID of the effect to retrieve presets for.
+
+        Returns:
+            List[Dict[str, Any]]: A list of preset dictionaries, each containing 'id' and 'type'.
+
+        Raises:
+            EffectNotFoundError: If the effect with the given ID is not found.
+            APIError: If there's an error retrieving the presets.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> presets = client.get_effect_presets("example_effect_id")
+            >>> for preset in presets:
+            ...     print(f"Preset ID: {preset['id']}, Type: {preset['type']}")
+        """
+        try:
+            response_data = self._request(
+                "GET", f"{LIGHTING_V1}/effects/{effect_id}/presets"
+            )
+            response = SignalRGBResponse.from_dict(response_data)
+            self._ensure_response_ok(response)
+            if "data" not in response_data or "items" not in response_data["data"]:
+                raise APIError("No preset data in the response")
+            return response_data["data"]["items"]
+        except APIError as e:
+            if e.error and e.error.code == "not_found":
+                raise EffectNotFoundError(
+                    f"Effect with ID '{effect_id}' not found", e.error
+                )
+            raise
+
+    def apply_effect_preset(self, effect_id: str, preset_id: str) -> None:
+        """Apply a preset for a specific effect.
+
+        Args:
+            effect_id (str): The ID of the effect to apply the preset to.
+            preset_id (str): The ID of the preset to apply.
+
+        Raises:
+            EffectNotFoundError: If the effect with the given ID is not found.
+            SignalRGBException: If there's an error applying the preset.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> client.apply_effect_preset("example_effect_id", "My Fancy Preset 1")
+            >>> print("Preset applied successfully")
+        """
+        try:
+            response_data = self._request(
+                "PATCH",
+                f"{LIGHTING_V1}/effects/{effect_id}/presets",
+                json={"preset": preset_id},
+            )
+            response = SignalRGBResponse.from_dict(response_data)
+            self._ensure_response_ok(response)
+        except APIError as e:
+            if e.error and e.error.code == "not_found":
+                raise EffectNotFoundError(
+                    f"Effect with ID '{effect_id}' or preset '{preset_id}' not found",
+                    e.error,
+                )
+            raise
+        except Exception as e:
+            raise SignalRGBException(
+                f"Failed to apply preset '{preset_id}' for effect '{effect_id}': {e}",
+                Error(title=str(e)),
+            )
+
+    def get_next_effect(self) -> Optional[Effect]:
+        """Get information about the next effect in history.
+
+        Returns:
+            Optional[Effect]: The next effect if available, None otherwise.
+
+        Raises:
+            APIError: If there's an error retrieving the next effect.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> next_effect = client.get_next_effect()
+            >>> if next_effect:
+            ...     print(f"Next effect: {next_effect.attributes.name}")
+            ... else:
+            ...     print("No next effect available")
+        """
+        try:
+            response_data = self._request("GET", f"{LIGHTING_V1}/next")
+            response = EffectDetailsResponse.from_dict(response_data)
+            self._ensure_response_ok(response)
+            return response.data
+        except APIError as e:
+            if e.error and e.error.code == "409":
+                return None
+            raise
+
+    def apply_next_effect(self) -> Effect:
+        """Apply the next effect in history or a random effect if there's no next effect.
+
+        Returns:
+            Effect: The newly applied effect.
+
+        Raises:
+            APIError: If there's an error applying the next effect.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> new_effect = client.apply_next_effect()
+            >>> print(f"Applied effect: {new_effect.attributes.name}")
+        """
+        response_data = self._request("POST", f"{LIGHTING_V1}/next")
+        response = EffectDetailsResponse.from_dict(response_data)
+        self._ensure_response_ok(response)
+        if response.data is None:
+            raise APIError("No effect data in the response")
+        return response.data
+
+    def get_previous_effect(self) -> Optional[Effect]:
+        """Get information about the previous effect in history.
+
+        Returns:
+            Optional[Effect]: The previous effect if available, None otherwise.
+
+        Raises:
+            APIError: If there's an error retrieving the previous effect.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> prev_effect = client.get_previous_effect()
+            >>> if prev_effect:
+            ...     print(f"Previous effect: {prev_effect.attributes.name}")
+            ... else:
+            ...     print("No previous effect available")
+        """
+        try:
+            response_data = self._request("GET", f"{LIGHTING_V1}/previous")
+            response = EffectDetailsResponse.from_dict(response_data)
+            self._ensure_response_ok(response)
+            return response.data
+        except APIError as e:
+            if e.error and e.error.code == "409":
+                return None
+            raise
+
+    def apply_previous_effect(self) -> Effect:
+        """Apply the previous effect in history.
+
+        Returns:
+            Effect: The newly applied effect.
+
+        Raises:
+            APIError: If there's an error applying the previous effect or if there's no previous effect.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> new_effect = client.apply_previous_effect()
+            >>> print(f"Applied effect: {new_effect.attributes.name}")
+        """
+        response_data = self._request("POST", f"{LIGHTING_V1}/previous")
+        response = EffectDetailsResponse.from_dict(response_data)
+        self._ensure_response_ok(response)
+        if response.data is None:
+            raise APIError("No effect data in the response")
+        return response.data
+
+    def apply_random_effect(self) -> Effect:
+        """Apply a random effect.
+
+        Returns:
+            Effect: The newly applied random effect.
+
+        Raises:
+            APIError: If there's an error applying a random effect.
+
+        Example:
+            >>> client = SignalRGBClient()
+            >>> random_effect = client.apply_random_effect()
+            >>> print(f"Applied random effect: {random_effect.attributes.name}")
+        """
+        response_data = self._request("POST", f"{LIGHTING_V1}/shuffle")
+        response = EffectDetailsResponse.from_dict(response_data)
+        self._ensure_response_ok(response)
+        if response.data is None:
+            raise APIError("No effect data in the response")
+        return response.data
 
     @staticmethod
     def _ensure_response_ok(response: SignalRGBResponse) -> None:
