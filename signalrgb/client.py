@@ -16,6 +16,7 @@ import requests
 from requests.exceptions import RequestException, Timeout
 
 from .model import (
+    CurrentLayoutResponse,
     CurrentStateHolder,
     CurrentStateResponse,
     Effect,
@@ -642,7 +643,7 @@ class SignalRGBClient:
         """
         try:
             with self._request_context("GET", f"{SCENES_V1}/current_layout") as data:
-                response = SignalRGBResponse.from_dict(data)
+                response = CurrentLayoutResponse.from_dict(data)
                 self._ensure_response_ok(response)
                 if "data" not in data or "current_layout" not in data["data"]:
                     raise APIError("No current layout data in the response")
@@ -672,7 +673,7 @@ class SignalRGBClient:
             with self._request_context(
                 "PATCH", f"{SCENES_V1}/current_layout", json={"layout": layout_id}
             ) as data:
-                response = SignalRGBResponse.from_dict(data)
+                response = CurrentLayoutResponse.from_dict(data)
                 self._ensure_response_ok(response)
                 if "data" not in data or "current_layout" not in data["data"]:
                     raise APIError("No current layout data in the response")

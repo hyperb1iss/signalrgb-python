@@ -156,6 +156,21 @@ class Layout(DataClassDictMixin):
 
 
 @dataclass
+class LayoutList(DataClassDictMixin):
+    """
+    A list of layouts in SignalRGB.
+
+    This class is used to represent a layout, typically in API responses
+    that return a collection of layouts.
+
+    Attributes:
+        items (List[Effect]): A list of Layout objects.
+    """
+
+    items: List[Layout] = field(default_factory=list)
+
+
+@dataclass
 class EffectPreset(DataClassDictMixin):
     """
     Represents a preset for an effect in SignalRGB.
@@ -302,7 +317,7 @@ class CurrentLayoutResponse(SignalRGBResponse):
         data (Optional[Dict[str, Any]]): The data containing the current layout returned by the API, if available.
     """
 
-    data: Optional[Dict[str, Any]] = None
+    data: Optional[Layout] = None
 
 
 @dataclass
