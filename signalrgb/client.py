@@ -21,6 +21,9 @@ from .model import (
     Effect,
     EffectDetailsResponse,
     EffectListResponse,
+    EffectPreset,
+    EffectPresetListResponse,
+    EffectPresetResponse,
     Error,
     Layout,
     SignalRGBResponse,
@@ -430,14 +433,14 @@ class SignalRGBClient:
                 f"Failed to apply effect '{effect_name}': {e}", Error(title=str(e))
             )
 
-    def get_effect_presets(self, effect_id: str) -> List[Dict[str, Any]]:
+    def get_effect_presets(self, effect_id: str) -> List[EffectPreset]:
         """Get presets for a specific effect.
 
         Args:
             effect_id: The ID of the effect to retrieve presets for.
 
         Returns:
-            List[Dict[str, Any]]: A list of preset dictionaries, each containing 'id' and 'type'.
+            List[EffectPreset]: A list of effect presets.
 
         Raises:
             EffectNotFoundError: If the effect with the given ID is not found.
@@ -453,11 +456,11 @@ class SignalRGBClient:
             with self._request_context(
                 "GET", f"{LIGHTING_V1}/effects/{effect_id}/presets"
             ) as data:
-                response = SignalRGBResponse.from_dict(data)
+                response = EffectPresetListResponse.from_dict(data)
                 self._ensure_response_ok(response)
-                if "data" not in data or "items" not in data["data"]:
+                if response.data is None or response.data.items is None:
                     raise APIError("No preset data in the response")
-                return data["data"]["items"]
+                return response.data.items
         except APIError as e:
             if e.error and e.error.code == "not_found":
                 raise EffectNotFoundError(
@@ -474,7 +477,7 @@ class SignalRGBClient:
 
         Raises:
             EffectNotFoundError: If the effect with the given ID is not found.
-            SignalRGBException: If there's an error applying the preset.
+            APIError: If there's an error applying the preset.
 
         Example:
             >>> client = SignalRGBClient()
@@ -486,8 +489,9 @@ class SignalRGBClient:
                 "PATCH",
                 f"{LIGHTING_V1}/effects/{effect_id}/presets",
                 json={"preset": preset_id},
-            ):
-                pass
+            ) as data:
+                response = EffectPresetResponse.from_dict(data)
+                self._ensure_response_ok(response)
         except APIError as e:
             if e.error and e.error.code == "not_found":
                 raise EffectNotFoundError(
@@ -496,7 +500,7 @@ class SignalRGBClient:
                 )
             raise
         except Exception as e:
-            raise SignalRGBException(
+            raise APIError(
                 f"Failed to apply preset '{preset_id}' for effect '{effect_id}': {e}",
                 Error(title=str(e)),
             )

@@ -156,6 +156,36 @@ class Layout(DataClassDictMixin):
 
 
 @dataclass
+class EffectPreset(DataClassDictMixin):
+    """
+    Represents a preset for an effect in SignalRGB.
+
+    Attributes:
+        id (str): The unique identifier of the preset.
+        type (str): The type of the preset, typically 'preset'.
+        name (str): The name of the preset.
+        description (Optional[str]): A description of the preset, if available.
+    """
+
+    id: str
+    type: str
+    name: str
+    description: Optional[str] = None
+
+
+@dataclass
+class EffectPresetList(DataClassDictMixin):
+    """
+    A list of effect presets in SignalRGB.
+
+    Attributes:
+        items (List[EffectPreset]): A list of EffectPreset objects.
+    """
+
+    items: List[EffectPreset] = field(default_factory=list)
+
+
+@dataclass
 class Error(DataClassDictMixin):
     """
     Represents an error returned by the SignalRGB API.
@@ -273,3 +303,27 @@ class CurrentLayoutResponse(SignalRGBResponse):
     """
 
     data: Optional[Dict[str, Any]] = None
+
+
+@dataclass
+class EffectPresetListResponse(SignalRGBResponse):
+    """
+    Response model for requests that return a list of effect presets.
+
+    Attributes:
+        data (Optional[EffectPresetList]): The list of effect presets returned by the API, if available.
+    """
+
+    data: Optional[EffectPresetList] = None
+
+
+@dataclass
+class EffectPresetResponse(SignalRGBResponse):
+    """
+    Response model for requests that return details of a single effect preset.
+
+    Attributes:
+        data (Optional[EffectPreset]): The details of the requested effect preset, if available.
+    """
+
+    data: Optional[EffectPreset] = None
