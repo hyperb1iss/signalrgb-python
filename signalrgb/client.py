@@ -79,10 +79,10 @@ class APIError(SignalRGBException):
     """
 
 
-class EffectNotFoundError(SignalRGBException):
-    """Exception raised when an effect is not found.
+class NotFoundError(SignalRGBException):
+    """Exception raised when an item is not found.
 
-    This exception is raised when trying to retrieve or apply a non-existent effect.
+    This exception is raised when trying to retrieve or apply a non-existent effect or preset.
     """
 
 
@@ -203,13 +203,13 @@ class SignalRGBClient:
         """Get details of a specific effect.
 
         Args:
-            effect_id: The ID of the effect to retrieve.
+            effect_id (str): The ID of the effect to retrieve.
 
         Returns:
             Effect: The requested effect.
 
         Raises:
-            EffectNotFoundError: If the effect with the given ID is not found.
+            NotFoundError: If the effect with the given ID is not found.
             APIError: If there's an error retrieving the effect.
 
         Example:
@@ -228,9 +228,7 @@ class SignalRGBClient:
                 return response.data
         except APIError as e:
             if e.error and e.error.code == "not_found":
-                raise EffectNotFoundError(
-                    f"Effect with ID '{effect_id}' not found", e.error
-                )
+                raise NotFoundError(f"Effect with ID '{effect_id}' not found", e.error)
             raise
 
     def get_effect_by_name(self, effect_name: str) -> Effect:
@@ -243,7 +241,7 @@ class SignalRGBClient:
             Effect: The requested effect.
 
         Raises:
-            EffectNotFoundError: If the effect with the given name is not found.
+            NotFoundError: If the effect with the given name is not found.
 
         Example:
             >>> client = SignalRGBClient()
@@ -254,7 +252,7 @@ class SignalRGBClient:
             (e for e in self.get_effects() if e.attributes.name == effect_name), None
         )
         if effect is None:
-            raise EffectNotFoundError(f"Effect '{effect_name}' not found")
+            raise NotFoundError(f"Effect '{effect_name}' not found")
         return self.get_effect(effect.id)
 
     @property
@@ -380,10 +378,10 @@ class SignalRGBClient:
         """Apply an effect.
 
         Args:
-            effect_id: The ID of the effect to apply.
+            effect_id (str): The ID of the effect to apply.
 
         Raises:
-            EffectNotFoundError: If the effect with the given ID is not found.
+            NotFoundError: If the effect with the given ID is not found.
             SignalRGBException: If there's an error applying the effect.
 
         Example:
@@ -398,9 +396,7 @@ class SignalRGBClient:
                 pass
         except APIError as e:
             if e.error and e.error.code == "not_found":
-                raise EffectNotFoundError(
-                    f"Effect with ID '{effect_id}' not found", e.error
-                )
+                raise NotFoundError(f"Effect with ID '{effect_id}' not found", e.error)
             raise
         except Exception as e:
             raise SignalRGBException(
@@ -414,7 +410,7 @@ class SignalRGBClient:
             effect_name: The name of the effect to apply.
 
         Raises:
-            EffectNotFoundError: If the effect with the given name is not found.
+            NotFoundError: If the effect with the given name is not found.
             SignalRGBException: If there's an error applying the effect.
 
         Example:
@@ -426,7 +422,7 @@ class SignalRGBClient:
             effect = self.get_effect_by_name(effect_name)
             with self._request_context("POST", effect.links.apply):
                 pass
-        except EffectNotFoundError:
+        except NotFoundError:
             raise
         except Exception as e:
             raise SignalRGBException(
@@ -437,13 +433,13 @@ class SignalRGBClient:
         """Get presets for a specific effect.
 
         Args:
-            effect_id: The ID of the effect to retrieve presets for.
+            effect_id (str): The ID of the effect to retrieve presets for.
 
         Returns:
             List[EffectPreset]: A list of effect presets.
 
         Raises:
-            EffectNotFoundError: If the effect with the given ID is not found.
+            NotFoundError: If the effect with the given ID is not found.
             APIError: If there's an error retrieving the presets.
 
         Example:
@@ -463,20 +459,18 @@ class SignalRGBClient:
                 return response.data.items
         except APIError as e:
             if e.error and e.error.code == "not_found":
-                raise EffectNotFoundError(
-                    f"Effect with ID '{effect_id}' not found", e.error
-                )
+                raise NotFoundError(f"Effect with ID '{effect_id}' not found", e.error)
             raise
 
     def apply_effect_preset(self, effect_id: str, preset_id: str) -> None:
         """Apply a preset for a specific effect.
 
         Args:
-            effect_id: The ID of the effect to apply the preset to.
-            preset_id: The ID of the preset to apply.
+            effect_id (str): The ID of the effect to apply the preset to.
+            preset_id (str): The ID of the preset to apply.
 
         Raises:
-            EffectNotFoundError: If the effect with the given ID is not found.
+            NotFoundError: If the effect with the given ID is not found.
             APIError: If there's an error applying the preset.
 
         Example:
@@ -494,7 +488,7 @@ class SignalRGBClient:
                 self._ensure_response_ok(response)
         except APIError as e:
             if e.error and e.error.code == "not_found":
-                raise EffectNotFoundError(
+                raise NotFoundError(
                     f"Effect with ID '{effect_id}' or preset '{preset_id}' not found",
                     e.error,
                 )

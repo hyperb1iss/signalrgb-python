@@ -21,7 +21,7 @@ from .client import (
     SignalRGBException,
     ConnectionError,
     APIError,
-    EffectNotFoundError,
+    NotFoundError,
 )
 from .model import Effect, Layout
 
@@ -39,7 +39,7 @@ try:
     __version__ = version("signalrgb")
 except ImportError:
     try:
-        import pkg_resources # type: ignore
+        import pkg_resources  # type: ignore
 
         __version__ = pkg_resources.get_distribution("signalrgb").version
     except Exception:
@@ -140,7 +140,7 @@ def handle_signalrgb_exception(func: callable) -> callable:
                 console.print(
                     "[yellow]An API error occurred. Please try again later.[/yellow]"
                 )
-            elif isinstance(e, EffectNotFoundError):
+            elif isinstance(e, NotFoundError):
                 console.print(
                     "[yellow]The specified effect was not found. Please check the effect name or ID.[/yellow]"
                 )
