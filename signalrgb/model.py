@@ -171,6 +171,18 @@ class LayoutList(DataClassDictMixin):
 
 
 @dataclass
+class CurrentLayoutHolder(DataClassDictMixin):
+    """
+    Holds the current layout information.
+
+    Attributes:
+        current_layout (Layout): The current layout.
+    """
+
+    current_layout: Layout
+
+
+@dataclass
 class EffectPreset(DataClassDictMixin):
     """
     Represents a preset for an effect in SignalRGB.
@@ -314,10 +326,10 @@ class CurrentLayoutResponse(SignalRGBResponse):
     the current layout.
 
     Attributes:
-        data (Optional[Dict[str, Any]]): The data containing the current layout returned by the API, if available.
+        data (Optional[CurrentLayoutHolder]): The data containing the current layout returned by the API, if available.
     """
 
-    data: Optional[Layout] = None
+    data: Optional[CurrentLayoutHolder] = None
 
 
 @dataclass
