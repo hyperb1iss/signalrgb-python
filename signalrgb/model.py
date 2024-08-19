@@ -190,14 +190,10 @@ class EffectPreset(DataClassDictMixin):
     Attributes:
         id (str): The unique identifier of the preset.
         type (str): The type of the preset, typically 'preset'.
-        name (str): The name of the preset.
-        description (Optional[str]): A description of the preset, if available.
     """
 
     id: str
     type: str
-    name: str
-    description: Optional[str] = None
 
 
 @dataclass
@@ -206,9 +202,12 @@ class EffectPresetList(DataClassDictMixin):
     A list of effect presets in SignalRGB.
 
     Attributes:
+        id (str): The ID of the effect these presets belong to.
         items (List[EffectPreset]): A list of EffectPreset objects.
+        type (str): The type of this object, typically 'presets'.
     """
 
+    id: str
     items: List[EffectPreset] = field(default_factory=list)
 
 

@@ -439,7 +439,7 @@ class SignalRGBClient:
             ) as data:
                 response = EffectPresetListResponse.from_dict(data)
                 self._ensure_response_ok(response)
-                if response.data is None or response.data.items is None:
+                if response.data is None:
                     raise APIError("No preset data in the response")
                 return response.data.items
         except APIError as e:

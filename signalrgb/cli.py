@@ -311,7 +311,7 @@ def preset(ctx: typer.Context, name: Optional[str] = None):
         else:
             content = (
                 f"[bold cyan]Current Effect:[/bold cyan] {current_effect.attributes.name}\n"
-                f"[bold magenta]Available Presets:[/bold magenta] {', '.join(p.name for p in presets)}"
+                f"[bold magenta]Available Presets:[/bold magenta] {', '.join(p.id for p in presets)}"
             )
             console.print(
                 Panel(
