@@ -23,7 +23,6 @@ from .model import (
     EffectDetailsResponse,
     EffectListResponse,
     EffectPreset,
-    EffectPresetList,
     EffectPresetListResponse,
     EffectPresetResponse,
     Error,
@@ -386,8 +385,11 @@ class SignalRGBClient:
             >>> client.apply_effect("example_effect_id")
             >>> print("Effect applied successfully")
         """
-        with self._request_context("POST", f"{LIGHTING_V1}/effects/{effect_id}/apply"):
-            pass
+        with self._request_context(
+            "POST", f"{LIGHTING_V1}/effects/{effect_id}/apply"
+        ) as data:
+            response = SignalRGBResponse.from_dict(data)
+            self._ensure_response_ok(response)
 
     def apply_effect_by_name(self, effect_name: str) -> None:
         """Apply an effect by name.
@@ -691,8 +693,6 @@ class SignalRGBClient:
         Raises:
             APIError: If the response status is not 'ok'.
         """
-        print("**** response {}", response)
-
         if response.status != "ok":
             error = response.errors[0] if response.errors else None
             raise APIError(f"API returned non-OK status: {response.status}", error)

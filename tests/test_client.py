@@ -9,12 +9,18 @@ from signalrgb.client import (
     APIError,
     ConnectionError,
     SignalRGBClient,
-    EffectNotFoundError,
+    NotFoundError,
     SignalRGBException,
 )
 from signalrgb.model import (
+    CurrentLayoutHolder,
+    CurrentLayoutResponse,
     Effect,
     Attributes,
+    EffectPreset,
+    EffectPresetList,
+    EffectPresetListResponse,
+    LayoutListResponse,
     Links,
     CurrentStateHolder,
     CurrentState,
@@ -23,6 +29,7 @@ from signalrgb.model import (
     EffectListResponse,
     EffectList,
     Error,
+    Layout,
 )
 
 
@@ -289,10 +296,10 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         """Test handling generic request exceptions."""
         mock_request.side_effect = Exception("Unexpected error")
 
-        with self.assertRaises(APIError) as context:
+        with self.assertRaises(SignalRGBException) as context:
             self.client.get_effects()
 
-        self.assertIn("Failed to retrieve effects", str(context.exception))
+        self.assertIn("An unexpected error occurred", str(context.exception))
 
     @patch("requests.Session.request")
     def test_timeout_error(self, mock_request):
@@ -389,9 +396,11 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_response.json.return_value = response.to_dict()
         mock_request.return_value = mock_response
 
-        response_data = self.client._request("GET", "/api/v1/lighting/effects")
-        response = SignalRGBResponse.from_dict(response_data)
-        self.client._ensure_response_ok(response)
+        with self.client._request_context(
+            "GET", "/api/v1/lighting/effects"
+        ) as response:
+            response = SignalRGBResponse.from_dict(response)
+            self.client._ensure_response_ok(response)
 
         error_response = SignalRGBResponse(
             api_version="1.0",
@@ -403,9 +412,11 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_response.json.return_value = error_response.to_dict()
 
         with self.assertRaises(APIError) as context:
-            response_data = self.client._request("GET", "/api/v1/lighting/effects")
-            response = SignalRGBResponse.from_dict(response_data)
-            self.client._ensure_response_ok(response)
+            with self.client._request_context(
+                "GET", "/api/v1/lighting/effects"
+            ) as response_data:
+                response = SignalRGBResponse.from_dict(response_data)
+                self.client._ensure_response_ok(response)
 
         self.assertIn("API returned non-OK status", str(context.exception))
 
@@ -423,8 +434,10 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_response.raise_for_status.return_value = None
         mock_request.return_value = mock_response
 
-        response = self.client._request("GET", "/api/v1/lighting/effects")
-        self.assertEqual(response["status"], "ok")
+        with self.client._request_context(
+            "GET", "/api/v1/lighting/effects"
+        ) as response:
+            self.assertEqual(response["status"], "ok")
 
     @patch("requests.Session.request")
     def test_request_connection_error(self, mock_request):
@@ -432,7 +445,8 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.side_effect = RequestsConnectionError("Connection failed")
 
         with self.assertRaises(ConnectionError) as context:
-            self.client._request("GET", "/api/v1/lighting/effects")
+            with self.client._request_context("GET", "/api/v1/lighting/effects"):
+                pass
 
         self.assertIn("Failed to connect to SignalRGB API", str(context.exception))
 
@@ -442,7 +456,8 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.side_effect = Timeout("Request timed out")
 
         with self.assertRaises(ConnectionError) as context:
-            self.client._request("GET", "/api/v1/lighting/effects")
+            with self.client._request_context("GET", "/api/v1/lighting/effects"):
+                pass
 
         self.assertIn("Request timed out", str(context.exception))
 
@@ -462,7 +477,8 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         with self.assertRaises(APIError) as context:
-            self.client._request("GET", "/api/v1/lighting/effects")
+            with self.client._request_context("GET", "/api/v1/lighting/effects"):
+                pass
 
         self.assertIn("HTTP error occurred", str(context.exception))
 
@@ -472,9 +488,10 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.side_effect = Exception("Unexpected error")
 
         with self.assertRaises(SignalRGBException) as context:
-            self.client._request("GET", "/api/v1/lighting/effects")
+            with self.client._request_context("GET", "/api/v1/lighting/effects"):
+                pass
 
-        self.assertIn("An unexpected error occurred", str(context.exception))
+        self.assertIn("unexpected error", str(context.exception))
 
     @patch("requests.Session.request")
     def test_get_effects_error(self, mock_request):
@@ -529,7 +546,7 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
 
         mock_request.return_value = mock_response_get_effects
 
-        with self.assertRaises(EffectNotFoundError) as context:
+        with self.assertRaises(NotFoundError) as context:
             self.client.get_effect_by_name("Nonexistent Effect")
 
         self.assertIn("Effect 'Nonexistent Effect' not found", str(context.exception))
@@ -567,7 +584,7 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_response.json.return_value = error_response.to_dict()
         mock_request.return_value = mock_response
 
-        with self.assertRaises(APIError) as context:
+        with self.assertRaises(SignalRGBException) as context:
             self.client.apply_effect("nonexistent_effect")
 
         self.assertIn("API returned non-OK status", str(context.exception))
@@ -587,7 +604,7 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
 
         mock_request.return_value = mock_response_get_effects
 
-        with self.assertRaises(EffectNotFoundError) as context:
+        with self.assertRaises(NotFoundError) as context:
             self.client.apply_effect_by_name("Nonexistent Effect")
 
         self.assertIn("Effect 'Nonexistent Effect' not found", str(context.exception))
@@ -711,10 +728,241 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_response.json.return_value = response.to_dict()
         mock_request.return_value = mock_response
 
-        attributes = self.client._get_current_state_attributes()
+        attributes = self.client._get_current_state().attributes
         self.assertEqual(attributes.name, "Current Effect")
         self.assertTrue(attributes.enabled)
         self.assertEqual(attributes.global_brightness, 50)
+
+    @patch("requests.Session.request")
+    def test_get_effect_presets(self, mock_request):
+        """Test getting presets for a specific effect."""
+        mock_response = Mock()
+        presets = [
+            EffectPreset(id="preset1", type="preset", name="Preset 1"),
+            EffectPreset(id="preset2", type="preset", name="Preset 2"),
+        ]
+        response = EffectPresetListResponse(
+            api_version="1.0",
+            id=1,
+            method="GET",
+            status="ok",
+            data=EffectPresetList(items=presets),
+        )
+        mock_response.json.return_value = response.to_dict()
+        mock_request.return_value = mock_response
+
+        result = self.client.get_effect_presets("effect1")
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0].id, "preset1")
+        self.assertEqual(result[1].id, "preset2")
+        self.assertEqual(result[0].name, "Preset 1")
+        self.assertEqual(result[1].name, "Preset 2")
+
+    @patch("requests.Session.request")
+    def test_apply_effect_preset(self, mock_request):
+        """Test applying a preset for a specific effect."""
+        mock_response = Mock()
+        response = SignalRGBResponse(
+            api_version="1.0",
+            id=1,
+            method="PATCH",
+            status="ok",
+        )
+        mock_response.json.return_value = response.to_dict()
+        mock_request.return_value = mock_response
+
+        self.client.apply_effect_preset("effect1", "preset1")
+        self.assert_request_called_with(
+            mock_request,
+            "PATCH",
+            "http://testhost:12345/api/v1/lighting/effects/effect1/presets",
+            json={"preset": "preset1"},
+        )
+
+    @patch("requests.Session.request")
+    def test_get_next_effect(self, mock_request):
+        """Test getting the next effect in history."""
+        mock_response = Mock()
+        effect = Effect(
+            id="next_effect",
+            type="lighting",
+            attributes=Attributes(name="Next Effect"),
+            links=Links(),
+        )
+        response = EffectDetailsResponse(
+            api_version="1.0",
+            id=1,
+            method="GET",
+            status="ok",
+            data=effect,
+        )
+        mock_response.json.return_value = response.to_dict()
+        mock_request.return_value = mock_response
+
+        next_effect = self.client.get_next_effect()
+        self.assertEqual(next_effect.id, "next_effect")
+        self.assertEqual(next_effect.attributes.name, "Next Effect")
+
+    @patch("requests.Session.request")
+    def test_apply_next_effect(self, mock_request):
+        """Test applying the next effect in history."""
+        mock_response = Mock()
+        effect = Effect(
+            id="next_effect",
+            type="lighting",
+            attributes=Attributes(name="Next Effect"),
+            links=Links(),
+        )
+        response = EffectDetailsResponse(
+            api_version="1.0",
+            id=1,
+            method="POST",
+            status="ok",
+            data=effect,
+        )
+        mock_response.json.return_value = response.to_dict()
+        mock_request.return_value = mock_response
+
+        applied_effect = self.client.apply_next_effect()
+        self.assertEqual(applied_effect.id, "next_effect")
+        self.assertEqual(applied_effect.attributes.name, "Next Effect")
+
+    @patch("requests.Session.request")
+    def test_get_previous_effect(self, mock_request):
+        """Test getting the previous effect in history."""
+        mock_response = Mock()
+        effect = Effect(
+            id="previous_effect",
+            type="lighting",
+            attributes=Attributes(name="Previous Effect"),
+            links=Links(),
+        )
+        response = EffectDetailsResponse(
+            api_version="1.0",
+            id=1,
+            method="GET",
+            status="ok",
+            data=effect,
+        )
+        mock_response.json.return_value = response.to_dict()
+        mock_request.return_value = mock_response
+
+        previous_effect = self.client.get_previous_effect()
+        self.assertEqual(previous_effect.id, "previous_effect")
+        self.assertEqual(previous_effect.attributes.name, "Previous Effect")
+
+    @patch("requests.Session.request")
+    def test_apply_previous_effect(self, mock_request):
+        """Test applying the previous effect in history."""
+        mock_response = Mock()
+        effect = Effect(
+            id="previous_effect",
+            type="lighting",
+            attributes=Attributes(name="Previous Effect"),
+            links=Links(),
+        )
+        response = EffectDetailsResponse(
+            api_version="1.0",
+            id=1,
+            method="POST",
+            status="ok",
+            data=effect,
+        )
+        mock_response.json.return_value = response.to_dict()
+        mock_request.return_value = mock_response
+
+        applied_effect = self.client.apply_previous_effect()
+        self.assertEqual(applied_effect.id, "previous_effect")
+        self.assertEqual(applied_effect.attributes.name, "Previous Effect")
+
+    @patch("requests.Session.request")
+    def test_apply_random_effect(self, mock_request):
+        """Test applying a random effect."""
+        mock_response = Mock()
+        effect = Effect(
+            id="random_effect",
+            type="lighting",
+            attributes=Attributes(name="Random Effect"),
+            links=Links(),
+        )
+        response = EffectDetailsResponse(
+            api_version="1.0",
+            id=1,
+            method="POST",
+            status="ok",
+            data=effect,
+        )
+        mock_response.json.return_value = response.to_dict()
+        mock_request.return_value = mock_response
+
+        random_effect = self.client.apply_random_effect()
+        self.assertEqual(random_effect.id, "random_effect")
+        self.assertEqual(random_effect.attributes.name, "Random Effect")
+
+    @patch("requests.Session.request")
+    def test_get_current_layout(self, mock_request):
+        """Test getting the current layout."""
+        mock_response = Mock()
+        layout = Layout(id="current_layout", type="layout")
+        response = CurrentLayoutResponse(
+            api_version="1.0",
+            id=1,
+            method="GET",
+            status="ok",
+            data=CurrentLayoutHolder(current_layout=layout),
+        )
+        mock_response.json.return_value = response.to_dict()
+        mock_request.return_value = mock_response
+
+        current_layout = self.client.current_layout
+        self.assertEqual(current_layout.id, "current_layout")
+        self.assertEqual(current_layout.type, "layout")
+
+    @patch("requests.Session.request")
+    def test_set_current_layout(self, mock_request):
+        """Test setting the current layout."""
+        mock_response = Mock()
+        layout = Layout(id="new_layout", type="layout")
+        response = CurrentLayoutResponse(
+            api_version="1.0",
+            id=1,
+            method="PATCH",
+            status="ok",
+            data=CurrentLayoutHolder(current_layout=layout),
+        )
+        mock_response.json.return_value = response.to_dict()
+        mock_request.return_value = mock_response
+
+        self.client.current_layout = "new_layout"
+        self.assert_request_called_with(
+            mock_request,
+            "PATCH",
+            "http://testhost:12345/api/v1/scenes/current_layout",
+            json={"layout": "new_layout"},
+        )
+
+    @patch("requests.Session.request")
+    def test_get_layouts(self, mock_request):
+        """Test getting all available layouts."""
+        mock_response = Mock()
+        layouts = [
+            Layout(id="layout1", type="layout"),
+            Layout(id="layout2", type="layout"),
+        ]
+        response = LayoutListResponse(
+            api_version="1.0",
+            id=1,
+            method="GET",
+            status="ok",
+            data={"items": [layout.to_dict() for layout in layouts]},
+        )
+        mock_response.json.return_value = response.to_dict()
+        mock_request.return_value = mock_response
+
+        result = self.client.get_layouts()
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0].id, "layout1")
+        self.assertEqual(result[1].id, "layout2")
 
 
 if __name__ == "__main__":

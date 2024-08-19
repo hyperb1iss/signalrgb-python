@@ -72,15 +72,34 @@ def test_current_effect(runner, mock_client):
     mock_effect = Effect(
         id="effect1",
         type="lighting",
-        attributes=Attributes(name="Current Effect", publisher="Test Publisher"),
+        attributes=Attributes(
+            name="Current Effect",
+            publisher="Test Publisher",
+            description="Test Description",
+            image="test_image.png",
+            uses_audio=True,
+            uses_video=False,
+            uses_input=True,
+            uses_meters=False,
+        ),
         links=Links(),
     )
+
+    # Configure the mock to return the actual Effect object
     mock_client.return_value.get_current_effect.return_value = mock_effect
+    mock_client.return_value.current_effect = mock_effect
 
     result = runner.invoke(app, ["current-effect"])
     assert result.exit_code == 0
     assert "Current Effect" in result.output
+    assert "effect1" in result.output
     assert "Test Publisher" in result.output
+    assert "Test Description" in result.output
+    assert "test_image.png" in result.output
+    assert "Uses Audio: True" in result.output
+    assert "Uses Video: False" in result.output
+    assert "Uses Input: True" in result.output
+    assert "Uses Meters: False" in result.output
 
 
 def test_apply_effect(runner, mock_client):
