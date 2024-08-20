@@ -10,7 +10,6 @@ from rich import box
 from rich.progress import Progress, TextColumn, BarColumn, TimeRemainingColumn
 from functools import wraps
 import json
-import wcwidth
 
 from .client import (
     SignalRGBClient,
@@ -19,6 +18,7 @@ from .client import (
     APIError,
     NotFoundError,
 )
+
 
 app = typer.Typer(help="SignalRGB CLI")
 console = Console()
@@ -37,15 +37,81 @@ STATUS_EMOJIS = {
     "error": "🚫",
 }
 
+# Global variable to track Full RGB mode
+FULL_RGB_MODE = False
 
-def color_gradient(text: str, start_color: str, end_color: str) -> Text:
-    gradient = Text(text)
-    gradient.stylize(f"bold {start_color}")
-    for i in range(len(text)):
-        gradient.stylize(
-            f"color({start_color}) blend({end_color} {i / len(text)})", i, i + 1
-        )
+# RGB Gradient
+GRADIENT_COLORS = [
+    "#ff99cc",  # Light Pink
+    "#ff66b2",  # Pink
+    "#ff4da6",  # Bright Pink
+    "#ff3399",  # Hot Pink
+    "#ff66ff",  # Magenta
+    "#cc33ff",  # Soft Violet
+    "#9933ff",  # Purple
+    "#6600cc",  # Deep Purple
+    "#3333ff",  # Indigo
+    "#3399ff",  # Light Blue
+    "#33ccff",  # Cyan
+    "#33ffcc",  # Aqua
+    "#33ff99",  # Mint
+    "#33ff66",  # Lime Green
+    "#99ff33",  # Bright Green
+    "#ccff33",  # Yellow-Green
+    "#ffff33",  # Yellow
+    "#ffcc33",  # Gold
+    "#ff9933",  # Orange
+    "#ff6633",  # Bright Orange
+    "#ff3333",  # Red
+    "#ff3366",  # Pink-Red
+]
+
+
+# Purple color for table borders
+BORDER_COLOR = "purple"
+
+
+def generate_gradient_markup(colors: List[str], steps: int) -> List[str]:
+    gradient = []
+    segments = len(colors) - 1
+    steps_per_segment = max(1, steps // segments)
+
+    for i in range(segments):
+        start_color = colors[i]
+        end_color = colors[i + 1]
+        for j in range(steps_per_segment):
+            t = j / steps_per_segment
+            r = int(int(start_color[1:3], 16) * (1 - t) + int(end_color[1:3], 16) * t)
+            g = int(int(start_color[3:5], 16) * (1 - t) + int(end_color[3:5], 16) * t)
+            b = int(int(start_color[5:7], 16) * (1 - t) + int(end_color[5:7], 16) * t)
+            gradient.append(f"#{r:02x}{g:02x}{b:02x}")
+
     return gradient
+
+
+def apply_gradient_to_text(text: str, colors: List[str], line_offset: int = 0) -> Text:
+    # Apply Rich's color styles for each character with a diagonal offset
+    gradient = generate_gradient_markup(colors, len(text))
+    styled_text = Text()
+    for i, char in enumerate(text):
+        color = gradient[(i + line_offset) % len(gradient)]
+        styled_text.append(char, style=color)
+    return styled_text
+
+
+def color_gradient(text: str, colors: List[str], line_number: int = 0) -> Text:
+    if FULL_RGB_MODE:
+        return apply_gradient_to_text(text, colors, line_number)
+    else:
+        return Text(text, style="bold green")
+
+
+def print_rgb(message: str):
+    if FULL_RGB_MODE:
+        styled_message = color_gradient(message, GRADIENT_COLORS)
+        console.print(styled_message)
+    else:
+        console.print(message)
 
 
 def get_client(ctx: typer.Context) -> SignalRGBClient:
@@ -58,75 +124,91 @@ def handle_exceptions(func):
         try:
             return func(*args, **kwargs)
         except ConnectionError as e:
-            console.print(
-                f"{STATUS_EMOJIS['error']} [bold red]Connection Error:[/bold red] {str(e)}"
-            )
+            print_rgb(f"{STATUS_EMOJIS['error']} Connection Error: {str(e)}")
             raise typer.Exit(code=1)
         except APIError as e:
-            console.print(
-                f"{STATUS_EMOJIS['error']} [bold red]API Error:[/bold red] {str(e)}"
-            )
+            print_rgb(f"{STATUS_EMOJIS['error']} API Error: {str(e)}")
             raise typer.Exit(code=1)
         except NotFoundError as e:
-            console.print(
-                f"{STATUS_EMOJIS['error']} [bold red]Not Found:[/bold red] {str(e)}"
-            )
+            print_rgb(f"{STATUS_EMOJIS['error']} Not Found: {str(e)}")
             raise typer.Exit(code=1)
         except SignalRGBException as e:
-            console.print(
-                f"{STATUS_EMOJIS['error']} [bold red]Error:[/bold red] {str(e)}"
-            )
+            print_rgb(f"{STATUS_EMOJIS['error']} Error: {str(e)}")
             raise typer.Exit(code=1)
 
     return wrapper
 
 
-def get_string_width(s: str) -> int:
-    return wcwidth.wcswidth(s)
-
-
 def create_effect_panel(effect, title: str) -> Panel:
-    content = "\n".join(
-        [
-            f"[bold cyan]ID:[/bold cyan] {effect.id}",
-            f"[bold magenta]Name:[/bold magenta] {effect.attributes.name}",
-            f"[bold green]Publisher:[/bold green] {effect.attributes.publisher or 'N/A'}",
-            f"[bold yellow]Description:[/bold yellow] {effect.attributes.description or 'N/A'}",
-            f"[bold blue]Uses Audio:[/bold blue] {STATUS_EMOJIS['enabled'] if effect.attributes.uses_audio else STATUS_EMOJIS['disabled']}",
-            f"[bold blue]Uses Video:[/bold blue] {STATUS_EMOJIS['enabled'] if effect.attributes.uses_video else STATUS_EMOJIS['disabled']}",
-            f"[bold blue]Uses Input:[/bold blue] {STATUS_EMOJIS['enabled'] if effect.attributes.uses_input else STATUS_EMOJIS['disabled']}",
-            f"[bold blue]Uses Meters:[/bold blue] {STATUS_EMOJIS['enabled'] if effect.attributes.uses_meters else STATUS_EMOJIS['disabled']}",
-        ]
-    )
+    content_lines = [
+        f"ID: {effect.id}",
+        f"Name: {effect.attributes.name}",
+        f"Publisher: {effect.attributes.publisher or 'N/A'}",
+        f"Description: {effect.attributes.description or 'N/A'}",
+        f"Uses Audio: {STATUS_EMOJIS['enabled'] if effect.attributes.uses_audio else STATUS_EMOJIS['disabled']}",
+        f"Uses Video: {STATUS_EMOJIS['enabled'] if effect.attributes.uses_video else STATUS_EMOJIS['disabled']}",
+        f"Uses Input: {STATUS_EMOJIS['enabled'] if effect.attributes.uses_input else STATUS_EMOJIS['disabled']}",
+        f"Uses Meters: {STATUS_EMOJIS['enabled'] if effect.attributes.uses_meters else STATUS_EMOJIS['disabled']}",
+    ]
+    if FULL_RGB_MODE:
+        content = "\n".join(
+            apply_gradient_to_text(line, GRADIENT_COLORS, line_offset=i)
+            for i, line in enumerate(content_lines)
+        )
+    else:
+        content = "\n".join(content_lines)
     return Panel(
         content,
-        title=color_gradient(title, "cyan", "green"),
+        title=color_gradient(title, GRADIENT_COLORS),
         expand=False,
-        border_style="bold white",
+        border_style=BORDER_COLOR,
     )
 
 
 def create_param_table(parameters):
     json_str = json.dumps(parameters, indent=2)
-    syntax = Syntax(json_str, "json", theme="monokai", line_numbers=True)
+    syntax = Syntax(
+        json_str,
+        "json",
+        theme="monokai" if not FULL_RGB_MODE else None,
+        line_numbers=True,
+    )
+    if FULL_RGB_MODE:
+        syntax = Text(
+            "\n".join(
+                apply_gradient_to_text(line, GRADIENT_COLORS, line_offset=i)
+                for i, line in enumerate(syntax.splitlines())
+            )
+        )
     return Panel(
         syntax,
-        title=color_gradient("Effect Parameters", "yellow", "green"),
-        border_style="bold white",
+        title=color_gradient("Effect Parameters", GRADIENT_COLORS),
+        border_style=BORDER_COLOR,
     )
 
 
 def create_colorful_table(title: str, headers: List[str], rows: List[List[str]]):
-    table = Table(title=color_gradient(title, "green", "yellow"), box=box.ROUNDED)
-    for header_index, header in enumerate(headers):
-        max_width = max(
-            get_string_width(str(cell))
-            for cell in [header] + [row[header_index] for row in rows]
-        )
-        table.add_column(header, style="bold magenta", width=max_width + 2)
+    table = Table(
+        title=color_gradient(title, GRADIENT_COLORS),
+        box=box.ROUNDED,
+        show_header=True,
+        header_style="bold magenta",
+        border_style=BORDER_COLOR,
+    )
+
+    for header in headers:
+        table.add_column(header)
+
     for i, row in enumerate(rows):
-        style = "cyan" if i % 2 == 0 else "green"
-        table.add_row(*row, style=style)
+        styled_row = []
+        for cell in row:
+            if FULL_RGB_MODE:
+                cell_text = apply_gradient_to_text(cell, GRADIENT_COLORS, line_offset=i)
+            else:
+                cell_text = Text(cell)
+            styled_row.append(cell_text)
+        table.add_row(*styled_row)
+
     return table
 
 
@@ -159,6 +241,7 @@ def list_effects(ctx: typer.Context):
     """List all available effects."""
     client = get_client(ctx)
     effects = client.get_effects()
+
     rows = [[e.attributes.name, e.id] for e in effects]
     table = create_colorful_table(
         f"{ICONS['effect']} Available Effects", ["Name", "ID"], rows
@@ -198,9 +281,9 @@ def apply_effect(ctx: typer.Context, name: str, preset: Optional[str] = None):
     client.apply_effect_by_name(name)
     if preset:
         client.apply_effect_preset(client.get_effect_by_name(name).id, preset)
-    console.print(
-        f"{ICONS['effect']} Applied effect: [bold cyan]{name}[/bold cyan]"
-        + (f" with preset: [bold magenta]{preset}[/bold magenta]" if preset else "")
+    print_rgb(
+        f"{ICONS['effect']} Applied effect: {name}"
+        + (f" with preset: {preset}" if preset else "")
     )
 
 
@@ -210,9 +293,7 @@ def next(ctx: typer.Context):
     """Apply the next effect in history."""
     client = get_client(ctx)
     effect = client.apply_next_effect()
-    console.print(
-        f"{ICONS['effect']} Applied next effect: [bold cyan]{effect.attributes.name}[/bold cyan]"
-    )
+    print_rgb(f"{ICONS['effect']} Applied next effect: {effect.attributes.name}")
 
 
 @effect_app.command()
@@ -221,9 +302,7 @@ def previous(ctx: typer.Context):
     """Apply the previous effect in history."""
     client = get_client(ctx)
     effect = client.apply_previous_effect()
-    console.print(
-        f"{ICONS['effect']} Applied previous effect: [bold cyan]{effect.attributes.name}[/bold cyan]"
-    )
+    print_rgb(f"{ICONS['effect']} Applied previous effect: {effect.attributes.name}")
 
 
 @effect_app.command()
@@ -232,9 +311,7 @@ def random(ctx: typer.Context):
     """Apply a random effect."""
     client = get_client(ctx)
     effect = client.apply_random_effect()
-    console.print(
-        f"{ICONS['effect']} Applied random effect: [bold cyan]{effect.attributes.name}[/bold cyan]"
-    )
+    print_rgb(f"{ICONS['effect']} Applied random effect: {effect.attributes.name}")
 
 
 @effect_app.command()
@@ -252,19 +329,17 @@ def cycle(
         TimeRemainingColumn(),
     ) as progress:
         task = progress.add_task(
-            f"{ICONS['effect']} [cyan]Cycling effects...", total=len(effects)
+            f"{ICONS['effect']} Cycling effects...", total=len(effects)
         )
         for effect in effects:
             client.apply_effect(effect.id)
             progress.update(
                 task,
                 advance=1,
-                description=f"{ICONS['effect']} [cyan]Applied: [bold]{effect.attributes.name}",
+                description=f"{ICONS['effect']} Applied: {effect.attributes.name}",
             )
             time.sleep(duration)
-    console.print(
-        f"{ICONS['effect']} [bold green]Finished cycling through all effects[/bold green]"
-    )
+    print_rgb(f"{ICONS['effect']} Finished cycling through all effects")
 
 
 @effect_app.command()
@@ -273,7 +348,7 @@ def refresh(ctx: typer.Context):
     """Refresh the cached effects."""
     client = get_client(ctx)
     client.refresh_effects()
-    console.print(f"{ICONS['effect']} [bold green]Effects cache refreshed[/bold green]")
+    print_rgb(f"{ICONS['effect']} Effects cache refreshed")
 
 
 # Preset commands
@@ -290,37 +365,41 @@ def preset(ctx: typer.Context, name: Optional[str] = None):
         current_effect = client.get_current_effect()
         presets = client.get_effect_presets(current_effect.id)
         if name:
-            preset = next((p for p in presets if p.name == name), None)
+            preset = next((p for p in presets if p.id == name), None)
             if preset:
-                content = f"Preset: [bold cyan]{preset.name}[/bold cyan]\nDescription: [italic]{preset.description or 'N/A'}[/italic]"
+                content = f"Preset: {preset.id}\nType: {preset.type}"
+                if FULL_RGB_MODE:
+                    content = apply_gradient_to_text(content, GRADIENT_COLORS)
                 console.print(
                     Panel(
                         content,
                         title=color_gradient(
-                            f"{ICONS['preset']} Preset Information", "blue", "green"
+                            f"{ICONS['preset']} Preset Information", GRADIENT_COLORS
                         ),
                         expand=False,
-                        border_style="bold white",
+                        border_style=BORDER_COLOR,
                     )
                 )
             else:
-                console.print(
-                    f"{STATUS_EMOJIS['error']} Preset '[bold]{name}[/bold]' not found for effect '[bold]{current_effect.attributes.name}[/bold]'"
+                print_rgb(
+                    f"{STATUS_EMOJIS['error']} Preset '{name}' not found for effect '{current_effect.attributes.name}'"
                 )
                 raise typer.Exit(code=1)
         else:
             content = (
-                f"[bold cyan]Current Effect:[/bold cyan] {current_effect.attributes.name}\n"
-                f"[bold magenta]Available Presets:[/bold magenta] {', '.join(p.id for p in presets)}"
+                f"Current Effect: {current_effect.attributes.name}\n"
+                f"Available Presets: {', '.join(p.id for p in presets)}"
             )
+            if FULL_RGB_MODE:
+                content = apply_gradient_to_text(content, GRADIENT_COLORS)
             console.print(
                 Panel(
                     content,
                     title=color_gradient(
-                        f"{ICONS['preset']} Preset Information", "blue", "green"
+                        f"{ICONS['preset']} Preset Information", GRADIENT_COLORS
                     ),
                     expand=False,
-                    border_style="bold white",
+                    border_style=BORDER_COLOR,
                 )
             )
 
@@ -332,10 +411,10 @@ def list_presets(ctx: typer.Context):
     client = get_client(ctx)
     current_effect = client.get_current_effect()
     presets = client.get_effect_presets(current_effect.id)
-    rows = [[p.name, p.description or "N/A"] for p in presets]
+    rows = [[p.id, p.type] for p in presets]
     table = create_colorful_table(
         f"{ICONS['preset']} Presets for {current_effect.attributes.name}",
-        ["Name", "Description"],
+        ["ID", "Type"],
         rows,
     )
     console.print(table)
@@ -343,13 +422,13 @@ def list_presets(ctx: typer.Context):
 
 @preset_app.command(name="apply")
 @handle_exceptions
-def apply_preset(ctx: typer.Context, preset_name: str):
+def apply_preset(ctx: typer.Context, preset_id: str):
     """Apply a preset to the current effect."""
     client = get_client(ctx)
     current_effect = client.get_current_effect()
-    client.apply_effect_preset(current_effect.id, preset_name)
-    console.print(
-        f"{ICONS['preset']} Applied preset '[bold cyan]{preset_name}[/bold cyan]' to effect '[bold magenta]{current_effect.attributes.name}[/bold magenta]'"
+    client.apply_effect_preset(current_effect.id, preset_id)
+    print_rgb(
+        f"{ICONS['preset']} Applied preset '{preset_id}' to effect '{current_effect.attributes.name}'"
     )
 
 
@@ -368,36 +447,37 @@ def layout(ctx: typer.Context, name: Optional[str] = None):
             layouts = client.get_layouts()
             layout = next((ll for ll in layouts if ll.id == name), None)
             if layout:
-                content = f"Layout: [bold cyan]{layout.id}[/bold cyan]\nType: [bold magenta]{layout.type}[/bold magenta]"
+                content = f"Layout: {layout.id}\nType: {layout.type}"
+                if FULL_RGB_MODE:
+                    content = apply_gradient_to_text(content, GRADIENT_COLORS)
                 console.print(
                     Panel(
                         content,
                         title=color_gradient(
-                            f"{ICONS['layout']} Layout Information", "blue", "green"
+                            f"{ICONS['layout']} Layout Information", GRADIENT_COLORS
                         ),
                         expand=False,
-                        border_style="bold white",
+                        border_style=BORDER_COLOR,
                     )
                 )
             else:
-                console.print(
-                    f"{STATUS_EMOJIS['error']} Layout '[bold]{name}[/bold]' not found"
-                )
+                print_rgb(f"{STATUS_EMOJIS['error']} Layout '{name}' not found")
                 raise typer.Exit(code=1)
         else:
             current_layout = client.current_layout
             content = (
-                f"[bold cyan]Current Layout:[/bold cyan] {current_layout.id}\n"
-                f"[bold magenta]Type:[/bold magenta] {current_layout.type}"
+                f"Current Layout: {current_layout.id}\n" f"Type: {current_layout.type}"
             )
+            if FULL_RGB_MODE:
+                content = apply_gradient_to_text(content, GRADIENT_COLORS)
             console.print(
                 Panel(
                     content,
                     title=color_gradient(
-                        f"{ICONS['layout']} Layout Information", "blue", "green"
+                        f"{ICONS['layout']} Layout Information", GRADIENT_COLORS
                     ),
                     expand=False,
-                    border_style="bold white",
+                    border_style=BORDER_COLOR,
                 )
             )
 
@@ -421,9 +501,7 @@ def set(ctx: typer.Context, name: str):
     """Set the current layout."""
     client = get_client(ctx)
     client.current_layout = name
-    console.print(
-        f"{ICONS['layout']} Set current layout to: [bold cyan]{name}[/bold cyan]"
-    )
+    print_rgb(f"{ICONS['layout']} Set current layout to: {name}")
 
 
 # Canvas commands
@@ -444,11 +522,13 @@ def canvas(ctx: typer.Context):
         brightness = client.brightness
         status = STATUS_EMOJIS["enabled"] if enabled else STATUS_EMOJIS["disabled"]
         content = (
-            f"[bold cyan]Canvas State:[/bold cyan] {status} {'Enabled' if enabled else 'Disabled'}\n"
-            f"[bold magenta]Brightness:[/bold magenta] {brightness}%"
+            f"Canvas State: {status} {'Enabled' if enabled else 'Disabled'}\n"
+            f"Brightness: {brightness}%"
         )
-        title = color_gradient(f"{ICONS['canvas']} Canvas Information", "blue", "green")
-        panel = Panel(content, title=title, expand=False, border_style="bold white")
+        if FULL_RGB_MODE:
+            content = apply_gradient_to_text(content, GRADIENT_COLORS)
+        title = color_gradient(f"{ICONS['canvas']} Canvas Information", GRADIENT_COLORS)
+        panel = Panel(content, title=title, expand=False, border_style=BORDER_COLOR)
         console.print(panel)
 
 
@@ -461,13 +541,9 @@ def brightness(
     client = get_client(ctx)
     if value is not None:
         client.brightness = value
-        console.print(
-            f"{ICONS['canvas']} Set brightness to: [bold cyan]{value}%[/bold cyan]"
-        )
+        print_rgb(f"{ICONS['canvas']} Set brightness to: {value}%")
     else:
-        console.print(
-            f"{ICONS['canvas']} Current brightness: [bold cyan]{client.brightness}%[/bold cyan]"
-        )
+        print_rgb(f"{ICONS['canvas']} Current brightness: {client.brightness}%")
 
 
 @canvas_app.command()
@@ -476,9 +552,7 @@ def enable(ctx: typer.Context):
     """Enable the canvas."""
     client = get_client(ctx)
     client.enabled = True
-    console.print(
-        f"{ICONS['canvas']} Canvas {STATUS_EMOJIS['enabled']} [bold green]enabled[/bold green]"
-    )
+    print_rgb(f"{ICONS['canvas']} Canvas {STATUS_EMOJIS['enabled']} enabled")
 
 
 @canvas_app.command()
@@ -487,9 +561,7 @@ def disable(ctx: typer.Context):
     """Disable the canvas."""
     client = get_client(ctx)
     client.enabled = False
-    console.print(
-        f"{ICONS['canvas']} Canvas {STATUS_EMOJIS['disabled']} [bold red]disabled[/bold red]"
-    )
+    print_rgb(f"{ICONS['canvas']} Canvas {STATUS_EMOJIS['disabled']} disabled")
 
 
 @canvas_app.command()
@@ -500,10 +572,7 @@ def toggle(ctx: typer.Context):
     client.enabled = not client.enabled
     status = "enabled" if client.enabled else "disabled"
     emoji = STATUS_EMOJIS["enabled"] if client.enabled else STATUS_EMOJIS["disabled"]
-    color = "green" if client.enabled else "red"
-    console.print(
-        f"{ICONS['canvas']} Canvas {emoji} [bold {color}]{status}[/bold {color}]"
-    )
+    print_rgb(f"{ICONS['canvas']} Canvas {emoji} {status}")
 
 
 @app.callback()
@@ -511,8 +580,13 @@ def main(
     ctx: typer.Context,
     host: str = typer.Option("localhost", help="SignalRGB API host"),
     port: int = typer.Option(16038, help="SignalRGB API port"),
+    full_rgb: bool = typer.Option(
+        False, "--full-rgb", help="Enable full RGB gradient mode for all output"
+    ),
 ):
     """Initialize SignalRGB client."""
+    global FULL_RGB_MODE
+    FULL_RGB_MODE = full_rgb
     ctx.obj = SignalRGBClient(host, port)
 
 
