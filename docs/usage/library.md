@@ -14,7 +14,9 @@ client = SignalRGBClient(host="localhost", port=16038)
 
 You can specify a custom host and port if your SignalRGB instance is not running on the default location.
 
-## Listing Effects
+## Working with Effects
+
+### Listing Effects
 
 To get a list of all available effects:
 
@@ -24,7 +26,7 @@ for effect in effects:
     print(f"Effect: {effect.attributes.name}")
 ```
 
-## Getting Effect Details
+### Getting Effect Details
 
 To get detailed information about a specific effect:
 
@@ -35,7 +37,7 @@ print(f"Description: {effect.attributes.description}")
 print(f"Uses Audio: {effect.attributes.uses_audio}")
 ```
 
-## Applying an Effect
+### Applying an Effect
 
 To apply a specific effect:
 
@@ -43,7 +45,7 @@ To apply a specific effect:
 client.apply_effect_by_name("Rainbow Wave")
 ```
 
-## Getting the Current Effect
+### Getting the Current Effect
 
 To see which effect is currently active:
 
@@ -52,7 +54,60 @@ current_effect = client.get_current_effect()
 print(f"Current Effect: {current_effect.attributes.name}")
 ```
 
-## Controlling Brightness
+## Working with Presets
+
+### Listing Presets
+
+To get a list of presets for a specific effect:
+
+```python
+effect_id = client.get_current_effect().id
+presets = client.get_effect_presets(effect_id)
+for preset in presets:
+    print(f"Preset: {preset.id}")
+```
+
+### Applying a Preset
+
+To apply a preset to the current effect:
+
+```python
+effect_id = client.get_current_effect().id
+client.apply_effect_preset(effect_id, "Cool Preset")
+```
+
+## Working with Layouts
+
+### Listing Layouts
+
+To get a list of all available layouts:
+
+```python
+layouts = client.get_layouts()
+for layout in layouts:
+    print(f"Layout: {layout.id}")
+```
+
+### Setting the Current Layout
+
+To set the current layout:
+
+```python
+client.current_layout = "Gaming Setup"
+```
+
+### Getting the Current Layout
+
+To get the current layout:
+
+```python
+current_layout = client.current_layout
+print(f"Current Layout: {current_layout.id}")
+```
+
+## Controlling the Canvas
+
+### Brightness
 
 To get the current brightness level:
 
@@ -68,7 +123,7 @@ client.brightness = 75
 print(f"Brightness set to: {client.brightness}")
 ```
 
-## Enabling/Disabling the Canvas
+### Enabling/Disabling the Canvas
 
 To get the current enabled state:
 
@@ -92,7 +147,7 @@ print(f"Canvas disabled: {client.enabled}")
 The client provides custom exceptions for different types of errors. You can handle these exceptions to provide better error messages or implement retry logic:
 
 ```python
-from signalrgb import SignalRGBClient, ConnectionError, APIError, EffectNotFoundError
+from signalrgb import SignalRGBClient, ConnectionError, APIError, NotFoundError
 
 client = SignalRGBClient()
 
@@ -100,7 +155,7 @@ try:
     client.apply_effect_by_name("Non-existent Effect")
 except ConnectionError as e:
     print(f"Connection failed: {e}")
-except EffectNotFoundError as e:
+except NotFoundError as e:
     print(f"Effect not found: {e}")
 except APIError as e:
     print(f"API error occurred: {e}")
@@ -135,7 +190,7 @@ Remember to handle exceptions and implement proper error checking in your produc
 Here's a more comprehensive example that demonstrates various features of the signalrgb-python library:
 
 ```python
-from signalrgb import SignalRGBClient, ConnectionError, APIError, EffectNotFoundError
+from signalrgb import SignalRGBClient, ConnectionError, APIError, NotFoundError
 
 def main():
     try:
@@ -163,6 +218,24 @@ def main():
         current_effect = client.get_current_effect()
         print(f"Current effect: {current_effect.attributes.name}")
 
+        # List and apply presets
+        presets = client.get_effect_presets(current_effect.id)
+        print("\nAvailable presets:")
+        for preset in presets:
+            print(f"- {preset.id}")
+        if presets:
+            client.apply_effect_preset(current_effect.id, presets[0].id)
+            print(f"Applied preset: {presets[0].id}")
+
+        # List and set layouts
+        layouts = client.get_layouts()
+        print("\nAvailable layouts:")
+        for layout in layouts:
+            print(f"- {layout.id}")
+        if layouts:
+            client.current_layout = layouts[0].id
+            print(f"Set current layout to: {layouts[0].id}")
+
         # Control brightness
         client.brightness = 75
         print(f"\nBrightness set to: {client.brightness}")
@@ -180,8 +253,8 @@ def main():
 
     except ConnectionError as e:
         print(f"Connection error: {e}")
-    except EffectNotFoundError as e:
-        print(f"Effect not found: {e}")
+    except NotFoundError as e:
+        print(f"Resource not found: {e}")
     except APIError as e:
         print(f"API error: {e}")
     except Exception as e:
@@ -191,7 +264,7 @@ if __name__ == "__main__":
     main()
 ```
 
-This example demonstrates how to use various features of the signalrgb-python library, including error handling, effect management, brightness control, and enabling/disabling the canvas.
+This example demonstrates how to use various features of the signalrgb-python library, including error handling, effect management, preset application, layout switching, brightness control, and enabling/disabling the canvas.
 
 ## Best Practices
 

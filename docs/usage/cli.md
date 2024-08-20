@@ -7,7 +7,7 @@ signalrgb-python provides a user-friendly command-line interface for interacting
 The basic syntax for using the SignalRGB CLI is:
 
 ```bash
-signalrgb [OPTIONS] COMMAND [ARGS]...
+signalrgb [OPTIONS] COMMAND [SUBCOMMAND] [ARGS]...
 ```
 
 You can always use the `--help` option to get more information about available commands and options:
@@ -18,66 +18,106 @@ signalrgb --help
 
 ## Available Commands
 
-### List Effects
+### Effect Commands
+
+#### List Effects
 
 To list all available lighting effects:
 
 ```bash
-signalrgb list-effects
+signalrgb effect list
 ```
 
-### Get Effect Details
+#### Get Effect Details
 
 To get detailed information about a specific effect:
 
 ```bash
-signalrgb get-effect "Effect Name"
+signalrgb effect "Effect Name"
 ```
 
 Replace "Effect Name" with the name of the effect you want to inspect.
 
-### Apply an Effect
+#### Apply an Effect
 
 To apply a specific effect:
 
 ```bash
-signalrgb apply-effect "Effect Name"
+signalrgb effect apply "Effect Name"
 ```
 
-### Get Current Effect
+#### Get Current Effect
 
 To see which effect is currently active:
 
 ```bash
-signalrgb current-effect
+signalrgb effect
 ```
 
-### Control Brightness
+### Preset Commands
+
+#### List Presets
+
+To list presets for the current effect:
+
+```bash
+signalrgb preset list
+```
+
+#### Apply a Preset
+
+To apply a preset to the current effect:
+
+```bash
+signalrgb preset apply "Preset Name"
+```
+
+### Layout Commands
+
+#### List Layouts
+
+To list all available layouts:
+
+```bash
+signalrgb layout list
+```
+
+#### Set Current Layout
+
+To set the current layout:
+
+```bash
+signalrgb layout set "Layout Name"
+```
+
+### Canvas Commands
+
+#### Control Brightness
 
 To set the brightness level (0-100):
 
 ```bash
-signalrgb brightness 75
+signalrgb canvas brightness 75
 ```
 
 To get the current brightness level:
 
 ```bash
-signalrgb brightness
+signalrgb canvas brightness
 ```
 
-### Enable/Disable Canvas
+#### Enable/Disable Canvas
 
 To enable the canvas:
 
 ```bash
-signalrgb enable
+signalrgb canvas enable
 ```
 
 To disable the canvas:
 
 ```bash
-signalrgb disable
+signalrgb canvas disable
 ```
 
 ## Global Options
@@ -85,7 +125,7 @@ signalrgb disable
 You can specify a custom host and port for all commands:
 
 ```bash
-signalrgb --host my-pc.local --port 16038 list-effects
+signalrgb --host my-pc.local --port 16038 effect list
 ```
 
 ## Examples
@@ -95,31 +135,44 @@ Here are some example use cases:
 1. List all effects and pipe the output to `grep` to find a specific effect:
 
    ```bash
-   signalrgb list-effects | grep "Electric Space"
+   signalrgb effect list | grep "Electric Space"
    ```
 
 2. Apply the "Rave Visualizer" effect:
 
    ```bash
-   signalrgb apply-effect "Rave Visualizer"
+   signalrgb effect apply "Rave Visualizer"
    ```
 
 3. Get details of the current effect and save it to a file:
 
    ```bash
-   signalrgb current-effect > current_effect.txt
+   signalrgb effect > current_effect.txt
    ```
 
 4. Set the brightness to 50%:
 
    ```bash
-   signalrgb brightness 50
+   signalrgb canvas brightness 50
    ```
 
 5. Enable the canvas:
 
    ```bash
-   signalrgb enable
+   signalrgb canvas enable
+   ```
+
+6. List and apply a preset:
+
+   ```bash
+   signalrgb preset list
+   signalrgb preset apply "Cool Preset"
+   ```
+
+7. Switch to a different layout:
+
+   ```bash
+   signalrgb layout set "Gaming Setup"
    ```
 
 Remember to refer to the `--help` option for each command to see all available options and arguments.

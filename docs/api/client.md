@@ -28,7 +28,7 @@ The SignalRGB client defines several custom exceptions for error handling:
       show_root_heading: true
       show_source: true
 
-::: signalrgb.client.EffectNotFoundError
+::: signalrgb.client.NotFoundError
     options:
       show_root_heading: true
       show_source: true

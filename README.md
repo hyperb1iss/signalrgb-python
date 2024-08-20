@@ -15,12 +15,13 @@
 ## ✨ Features
 <a name="features"></a>
 
-- 📋 List available lighting effects
+- 📋 List available lighting effects and presets
 - 🔍 Get detailed information about specific effects
-- 🎨 Apply effects to your devices with ease
+- 🎨 Apply effects and presets to your devices with ease
+- 🖼️ Manage and switch between different layouts
 - 🔆 Control brightness levels
 - 🔌 Enable or disable the canvas
-- 🖥️ User-friendly command-line interface
+- 🖥️ User-friendly command-line interface with intuitive subcommands
 - 🐍 Python client library for seamless integration into your projects
 - 🔐 Error handling and connection management
 - 🔄 Automatic effect caching for improved performance
@@ -52,38 +53,50 @@ This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-
 
 ### Command-line Interface
 
-signalrgb-python comes with an intuitive command-line interface for easy interaction with your SignalRGB setup.
+signalrgb-python comes with an intuitive command-line interface for easy interaction with your SignalRGB setup. The CLI now uses a subcommand structure for better organization and extensibility.
 
 ```bash
 # List all available effects
-signalrgb list-effects
+signalrgb effect list
 
 # Get details of a specific effect
-signalrgb get-effect "Psychedelic Dream"
+signalrgb effect "Psychedelic Dream"
 
 # Apply an effect
-signalrgb apply-effect "Rave Visualizer"
+signalrgb effect apply "Rave Visualizer"
+
+# List presets for the current effect
+signalrgb preset list
+
+# Apply a preset to the current effect
+signalrgb preset apply "My Fancy Preset"
+
+# List available layouts
+signalrgb layout list
+
+# Set the current layout
+signalrgb layout set "My Gaming Layout"
 
 # Get the current effect
-signalrgb current-effect
+signalrgb effect
 
 # Set brightness level (0-100)
-signalrgb brightness 75
+signalrgb canvas brightness 75
 
 # Get current brightness level
-signalrgb brightness
+signalrgb canvas brightness
 
 # Enable the canvas
-signalrgb enable
+signalrgb canvas enable
 
 # Disable the canvas
-signalrgb disable
+signalrgb canvas disable
 ```
 
 You can also specify a custom host and port:
 
 ```bash
-signalrgb --host hyperia.home --port 16038 list-effects
+signalrgb --host hyperia.home --port 16038 effect list
 ```
 
 For a full list of available commands and options, use:
@@ -110,9 +123,22 @@ for effect in effects:
 # Apply an effect
 client.apply_effect_by_name("Rain")
 
-# Get current effect
+# List presets for the current effect
 current_effect = client.get_current_effect()
-print(f"Current effect: {current_effect.attributes.name}")
+presets = client.get_effect_presets(current_effect.id)
+for preset in presets:
+    print(f"Preset: {preset.id}")
+
+# Apply a preset
+client.apply_effect_preset(current_effect.id, "Cool Preset")
+
+# Get available layouts
+layouts = client.get_layouts()
+for layout in layouts:
+    print(f"Layout: {layout.id}")
+
+# Set the current layout
+client.current_layout = "Gaming Setup"
 
 # Control brightness
 client.brightness = 50
@@ -128,7 +154,7 @@ print(f"Canvas enabled: {client.enabled}")
 The client provides custom exceptions for different types of errors:
 
 ```python
-from signalrgb.client import SignalRGBClient, ConnectionError, APIError, EffectNotFoundError
+from signalrgb.client import SignalRGBClient, ConnectionError, APIError, NotFoundError
 
 client = SignalRGBClient()
 
@@ -136,7 +162,7 @@ try:
     client.apply_effect_by_name("Non-existent Effect")
 except ConnectionError as e:
     print(f"Connection failed: {e}")
-except EffectNotFoundError as e:
+except NotFoundError as e:
     print(f"Effect not found: {e}")
 except APIError as e:
     print(f"API error occurred: {e}")
