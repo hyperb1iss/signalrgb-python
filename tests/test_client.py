@@ -738,15 +738,15 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         """Test getting presets for a specific effect."""
         mock_response = Mock()
         presets = [
-            EffectPreset(id="preset1", type="preset", name="Preset 1"),
-            EffectPreset(id="preset2", type="preset", name="Preset 2"),
+            EffectPreset(id="preset1", type="preset"),
+            EffectPreset(id="preset2", type="preset"),
         ]
         response = EffectPresetListResponse(
             api_version="1.0",
             id=1,
             method="GET",
             status="ok",
-            data=EffectPresetList(items=presets),
+            data=EffectPresetList(id="effect1", items=presets),
         )
         mock_response.json.return_value = response.to_dict()
         mock_request.return_value = mock_response
@@ -755,8 +755,8 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0].id, "preset1")
         self.assertEqual(result[1].id, "preset2")
-        self.assertEqual(result[0].name, "Preset 1")
-        self.assertEqual(result[1].name, "Preset 2")
+        self.assertEqual(result[0].type, "preset")
+        self.assertEqual(result[1].type, "preset")
 
     @patch("requests.Session.request")
     def test_apply_effect_preset(self, mock_request):
