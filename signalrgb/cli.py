@@ -89,13 +89,13 @@ def generate_gradient_markup(colors: List[str], steps: int) -> List[str]:
     return gradient
 
 
-def apply_gradient_to_text(text: str, colors: List[str], line_offset: int = 0) -> Text:
+def apply_gradient_to_text(text: str, colors: List[str], line_offset: int = 0) -> str:
     # Apply Rich's color styles for each character with a diagonal offset
     gradient = generate_gradient_markup(colors, len(text))
-    styled_text = Text()
+    styled_text = ""
     for i, char in enumerate(text):
         color = gradient[(i + line_offset) % len(gradient)]
-        styled_text.append(char, style=color)
+        styled_text += f"[{color}]{char}[/]"
     return styled_text
 
 
@@ -166,25 +166,44 @@ def create_effect_panel(effect, title: str) -> Panel:
 
 
 def create_param_table(parameters):
-    json_str = json.dumps(parameters, indent=2)
-    syntax = Syntax(
-        json_str,
-        "json",
-        theme="monokai" if not FULL_RGB_MODE else None,
-        line_numbers=True,
+    headers = ["Parameter", "Value"]
+    rows = [
+        [key, str(value) if not isinstance(value, bool) else ("Yes" if value else "No")]
+        for key, value in parameters.items()
+    ]
+
+    table = create_colorful_table(
+        title=f"{ICONS['effect']} Effect Parameters", headers=headers, rows=rows
     )
-    if FULL_RGB_MODE:
-        syntax = Text(
-            "\n".join(
-                apply_gradient_to_text(line, GRADIENT_COLORS, line_offset=i)
-                for i, line in enumerate(syntax.splitlines())
-            )
-        )
-    return Panel(
-        syntax,
-        title=color_gradient("Effect Parameters", GRADIENT_COLORS),
+
+    return table
+
+
+# Ensure that create_colorful_table is defined as follows:
+def create_colorful_table(title: str, headers: List[str], rows: List[List[str]]):
+    table = Table(
+        title=color_gradient(title, GRADIENT_COLORS),
+        box=box.ROUNDED,
+        show_header=True,
+        header_style="bold magenta",
         border_style=BORDER_COLOR,
+        expand=True,
     )
+
+    for header in headers:
+        table.add_column(header)
+
+    for i, row in enumerate(rows):
+        styled_row = []
+        for cell in row:
+            if FULL_RGB_MODE:
+                cell_text = apply_gradient_to_text(cell, GRADIENT_COLORS, line_offset=i)
+            else:
+                cell_text = Text(cell)
+            styled_row.append(cell_text)
+        table.add_row(*styled_row)
+
+    return table
 
 
 def create_colorful_table(title: str, headers: List[str], rows: List[List[str]]):
