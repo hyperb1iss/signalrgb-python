@@ -517,7 +517,7 @@ def preset(ctx: typer.Context, name: Optional[str] = None):
         if name:
             preset = next((p for p in presets if p.id == name), None)
             if preset:
-                content = f"Preset: {preset.id}\nType: {preset.type}"
+                content = f"Preset: {preset.id}"
                 if FULL_RGB_MODE:
                     content = apply_gradient_to_text(content, GRADIENT_COLORS)
                 console.print(
@@ -531,7 +531,6 @@ def preset(ctx: typer.Context, name: Optional[str] = None):
                     )
                 )
 
-
 @preset_app.command(name="list")
 @handle_exceptions
 def list_presets(ctx: typer.Context):
@@ -539,10 +538,10 @@ def list_presets(ctx: typer.Context):
     client = get_client(ctx)
     current_effect = client.get_current_effect()
     presets = client.get_effect_presets(current_effect.id)
-    rows = [[p.id, p.type] for p in presets]
+    rows = [[p.id] for p in presets]
     table = create_colorful_table(
         f"{ICONS['preset']} Presets for {current_effect.attributes.name}",
-        ["ID", "Type"],
+        ["Preset"],
         rows,
     )
     console.print(table)
@@ -576,7 +575,7 @@ def layout(ctx: typer.Context, name: Optional[str] = None):
             layouts = client.get_layouts()
             layout = next((ll for ll in layouts if ll.id == name), None)
             if layout:
-                content = f"Layout: {layout.id}\nType: {layout.type}"
+                content = f"Layout: {layout.id}"
                 if FULL_RGB_MODE:
                     content = apply_gradient_to_text(content, GRADIENT_COLORS)
                 console.print(
@@ -596,9 +595,7 @@ def layout(ctx: typer.Context, name: Optional[str] = None):
                 raise typer.Exit(code=1)
         else:
             current_layout = client.current_layout
-            content = (
-                f"Current Layout: {current_layout.id}\n" f"Type: {current_layout.type}"
-            )
+            content = f"Current Layout: {current_layout.id}"
             if FULL_RGB_MODE:
                 content = apply_gradient_to_text(content, GRADIENT_COLORS)
             console.print(
@@ -612,16 +609,15 @@ def layout(ctx: typer.Context, name: Optional[str] = None):
                 )
             )
 
-
 @layout_app.command(name="list")
 @handle_exceptions
 def list_layouts(ctx: typer.Context):
     """List all available layouts."""
     client = get_client(ctx)
     layouts = client.get_layouts()
-    rows = [[layout.id, layout.type] for layout in layouts]
+    rows = [[layout.id] for layout in layouts]
     table = create_colorful_table(
-        f"{ICONS['layout']} Available Layouts", ["ID", "Type"], rows
+        f"{ICONS['layout']} Available Layouts", ["Layout ID"], rows
     )
     console.print(table)
 
