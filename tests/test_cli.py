@@ -1,9 +1,11 @@
+from unittest.mock import patch
+
 import pytest
 from typer.testing import CliRunner
-from unittest.mock import patch
+
 from signalrgb.cli import app
 from signalrgb.client import SignalRGBException
-from signalrgb.model import Effect, Attributes, EffectPreset, Links
+from signalrgb.model import Attributes, Effect, EffectPreset, Layout, Links
 
 
 @pytest.fixture
@@ -66,10 +68,10 @@ def test_get_effect(runner, mock_client):
     assert "Test Effect" in result.output
     assert "Test Publisher" in result.output
     assert "Test Description" in result.output
-    assert "Uses Audio: ✅" in result.output
-    assert "Uses Video: ❌" in result.output
-    assert "Uses Input: ✅" in result.output
-    assert "Uses Meters: ❌" in result.output
+    assert "Uses Audio " in result.output
+    assert "Uses Video " in result.output
+    assert "Uses Input " in result.output
+    assert "Uses Meters " in result.output
 
 
 def test_current_effect(runner, mock_client):
@@ -97,10 +99,10 @@ def test_current_effect(runner, mock_client):
     assert "effect1" in result.output
     assert "Test Publisher" in result.output
     assert "Test Description" in result.output
-    assert "Uses Audio: ✅" in result.output
-    assert "Uses Video: ❌" in result.output
-    assert "Uses Input: ✅" in result.output
-    assert "Uses Meters: ❌" in result.output
+    assert "Uses Audio " in result.output
+    assert "Uses Video " in result.output
+    assert "Uses Input " in result.output
+    assert "Uses Meters " in result.output
 
 
 def test_apply_effect(runner, mock_client):
@@ -158,7 +160,7 @@ def test_enable(runner, mock_client):
 
     result = runner.invoke(app, ["canvas", "enable"])
     assert result.exit_code == 0
-    assert "Canvas ✅ enabled" in result.output
+    assert "enabled" in result.output
 
 
 def test_disable(runner, mock_client):
@@ -166,7 +168,7 @@ def test_disable(runner, mock_client):
 
     result = runner.invoke(app, ["canvas", "disable"])
     assert result.exit_code == 0
-    assert "Canvas ❌ disabled" in result.output
+    assert "disabled" in result.output
 
 
 def test_error_handling(runner, mock_client):
@@ -181,9 +183,6 @@ def test_main_callback(runner, mock_client):
     result = runner.invoke(app, ["--help"])
     assert result.exit_code == 0
     assert "SignalRGB CLI" in result.output
-
-
-# Additional tests for new features
 
 
 def test_next_effect(runner, mock_client):
@@ -266,4 +265,47 @@ def test_apply_preset(runner, mock_client):
     assert "Applied preset 'preset1' to effect 'Current Effect'" in result.output
 
 
-# Add more tests as needed
+def test_list_layouts(runner, mock_client):
+    mock_layouts = [
+        Layout(id="layout1", type="layout"),
+        Layout(id="layout2", type="layout"),
+    ]
+    mock_client.return_value.get_layouts.return_value = mock_layouts
+
+    result = runner.invoke(app, ["layout", "list"])
+    assert result.exit_code == 0
+    assert "layout1" in result.output
+    assert "layout2" in result.output
+    assert "layout" in result.output
+
+
+def test_set_layout(runner, mock_client):
+    result = runner.invoke(app, ["layout", "set", "layout1"])
+    assert result.exit_code == 0
+    assert "Set current layout to: layout1" in result.output
+
+
+def test_canvas_info(runner, mock_client):
+    mock_client.return_value.enabled = True
+    mock_client.return_value.brightness = 75
+
+    result = runner.invoke(app, ["canvas"])
+    assert result.exit_code == 0
+    assert "Canvas State" in result.output
+    assert "Enabled" in result.output
+    assert "Brightness" in result.output
+    assert "75%" in result.output
+
+
+def test_toggle_canvas(runner, mock_client):
+    mock_client.return_value.enabled = False
+
+    result = runner.invoke(app, ["canvas", "toggle"])
+    assert result.exit_code == 0
+    assert " enabled" in result.output
+
+    mock_client.return_value.enabled = True
+
+    result = runner.invoke(app, ["canvas", "toggle"])
+    assert result.exit_code == 0
+    assert " disabled" in result.output

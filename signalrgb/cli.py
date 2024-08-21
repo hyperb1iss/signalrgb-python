@@ -83,6 +83,9 @@ NORMAL_PALETTE = {
     "parameter": "orchid",
     "parameter_value": "medium_spring_green",
     "border": "bright_blue",
+    "accent": "bright_green",
+    "info": "bright_blue",
+    "error": "bright_red",
 }
 
 # Purple color for table borders
@@ -616,7 +619,7 @@ def list_layouts(ctx: typer.Context):
     """List all available layouts."""
     client = get_client(ctx)
     layouts = client.get_layouts()
-    rows = [[ll.id, ll.type] for ll in layouts]
+    rows = [[layout.id, layout.type] for layout in layouts]
     table = create_colorful_table(
         f"{ICONS['layout']} Available Layouts", ["ID", "Type"], rows
     )
