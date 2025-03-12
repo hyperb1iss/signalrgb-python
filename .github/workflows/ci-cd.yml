@@ -16,7 +16,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12'
+        python-version: '3.11'
     - name: Set up uv
       uses: astral-sh/setup-uv@v5
       with:
@@ -43,14 +43,14 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12'
+        python-version: '3.11'
     - name: Set up uv
       uses: astral-sh/setup-uv@v5
       with:
         version: "0.6.3"
     - name: Install dependencies
       run: |
-        uv sync --groups dev
+        uv sync
     - name: Build documentation
       run: uv run mkdocs build
     - name: Upload documentation
@@ -101,14 +101,14 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12'
+        python-version: '3.11'
     - name: Set up uv
       uses: astral-sh/setup-uv@v5
       with:
         version: "0.6.3"
     - name: Install dependencies
       run: |
-        uv sync --groups dev
+        uv sync
         uv pip install build twine
     - name: Build package
       run: uv run python -m build
