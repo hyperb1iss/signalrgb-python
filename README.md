@@ -35,10 +35,10 @@ You can install signalrgb-python using pip:
 pip install signalrgb
 ```
 
-Or if you prefer to use Poetry:
+Or if you prefer to use [uv](https://github.com/astral-sh/uv):
 
 ```bash
-poetry add signalrgb
+uv add signalrgb
 ```
 
 ### Prerequisites
@@ -183,9 +183,9 @@ To set up the development environment:
    git clone https://github.com/hyperb1iss/signalrgb-python.git
    cd signalrgb-python
    ```
-2. Install Poetry if you haven't already: `pip install poetry`
-3. Install dependencies: `poetry install`
-4. Activate the virtual environment: `poetry shell`
+2. Install [uv](https://github.com/astral-sh/uv) if you haven't already
+3. Install dependencies: `uv sync`
+4. Activate a virtual environment if needed: `uv venv .venv && . .venv/bin/activate`
 
 To run tests:
 
