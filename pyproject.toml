@@ -3,7 +3,7 @@ name = "signalrgb"
 version = "0.9.7"
 description = "A Python client for SignalRGB"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Stefanie Jane", email = "stef@hyperbliss.tech" }]
 dependencies = [
@@ -25,6 +25,7 @@ dev = [
     "mkdocstrings[python]>=0.29.0",
     "mypy>=1.15.0",
     "pytest-cov>=6.0.0",
+    "types-requests>=2.31.0.6",
     "types-setuptools>=75.8.2.20250305",
     "semver>=3.0.4",
 ]
@@ -63,7 +64,7 @@ exclude_lines = [
 
 # Type checking configuration
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.11"
 # Basic type checking
 warn_return_any = true
 warn_unused_configs = true
@@ -110,7 +111,7 @@ check_untyped_defs = false
 [tool.ruff]
 # General settings
 line-length = 120
-target-version = "py39"
+target-version = "py311"
 src = ["signalrgb", "tests"]
 extend-exclude = [".venv", "docs"]
 
@@ -241,7 +242,7 @@ docstring-code-line-length = 80
 
 # Pylint configuration - only for things Ruff can't handle
 [tool.pylint]
-py-version = "3.9"
+py-version = "3.11"
 jobs = 2
 max-line-length = 120
 disable = [
@@ -271,6 +272,7 @@ disable = [
     "wrong-import-position",
     "import-outside-toplevel",
     "too-many-positional-arguments",
+    "redefined-builtin", # ConnectionError shadows requests.ConnectionError, it's fine
     "fixme",
 
     # Additional suppressions for practicality

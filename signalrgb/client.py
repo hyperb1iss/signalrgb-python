@@ -7,10 +7,10 @@ allowing users to retrieve, apply, and manage lighting effects and layouts.
 
 from __future__ import annotations
 
-import os
+from collections.abc import Iterator
 from contextlib import contextmanager
-from functools import lru_cache
-from typing import Any, Dict, Iterator, List, Optional
+import os
+from typing import Any
 
 import requests
 from requests.exceptions import RequestException, Timeout
@@ -36,7 +36,7 @@ LIGHTING_V1 = "/api/v1/lighting"
 SCENES_V1 = "/api/v1/scenes"
 
 
-class SignalRGBException(Exception):
+class SignalRGBError(Exception):
     """Base exception for SignalRGB errors.
 
     This exception is raised when a general error occurs during API interactions.
@@ -46,45 +46,51 @@ class SignalRGBException(Exception):
         error (Optional[Error]): The Error object containing additional error details.
     """
 
-    def __init__(self, message: str, error: Optional[Error] = None):
+    def __init__(self, message: str, error: Error | None = None):
         super().__init__(message)
         self.error = error
 
     @property
-    def code(self) -> Optional[str]:
+    def code(self) -> str | None:
         """Optional[str]: The error code, if available."""
         return self.error.code if self.error else None
 
     @property
-    def title(self) -> Optional[str]:
+    def title(self) -> str | None:
         """Optional[str]: The error title, if available."""
         return self.error.title if self.error else None
 
     @property
-    def detail(self) -> Optional[str]:
+    def detail(self) -> str | None:
         """Optional[str]: The detailed error message, if available."""
         return self.error.detail if self.error else None
 
 
-class ConnectionError(SignalRGBException):
+class ConnectionError(SignalRGBError):
     """Exception raised for connection errors.
 
     This exception is raised when there's an issue connecting to the SignalRGB API.
     """
 
 
-class APIError(SignalRGBException):
+class APIError(SignalRGBError):
     """Exception raised for API errors.
 
     This exception is raised when the API returns an error response.
     """
 
 
-class NotFoundError(SignalRGBException):
+class NotFoundError(SignalRGBError):
     """Exception raised when an item is not found.
 
     This exception is raised when trying to retrieve or apply a non-existent effect, preset, or layout.
     """
+
+
+# For backward compatibility
+SignalRGBException = SignalRGBError
+# For backward compatibility
+SignalConnectionError = ConnectionError
 
 
 class SignalRGBClient:
@@ -94,9 +100,7 @@ class SignalRGBClient:
     to retrieve, apply, and manage lighting effects and layouts.
     """
 
-    def __init__(
-        self, host: str = "localhost", port: int = DEFAULT_PORT, timeout: float = 10.0
-    ):
+    def __init__(self, host: str = "localhost", port: int = DEFAULT_PORT, timeout: float = 10.0):
         """Initialize the SignalRGBClient.
 
         Args:
@@ -111,11 +115,10 @@ class SignalRGBClient:
         self._base_url = f"http://{host}:{port}"
         self._session = requests.Session()
         self._timeout = timeout
+        self._effects_cache: list[Effect] | None = None
 
     @contextmanager
-    def _request_context(
-        self, method: str, endpoint: str, **kwargs: Any
-    ) -> Iterator[Dict[str, Any]]:
+    def _request_context(self, method: str, endpoint: str, **kwargs: Any) -> Iterator[dict[str, Any]]:
         """Context manager for making API requests.
 
         This method handles common exception cases and debug logging.
@@ -131,52 +134,52 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
         """
         url = f"{self._base_url}{endpoint}"
         debug = os.getenv("SIGNALRGB_DEBUG", "0") == "1"
 
         if debug:
-            print(f"DEBUG: Request URL: {url}")
-            print(f"DEBUG: Request Method: {method}")
-            print(f"DEBUG: Request Headers: {kwargs.get('headers', {})}")
-            print(f"DEBUG: Request Data: {kwargs.get('json', {})}")
+            pass
 
         try:
-            response = self._session.request(
-                method, url, timeout=self._timeout, **kwargs
-            )
+            response = self._session.request(method, url, timeout=self._timeout, **kwargs)
             response.raise_for_status()
 
             if debug:
-                print(f"DEBUG: Response Status Code: {response.status_code}")
-                print(f"DEBUG: Response Headers: {response.headers}")
-                print(f"DEBUG: Response Content: {response.text}")
+                pass
 
             yield response.json()
         except requests.ConnectionError as e:
-            raise ConnectionError(
-                f"Failed to connect to SignalRGB API: {e}", Error(title=str(e))
-            )
-        except Timeout:
-            raise ConnectionError("Request timed out", Error(title="Request Timeout"))
+            raise ConnectionError(f"Failed to connect to SignalRGB API: {e}", Error(title=str(e))) from e
+        except Timeout as e:
+            raise ConnectionError("Request timed out", Error(title="Request Timeout")) from e
         except requests.HTTPError as e:
             if e.response is not None:
                 error_data = e.response.json().get("errors", [{}])[0]
                 error = Error.from_dict(error_data)
-                raise APIError(f"HTTP error occurred: {e}", error)
-            raise APIError(f"HTTP error occurred: {e}", Error(title=str(e)))
+                raise APIError(f"HTTP error occurred: {e}", error) from e
+            raise APIError(f"HTTP error occurred: {e}", Error(title=str(e))) from e
         except RequestException as e:
-            raise APIError(
-                f"An error occurred while making the request: {e}", Error(title=str(e))
-            )
-        except APIError as e:
-            raise e
-        except Exception as e:
-            raise SignalRGBException(f"An unexpected error occurred: {e}")
+            raise APIError(f"An error occurred while making the request: {e}", Error(title=str(e))) from e
+        except (ValueError, TypeError) as e:
+            # More specific exceptions instead of catching generic Exception
+            raise SignalRGBError(f"An unexpected error occurred: {e}") from e
 
-    @lru_cache(maxsize=1)
-    def get_effects(self) -> List[Effect]:
+    # Using a standard method with cached property pattern instead of lru_cache on method
+    def _get_effects_cached(self) -> list[Effect]:
+        """Internal method to get effects with caching."""
+        if self._effects_cache is None:
+            with self._request_context("GET", f"{LIGHTING_V1}/effects") as data:
+                response = EffectListResponse.from_dict(data)
+                self._ensure_response_ok(response)
+                effects = response.data
+                if effects is None or effects.items is None:
+                    raise APIError("No effects data in the response")
+                self._effects_cache = effects.items
+        return self._effects_cache
+
+    def get_effects(self) -> list[Effect]:
         """List available effects.
 
         Returns:
@@ -185,20 +188,14 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an error retrieving the effects.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
             >>> effects = client.get_effects()
             >>> print(f"Found {len(effects)} effects")
         """
-        with self._request_context("GET", f"{LIGHTING_V1}/effects") as data:
-            response = EffectListResponse.from_dict(data)
-            self._ensure_response_ok(response)
-            effects = response.data
-            if effects is None or effects.items is None:
-                raise APIError("No effects data in the response")
-            return effects.items
+        return self._get_effects_cached()
 
     def get_effect(self, effect_id: str) -> Effect:
         """Get details of a specific effect.
@@ -213,7 +210,7 @@ class SignalRGBClient:
             NotFoundError: If the effect with the given ID is not found.
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -221,9 +218,7 @@ class SignalRGBClient:
             >>> print(f"Effect name: {effect.attributes.name}")
         """
         try:
-            with self._request_context(
-                "GET", f"{LIGHTING_V1}/effects/{effect_id}"
-            ) as data:
+            with self._request_context("GET", f"{LIGHTING_V1}/effects/{effect_id}") as data:
                 response = EffectDetailsResponse.from_dict(data)
                 self._ensure_response_ok(response)
                 if response.data is None:
@@ -231,7 +226,7 @@ class SignalRGBClient:
                 return response.data
         except APIError as e:
             if e.error and e.error.code == "not_found":
-                raise NotFoundError(f"Effect with ID '{effect_id}' not found", e.error)
+                raise NotFoundError(f"Effect with ID '{effect_id}' not found", e.error) from e
             raise
 
     def get_effect_by_name(self, effect_name: str) -> Effect:
@@ -247,7 +242,7 @@ class SignalRGBClient:
             NotFoundError: If the effect with the given name is not found.
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -283,7 +278,7 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -304,7 +299,7 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
         """
         with self._request_context("GET", LIGHTING_V1) as data:
             response = CurrentStateResponse.from_dict(data)
@@ -323,7 +318,7 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -352,7 +347,7 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -364,9 +359,7 @@ class SignalRGBClient:
 
     @enabled.setter
     def enabled(self, value: bool) -> None:
-        with self._request_context(
-            "PATCH", f"{LIGHTING_V1}/enabled", json={"enabled": value}
-        ):
+        with self._request_context("PATCH", f"{LIGHTING_V1}/enabled", json={"enabled": value}):
             pass
 
     def apply_effect(self, effect_id: str) -> None:
@@ -378,16 +371,14 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
             >>> client.apply_effect("example_effect_id")
             >>> print("Effect applied successfully")
         """
-        with self._request_context(
-            "POST", f"{LIGHTING_V1}/effects/{effect_id}/apply"
-        ) as data:
+        with self._request_context("POST", f"{LIGHTING_V1}/effects/{effect_id}/apply") as data:
             response = SignalRGBResponse.from_dict(data)
             self._ensure_response_ok(response)
 
@@ -401,7 +392,7 @@ class SignalRGBClient:
             NotFoundError: If the effect with the given name is not found.
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -409,10 +400,15 @@ class SignalRGBClient:
             >>> print("Effect applied successfully")
         """
         effect = self.get_effect_by_name(effect_name)
-        with self._request_context("POST", effect.links.apply):
-            pass
+        apply_url = effect.links.apply
+        if apply_url is None:
+            # Fallback if apply link is missing
+            self.apply_effect(effect.id)
+        else:
+            with self._request_context("POST", apply_url):
+                pass
 
-    def get_effect_presets(self, effect_id: str) -> List[EffectPreset]:
+    def get_effect_presets(self, effect_id: str) -> list[EffectPreset]:
         """Get presets for a specific effect.
 
         Args:
@@ -425,7 +421,7 @@ class SignalRGBClient:
             NotFoundError: If the effect with the given ID is not found.
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -434,9 +430,7 @@ class SignalRGBClient:
             ...     print(f"Preset ID: {preset.id}, Name: {preset.name}")
         """
         try:
-            with self._request_context(
-                "GET", f"{LIGHTING_V1}/effects/{effect_id}/presets"
-            ) as data:
+            with self._request_context("GET", f"{LIGHTING_V1}/effects/{effect_id}/presets") as data:
                 response = EffectPresetListResponse.from_dict(data)
                 self._ensure_response_ok(response)
                 if response.data is None:
@@ -444,7 +438,7 @@ class SignalRGBClient:
                 return response.data.items
         except APIError as e:
             if e.error and e.error.code == "not_found":
-                raise NotFoundError(f"Effect with ID '{effect_id}' not found", e.error)
+                raise NotFoundError(f"Effect with ID '{effect_id}' not found", e.error) from e
             raise
 
     def apply_effect_preset(self, effect_id: str, preset_id: str) -> None:
@@ -458,7 +452,7 @@ class SignalRGBClient:
             NotFoundError: If the effect with the given ID is not found.
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -478,10 +472,10 @@ class SignalRGBClient:
                 raise NotFoundError(
                     f"Effect with ID '{effect_id}' or preset '{preset_id}' not found",
                     e.error,
-                )
+                ) from e
             raise
 
-    def get_next_effect(self) -> Optional[Effect]:
+    def get_next_effect(self) -> Effect | None:
         """Get information about the next effect in history.
 
         Returns:
@@ -490,7 +484,7 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -519,7 +513,7 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -533,7 +527,7 @@ class SignalRGBClient:
                 raise APIError("No effect data in the response")
             return response.data
 
-    def get_previous_effect(self) -> Optional[Effect]:
+    def get_previous_effect(self) -> Effect | None:
         """Get information about the previous effect in history.
 
         Returns:
@@ -542,7 +536,7 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -571,7 +565,7 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -594,7 +588,7 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -618,7 +612,7 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -642,16 +636,14 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
             >>> client.current_layout = "My Layout 1"
             >>> print(f"New current layout: {client.current_layout.id}")
         """
-        with self._request_context(
-            "PATCH", f"{SCENES_V1}/current_layout", json={"layout": layout_id}
-        ) as data:
+        with self._request_context("PATCH", f"{SCENES_V1}/current_layout", json={"layout": layout_id}) as data:
             response = CurrentLayoutResponse.from_dict(data)
             self._ensure_response_ok(response)
             if response.data is None or response.data.current_layout is None:
@@ -659,7 +651,7 @@ class SignalRGBClient:
             if response.data.current_layout.id != layout_id:
                 raise APIError(f"Failed to set layout to '{layout_id}'")
 
-    def get_layouts(self) -> List[Layout]:
+    def get_layouts(self) -> list[Layout]:
         """Get all available layouts.
 
         Returns:
@@ -668,7 +660,7 @@ class SignalRGBClient:
         Raises:
             ConnectionError: If there's a connection error.
             APIError: If there's an API error.
-            SignalRGBException: For any other unexpected errors.
+            SignalRGBError: For any other unexpected errors.
 
         Example:
             >>> client = SignalRGBClient()
@@ -708,7 +700,7 @@ class SignalRGBClient:
             >>> client.refresh_effects()
             >>> fresh_effects = client.get_effects()
         """
-        self.get_effects.cache_clear()
+        self._effects_cache = None
 
     def __repr__(self) -> str:
         return f"SignalRGBClient(base_url='{self._base_url}')"

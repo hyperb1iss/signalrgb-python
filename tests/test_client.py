@@ -1,35 +1,36 @@
 import unittest
 from unittest.mock import Mock, patch
 
-from requests.exceptions import ConnectionError as RequestsConnectionError
-from requests.exceptions import Timeout
+import pytest
 import requests
+from requests.exceptions import ConnectionError as RequestsConnectionError, Timeout
 
 from signalrgb.client import (
     APIError,
     ConnectionError,
-    SignalRGBClient,
     NotFoundError,
+    SignalRGBClient,
+    SignalRGBError,
     SignalRGBException,
 )
 from signalrgb.model import (
+    Attributes,
     CurrentLayoutHolder,
     CurrentLayoutResponse,
+    CurrentState,
+    CurrentStateHolder,
     Effect,
-    Attributes,
+    EffectDetailsResponse,
+    EffectList,
+    EffectListResponse,
     EffectPreset,
     EffectPresetList,
     EffectPresetListResponse,
-    LayoutListResponse,
-    Links,
-    CurrentStateHolder,
-    CurrentState,
-    SignalRGBResponse,
-    EffectDetailsResponse,
-    EffectListResponse,
-    EffectList,
     Error,
     Layout,
+    LayoutListResponse,
+    Links,
+    SignalRGBResponse,
 )
 
 
@@ -42,13 +43,13 @@ class BaseSignalRGBClientTest(unittest.TestCase):
 
     def tearDown(self):
         """Clean up after each test."""
-        pass
 
     def assert_request_called_with(self, mock_request, method, url, **kwargs):
         """Helper method to assert that a request was called with specific parameters."""
         mock_request.assert_called_with(method, url, timeout=10.0, **kwargs)
 
 
+# pylint: disable=too-many-public-methods
 class TestSignalRGBClient(BaseSignalRGBClientTest):
     """Tests for the SignalRGBClient class."""
 
@@ -81,9 +82,9 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         effects = self.client.get_effects()
-        self.assertEqual(len(effects), 2)
-        self.assertEqual(effects[0].id, "effect1")
-        self.assertEqual(effects[1].id, "effect2")
+        assert len(effects) == 2
+        assert effects[0].id == "effect1"
+        assert effects[1].id == "effect2"
 
     @patch("requests.Session.request")
     def test_get_effect(self, mock_request):
@@ -106,8 +107,8 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         effect = self.client.get_effect("effect1")
-        self.assertEqual(effect.id, "effect1")
-        self.assertEqual(effect.attributes.name, "Effect 1")
+        assert effect.id == "effect1"
+        assert effect.attributes.name == "Effect 1"
 
     @patch("requests.Session.request")
     def test_get_effect_by_name(self, mock_request):
@@ -152,17 +153,15 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         ]
 
         effect = self.client.get_effect_by_name("Test Effect 1")
-        self.assertEqual(effect.id, "effect1")
-        self.assertEqual(effect.attributes.name, "Test Effect 1")
+        assert effect.id == "effect1"
+        assert effect.attributes.name == "Test Effect 1"
 
     @patch("requests.Session.request")
     def test_get_current_effect(self, mock_request):
         """Test getting the current effect."""
         mock_response_current_state = Mock()
         current_state = CurrentStateHolder(
-            attributes=CurrentState(
-                name="Current Effect", enabled=True, global_brightness=50
-            ),
+            attributes=CurrentState(name="Current Effect", enabled=True, global_brightness=50),
             id="current_state",
             links=Links(),
             type="current_state",
@@ -198,8 +197,8 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         ]
 
         effect = self.client.get_current_effect()
-        self.assertEqual(effect.id, "current_state")
-        self.assertEqual(effect.attributes.name, "Current Effect")
+        assert effect.id == "current_state"
+        assert effect.attributes.name == "Current Effect"
 
     @patch("requests.Session.request")
     def test_apply_effect(self, mock_request):
@@ -275,41 +274,39 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
 
         self.client.apply_effect_by_name("Test Effect 1")
 
-        self.assertEqual(mock_request.call_count, 3)
+        assert mock_request.call_count == 3
 
-        self.assert_request_called_with(
-            mock_request, "POST", "http://testhost:12345/api/v1/effects/effect1/apply"
-        )
+        self.assert_request_called_with(mock_request, "POST", "http://testhost:12345/api/v1/effects/effect1/apply")
 
     @patch("requests.Session.request")
     def test_connection_error(self, mock_request):
         """Test handling connection errors."""
         mock_request.side_effect = RequestsConnectionError("Connection failed")
 
-        with self.assertRaises(ConnectionError) as context:
+        with pytest.raises(ConnectionError) as context:
             self.client.get_effects()
 
-        self.assertIn("Failed to connect to SignalRGB API", str(context.exception))
+        assert "Failed to connect to SignalRGB API" in str(context.value)
 
     @patch("requests.Session.request")
     def test_generic_request_exception(self, mock_request):
         """Test handling generic request exceptions."""
-        mock_request.side_effect = Exception("Unexpected error")
+        mock_request.side_effect = ValueError("Unexpected error")
 
-        with self.assertRaises(SignalRGBException) as context:
+        with pytest.raises(SignalRGBError) as context:
             self.client.get_effects()
 
-        self.assertIn("An unexpected error occurred", str(context.exception))
+        assert "An unexpected error occurred" in str(context.value)
 
     @patch("requests.Session.request")
     def test_timeout_error(self, mock_request):
         """Test handling timeout errors."""
         mock_request.side_effect = Timeout("Request timed out")
 
-        with self.assertRaises(ConnectionError) as context:
+        with pytest.raises(ConnectionError) as context:
             self.client.get_effects()
 
-        self.assertIn("Request timed out", str(context.exception))
+        assert "Request timed out" in str(context.value)
 
     @patch("requests.Session.request")
     def test_brightness(self, mock_request):
@@ -345,7 +342,7 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
             },
         }
         brightness = self.client.brightness
-        self.assertEqual(brightness, 50)
+        assert brightness == 50
 
     @patch("requests.Session.request")
     def test_enabled(self, mock_request):
@@ -381,27 +378,13 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
             },
         }
         enabled = self.client.enabled
-        self.assertTrue(enabled)
+        assert enabled
 
     @patch("requests.Session.request")
     def test_ensure_response_ok(self, mock_request):
-        """Test ensuring the response status is 'ok'."""
+        """Test the ensure_response_ok method."""
+        # Set up the mock response with error status
         mock_response = Mock()
-        response = SignalRGBResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
-
-        with self.client._request_context(
-            "GET", "/api/v1/lighting/effects"
-        ) as response:
-            response = SignalRGBResponse.from_dict(response)
-            self.client._ensure_response_ok(response)
-
         error_response = SignalRGBResponse(
             api_version="1.0",
             id=1,
@@ -410,15 +393,17 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
             errors=[Error(code="404", title="Not Found")],
         )
         mock_response.json.return_value = error_response.to_dict()
+        mock_request.return_value = mock_response
 
-        with self.assertRaises(APIError) as context:
-            with self.client._request_context(
-                "GET", "/api/v1/lighting/effects"
-            ) as response_data:
-                response = SignalRGBResponse.from_dict(response_data)
+        # First get the response data using the context manager
+        with self.client._request_context("GET", "/api/v1/lighting/effects") as response_data:
+            response = SignalRGBResponse.from_dict(response_data)
+
+            # Then test the ensure_response_ok method separately with pytest.raises
+            with pytest.raises(APIError) as context:
                 self.client._ensure_response_ok(response)
 
-        self.assertIn("API returned non-OK status", str(context.exception))
+        assert "API returned non-OK status" in str(context.value)
 
     @patch("requests.Session.request")
     def test_request_success(self, mock_request):
@@ -434,32 +419,34 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_response.raise_for_status.return_value = None
         mock_request.return_value = mock_response
 
-        with self.client._request_context(
-            "GET", "/api/v1/lighting/effects"
-        ) as response:
-            self.assertEqual(response["status"], "ok")
+        with self.client._request_context("GET", "/api/v1/lighting/effects") as response:
+            assert response["status"] == "ok"
 
     @patch("requests.Session.request")
     def test_request_connection_error(self, mock_request):
         """Test handling connection errors in requests."""
         mock_request.side_effect = RequestsConnectionError("Connection failed")
 
-        with self.assertRaises(ConnectionError) as context:
-            with self.client._request_context("GET", "/api/v1/lighting/effects"):
-                pass
+        with (
+            pytest.raises(ConnectionError) as context,
+            self.client._request_context("GET", "/api/v1/lighting/effects") as _,
+        ):
+            pass
 
-        self.assertIn("Failed to connect to SignalRGB API", str(context.exception))
+        assert "Failed to connect to SignalRGB API" in str(context.value)
 
     @patch("requests.Session.request")
     def test_request_timeout(self, mock_request):
         """Test handling timeout errors in requests."""
         mock_request.side_effect = Timeout("Request timed out")
 
-        with self.assertRaises(ConnectionError) as context:
-            with self.client._request_context("GET", "/api/v1/lighting/effects"):
-                pass
+        with (
+            pytest.raises(ConnectionError) as context,
+            self.client._request_context("GET", "/api/v1/lighting/effects") as _,
+        ):
+            pass
 
-        self.assertIn("Request timed out", str(context.exception))
+        assert "Request timed out" in str(context.value)
 
     @patch("requests.Session.request")
     def test_request_http_error(self, mock_request):
@@ -476,22 +463,23 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_response.raise_for_status.side_effect = requests.HTTPError("HTTP error")
         mock_request.return_value = mock_response
 
-        with self.assertRaises(APIError) as context:
-            with self.client._request_context("GET", "/api/v1/lighting/effects"):
-                pass
+        with pytest.raises(APIError) as context, self.client._request_context("GET", "/api/v1/lighting/effects") as _:
+            pass
 
-        self.assertIn("HTTP error occurred", str(context.exception))
+        assert "HTTP error occurred" in str(context.value)
 
     @patch("requests.Session.request")
     def test_request_generic_error(self, mock_request):
         """Test handling generic errors in requests."""
-        mock_request.side_effect = Exception("Unexpected error")
+        mock_request.side_effect = ValueError("Unexpected error")
 
-        with self.assertRaises(SignalRGBException) as context:
-            with self.client._request_context("GET", "/api/v1/lighting/effects"):
-                pass
+        with (
+            pytest.raises(SignalRGBError) as context,
+            self.client._request_context("GET", "/api/v1/lighting/effects") as _,
+        ):
+            pass
 
-        self.assertIn("unexpected error", str(context.exception))
+        assert "unexpected error" in str(context.value)
 
     @patch("requests.Session.request")
     def test_get_effects_error(self, mock_request):
@@ -507,10 +495,10 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_response.json.return_value = error_response.to_dict()
         mock_request.return_value = mock_response
 
-        with self.assertRaises(APIError) as context:
+        with pytest.raises(APIError) as context:
             self.client.get_effects()
 
-        self.assertIn("API returned non-OK status", str(context.exception))
+        assert "API returned non-OK status" in str(context.value)
 
     @patch("requests.Session.request")
     def test_get_effect_error(self, mock_request):
@@ -526,10 +514,10 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_response.json.return_value = error_response.to_dict()
         mock_request.return_value = mock_response
 
-        with self.assertRaises(APIError) as context:
+        with pytest.raises(APIError) as context:
             self.client.get_effect("nonexistent_effect")
 
-        self.assertIn("API returned non-OK status", str(context.exception))
+        assert "API returned non-OK status" in str(context.value)
 
     @patch("requests.Session.request")
     def test_get_effect_by_name_error(self, mock_request):
@@ -546,10 +534,10 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
 
         mock_request.return_value = mock_response_get_effects
 
-        with self.assertRaises(NotFoundError) as context:
+        with pytest.raises(NotFoundError) as context:
             self.client.get_effect_by_name("Nonexistent Effect")
 
-        self.assertIn("Effect 'Nonexistent Effect' not found", str(context.exception))
+        assert "Effect 'Nonexistent Effect' not found" in str(context.value)
 
     @patch("requests.Session.request")
     def test_get_current_effect_error(self, mock_request):
@@ -565,10 +553,10 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_response_current_state.json.return_value = error_response.to_dict()
         mock_request.return_value = mock_response_current_state
 
-        with self.assertRaises(APIError) as context:
+        with pytest.raises(APIError) as context:
             self.client.get_current_effect()
 
-        self.assertIn("API returned non-OK status", str(context.exception))
+        assert "API returned non-OK status" in str(context.value)
 
     @patch("requests.Session.request")
     def test_apply_effect_error(self, mock_request):
@@ -584,10 +572,10 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_response.json.return_value = error_response.to_dict()
         mock_request.return_value = mock_response
 
-        with self.assertRaises(SignalRGBException) as context:
+        with pytest.raises(SignalRGBException) as context:
             self.client.apply_effect("nonexistent_effect")
 
-        self.assertIn("API returned non-OK status", str(context.exception))
+        assert "API returned non-OK status" in str(context.value)
 
     @patch("requests.Session.request")
     def test_apply_effect_by_name_error(self, mock_request):
@@ -604,10 +592,10 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
 
         mock_request.return_value = mock_response_get_effects
 
-        with self.assertRaises(NotFoundError) as context:
+        with pytest.raises(NotFoundError) as context:
             self.client.apply_effect_by_name("Nonexistent Effect")
 
-        self.assertIn("Effect 'Nonexistent Effect' not found", str(context.exception))
+        assert "Effect 'Nonexistent Effect' not found" in str(context.value)
 
     @patch("requests.Session.request")
     def test_refresh_effects(self, mock_request):
@@ -662,32 +650,30 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         ]
 
         effects1 = self.client.get_effects()
-        self.assertEqual(len(effects1), 2)
-        self.assertEqual(effects1[0].id, "effect1")
-        self.assertEqual(effects1[1].id, "effect2")
+        assert len(effects1) == 2
+        assert effects1[0].id == "effect1"
+        assert effects1[1].id == "effect2"
 
         effects2 = self.client.get_effects()
-        self.assertEqual(effects1, effects2)
+        assert effects1 == effects2
 
-        self.assertEqual(mock_request.call_count, 1)
+        assert mock_request.call_count == 1
 
         self.client.refresh_effects()
 
         effects3 = self.client.get_effects()
-        self.assertEqual(len(effects3), 2)
-        self.assertEqual(effects3[0].id, "effect3")
-        self.assertEqual(effects3[1].id, "effect4")
+        assert len(effects3) == 2
+        assert effects3[0].id == "effect3"
+        assert effects3[1].id == "effect4"
 
-        self.assertEqual(mock_request.call_count, 2)
+        assert mock_request.call_count == 2
 
     @patch("requests.Session.request")
     def test_get_current_state(self, mock_request):
         """Test getting the current state."""
         mock_response = Mock()
         current_state = CurrentStateHolder(
-            attributes=CurrentState(
-                name="Current Effect", enabled=True, global_brightness=50
-            ),
+            attributes=CurrentState(name="Current Effect", enabled=True, global_brightness=50),
             id="current_state",
             links=Links(),
             type="current_state",
@@ -703,17 +689,15 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         state = self.client._get_current_state()
-        self.assertEqual(state.id, "current_state")
-        self.assertEqual(state.attributes.name, "Current Effect")
+        assert state.id == "current_state"
+        assert state.attributes.name == "Current Effect"
 
     @patch("requests.Session.request")
     def test_get_current_state_attributes(self, mock_request):
         """Test getting the current state attributes."""
         mock_response = Mock()
         current_state = CurrentStateHolder(
-            attributes=CurrentState(
-                name="Current Effect", enabled=True, global_brightness=50
-            ),
+            attributes=CurrentState(name="Current Effect", enabled=True, global_brightness=50),
             id="current_state",
             links=Links(),
             type="current_state",
@@ -729,9 +713,9 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         attributes = self.client._get_current_state().attributes
-        self.assertEqual(attributes.name, "Current Effect")
-        self.assertTrue(attributes.enabled)
-        self.assertEqual(attributes.global_brightness, 50)
+        assert attributes.name == "Current Effect"
+        assert attributes.enabled
+        assert attributes.global_brightness == 50
 
     @patch("requests.Session.request")
     def test_get_effect_presets(self, mock_request):
@@ -752,11 +736,11 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         result = self.client.get_effect_presets("effect1")
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0].id, "preset1")
-        self.assertEqual(result[1].id, "preset2")
-        self.assertEqual(result[0].type, "preset")
-        self.assertEqual(result[1].type, "preset")
+        assert len(result) == 2
+        assert result[0].id == "preset1"
+        assert result[1].id == "preset2"
+        assert result[0].type == "preset"
+        assert result[1].type == "preset"
 
     @patch("requests.Session.request")
     def test_apply_effect_preset(self, mock_request):
@@ -800,8 +784,8 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         next_effect = self.client.get_next_effect()
-        self.assertEqual(next_effect.id, "next_effect")
-        self.assertEqual(next_effect.attributes.name, "Next Effect")
+        assert next_effect.id == "next_effect"
+        assert next_effect.attributes.name == "Next Effect"
 
     @patch("requests.Session.request")
     def test_apply_next_effect(self, mock_request):
@@ -824,8 +808,8 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         applied_effect = self.client.apply_next_effect()
-        self.assertEqual(applied_effect.id, "next_effect")
-        self.assertEqual(applied_effect.attributes.name, "Next Effect")
+        assert applied_effect.id == "next_effect"
+        assert applied_effect.attributes.name == "Next Effect"
 
     @patch("requests.Session.request")
     def test_get_previous_effect(self, mock_request):
@@ -848,8 +832,8 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         previous_effect = self.client.get_previous_effect()
-        self.assertEqual(previous_effect.id, "previous_effect")
-        self.assertEqual(previous_effect.attributes.name, "Previous Effect")
+        assert previous_effect.id == "previous_effect"
+        assert previous_effect.attributes.name == "Previous Effect"
 
     @patch("requests.Session.request")
     def test_apply_previous_effect(self, mock_request):
@@ -872,8 +856,8 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         applied_effect = self.client.apply_previous_effect()
-        self.assertEqual(applied_effect.id, "previous_effect")
-        self.assertEqual(applied_effect.attributes.name, "Previous Effect")
+        assert applied_effect.id == "previous_effect"
+        assert applied_effect.attributes.name == "Previous Effect"
 
     @patch("requests.Session.request")
     def test_apply_random_effect(self, mock_request):
@@ -896,8 +880,8 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         random_effect = self.client.apply_random_effect()
-        self.assertEqual(random_effect.id, "random_effect")
-        self.assertEqual(random_effect.attributes.name, "Random Effect")
+        assert random_effect.id == "random_effect"
+        assert random_effect.attributes.name == "Random Effect"
 
     @patch("requests.Session.request")
     def test_get_current_layout(self, mock_request):
@@ -915,8 +899,8 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         current_layout = self.client.current_layout
-        self.assertEqual(current_layout.id, "current_layout")
-        self.assertEqual(current_layout.type, "layout")
+        assert current_layout.id == "current_layout"
+        assert current_layout.type == "layout"
 
     @patch("requests.Session.request")
     def test_set_current_layout(self, mock_request):
@@ -960,9 +944,9 @@ class TestSignalRGBClient(BaseSignalRGBClientTest):
         mock_request.return_value = mock_response
 
         result = self.client.get_layouts()
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0].id, "layout1")
-        self.assertEqual(result[1].id, "layout2")
+        assert len(result) == 2
+        assert result[0].id == "layout1"
+        assert result[1].id == "layout2"
 
 
 if __name__ == "__main__":

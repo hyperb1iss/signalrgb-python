@@ -1,8 +1,8 @@
-import time
+from collections.abc import Callable
 from functools import wraps
-from typing import List, Optional, Tuple
+import time
+from typing import Any, TypeVar, cast
 
-import typer
 from rich import box
 from rich.columns import Columns
 from rich.console import Console, ConsoleOptions, Group, RenderResult
@@ -10,6 +10,7 @@ from rich.panel import Panel
 from rich.progress import BarColumn, Progress, TextColumn, TimeRemainingColumn
 from rich.table import Table
 from rich.text import Text
+import typer
 
 from .client import (
     APIError,
@@ -95,18 +96,17 @@ BORDER_COLOR = "purple"
 class FlexibleTable(Table):
     """A Table that adjusts its width based on the console width."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.original_width = kwargs.get("width")
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        self.width = min(self.original_width, options.max_width)
+    def __rich_console__(self, console: Console, options: ConsoleOptions) -> RenderResult:
+        if self.original_width is not None and options.max_width is not None:
+            self.width = min(self.original_width, options.max_width)
         yield from super().__rich_console__(console, options)
 
 
-def generate_gradient_markup(colors: List[str], steps: int) -> List[str]:
+def generate_gradient_markup(colors: list[str], steps: int) -> list[str]:
     """Generate a list of color codes for gradient effect."""
     gradient = []
     segments = len(colors) - 1
@@ -125,7 +125,7 @@ def generate_gradient_markup(colors: List[str], steps: int) -> List[str]:
     return gradient
 
 
-def apply_gradient_to_text(text: str, colors: List[str], line_offset: int = 0) -> Text:
+def apply_gradient_to_text(text: str, colors: list[str], line_offset: int = 0) -> Text:
     """Apply gradient coloring to text using Rich's Text object."""
     gradient = generate_gradient_markup(colors, len(text))
     styled_text = Text()
@@ -137,12 +137,12 @@ def apply_gradient_to_text(text: str, colors: List[str], line_offset: int = 0) -
     return styled_text
 
 
-def color_gradient(text: str, colors: List[str], line_number: int = 0) -> Text:
+def color_gradient(text: str, colors: list[str], line_number: int = 0) -> Text:
     """Apply color gradient or normal coloring based on mode."""
     return apply_gradient_to_text(text, colors, line_number)
 
 
-def print_rgb(message: str, style: str = "primary"):
+def print_rgb(message: str, style: str = "primary") -> None:
     """Print message with appropriate coloring based on mode."""
     if FULL_RGB_MODE:
         styled_message = color_gradient(message, GRADIENT_COLORS)
@@ -153,62 +153,61 @@ def print_rgb(message: str, style: str = "primary"):
 
 def get_client(ctx: typer.Context) -> SignalRGBClient:
     """Get the SignalRGB client from the Typer context."""
-    return ctx.obj
+    return cast(SignalRGBClient, ctx.obj)
 
 
-def handle_exceptions(func):
+F = TypeVar("F", bound=Callable[..., Any])
+
+
+def handle_exceptions(func: F) -> F:
     """Decorator to handle exceptions in CLI commands."""
 
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         try:
             return func(*args, **kwargs)
         except ConnectionError as e:
-            print_rgb(f"{STATUS_EMOJIS['error']} Connection Error: {str(e)}", "error")
-            raise typer.Exit(code=1)
+            print_rgb(f"{STATUS_EMOJIS['error']} Connection Error: {e!s}", "error")
+            raise typer.Exit(code=1) from e
         except APIError as e:
-            print_rgb(f"{STATUS_EMOJIS['error']} API Error: {str(e)}", "error")
-            raise typer.Exit(code=1)
+            print_rgb(f"{STATUS_EMOJIS['error']} API Error: {e!s}", "error")
+            raise typer.Exit(code=1) from e
         except NotFoundError as e:
-            print_rgb(f"{STATUS_EMOJIS['error']} Not Found: {str(e)}", "error")
-            raise typer.Exit(code=1)
+            print_rgb(f"{STATUS_EMOJIS['error']} Not Found: {e!s}", "error")
+            raise typer.Exit(code=1) from e
         except SignalRGBException as e:
-            print_rgb(f"{STATUS_EMOJIS['error']} Error: {str(e)}", "error")
-            raise typer.Exit(code=1)
+            print_rgb(f"{STATUS_EMOJIS['error']} Error: {e!s}", "error")
+            raise typer.Exit(code=1) from e
 
-    return wrapper
+    return cast(F, wrapper)
 
 
-def get_column_widths(items):
+def get_column_widths(items: list[tuple[str, str]]) -> tuple[int, int]:
     """Calculate column widths based on content."""
     max_label_width = max(len(key) for key, _ in items)
     label_column_width = max(max_label_width, 20)  # Minimum width of 20 characters
-    value_column_width = (
-        (PANEL_WIDTH // 2) - label_column_width - 4
-    )  # 4 for padding and separators
+    value_column_width = (PANEL_WIDTH // 2) - label_column_width - 4  # 4 for padding and separators
     return label_column_width, value_column_width
 
 
-def create_section(content: List[Tuple[str, str]], width: int) -> FlexibleTable:
+def create_section(content: list[tuple[str, str]], width: int) -> FlexibleTable:
     label_column_width, value_column_width = get_column_widths(content)
 
-    table = FlexibleTable(
-        show_header=False, padding=(0, 1), expand=False, box=None, width=width
-    )
-    table.add_column(
-        style=NORMAL_PALETTE["label"], width=label_column_width, no_wrap=True
-    )
+    table = FlexibleTable(show_header=False, padding=(0, 1), expand=False, box=None, width=width)
+    table.add_column(style=NORMAL_PALETTE["label"], width=label_column_width, no_wrap=True)
     table.add_column(style=NORMAL_PALETTE["value"], width=value_column_width)
 
     for i, (label, value) in enumerate(content):
         if FULL_RGB_MODE:
-            label = apply_gradient_to_text(label, GRADIENT_COLORS, line_offset=i)
-            value = apply_gradient_to_text(value, GRADIENT_COLORS, line_offset=i)
-        table.add_row(label, value)
+            label_text = apply_gradient_to_text(label, GRADIENT_COLORS, line_offset=i)
+            value_text = apply_gradient_to_text(value, GRADIENT_COLORS, line_offset=i)
+            table.add_row(label_text, value_text)
+        else:
+            table.add_row(label, value)
     return table
 
 
-def create_effect_panel(effect, title: str) -> Panel:
+def create_effect_panel(effect: Any, title: str) -> Panel:
     """Create a panel displaying effect details with an enhanced layout."""
 
     # Info Section
@@ -226,27 +225,19 @@ def create_effect_panel(effect, title: str) -> Panel:
         [
             (
                 "Uses Audio",
-                STATUS_EMOJIS["enabled"]
-                if effect.attributes.uses_audio
-                else STATUS_EMOJIS["disabled"],
+                STATUS_EMOJIS["enabled"] if effect.attributes.uses_audio else STATUS_EMOJIS["disabled"],
             ),
             (
                 "Uses Video",
-                STATUS_EMOJIS["enabled"]
-                if effect.attributes.uses_video
-                else STATUS_EMOJIS["disabled"],
+                STATUS_EMOJIS["enabled"] if effect.attributes.uses_video else STATUS_EMOJIS["disabled"],
             ),
             (
                 "Uses Input",
-                STATUS_EMOJIS["enabled"]
-                if effect.attributes.uses_input
-                else STATUS_EMOJIS["disabled"],
+                STATUS_EMOJIS["enabled"] if effect.attributes.uses_input else STATUS_EMOJIS["disabled"],
             ),
             (
                 "Uses Meters",
-                STATUS_EMOJIS["enabled"]
-                if effect.attributes.uses_meters
-                else STATUS_EMOJIS["disabled"],
+                STATUS_EMOJIS["enabled"] if effect.attributes.uses_meters else STATUS_EMOJIS["disabled"],
             ),
         ],
         (PANEL_WIDTH // 2) - 5,
@@ -257,11 +248,12 @@ def create_effect_panel(effect, title: str) -> Panel:
 
     # Description Section
     description = effect.attributes.description or "N/A"
+    description_text = description
     if FULL_RGB_MODE:
-        description = apply_gradient_to_text(description, GRADIENT_COLORS)
+        description_text = apply_gradient_to_text(description, GRADIENT_COLORS)
 
     # Combine all sections
-    content = Group(top_section, "", description)  # Empty string adds a blank line
+    content = Group(top_section, "", description_text)  # Empty string adds a blank line
 
     return Panel(
         content,
@@ -272,17 +264,13 @@ def create_effect_panel(effect, title: str) -> Panel:
     )
 
 
-def create_param_table(parameters):
+def create_param_table(parameters: dict[str, Any]) -> Panel:
     """Create a table displaying effect parameters with enhanced layout."""
-    label_column_width, value_column_width = get_column_widths(parameters.items())
+    label_column_width, value_column_width = get_column_widths(list(parameters.items()))
 
-    table = FlexibleTable(
-        box=None, show_header=False, expand=False, width=PANEL_WIDTH // 2
-    )
+    table = FlexibleTable(box=None, show_header=False, expand=False, width=PANEL_WIDTH // 2)
 
-    table.add_column(
-        style=NORMAL_PALETTE["parameter"], width=label_column_width, no_wrap=True
-    )
+    table.add_column(style=NORMAL_PALETTE["parameter"], width=label_column_width, no_wrap=True)
     table.add_column(style=NORMAL_PALETTE["parameter_value"], width=value_column_width)
 
     param_items = list(parameters.items())
@@ -291,14 +279,16 @@ def create_param_table(parameters):
     for i, (key, value) in enumerate(param_items[:mid_point]):
         label, formatted_value = format_parameter(key, value)
         if FULL_RGB_MODE:
-            label = apply_gradient_to_text(label, GRADIENT_COLORS, line_offset=i)
-            if "■■■■" not in formatted_value:
-                formatted_value = apply_gradient_to_text(
-                    formatted_value, GRADIENT_COLORS, line_offset=i
-                )
-        table.add_row(label, formatted_value)
+            label_text = apply_gradient_to_text(label, GRADIENT_COLORS, line_offset=i)
+            if isinstance(formatted_value, str) and "■■■■" not in formatted_value:
+                value_text = apply_gradient_to_text(formatted_value, GRADIENT_COLORS, line_offset=i)
+                table.add_row(label_text, value_text)
+            else:
+                table.add_row(label_text, formatted_value)
+        else:
+            table.add_row(label, formatted_value)
 
-    param_panel = Panel(
+    return Panel(
         Columns([table], expand=True, equal=True),
         title=color_gradient(f"{ICONS['effect']} Parameters", GRADIENT_COLORS),
         expand=False,
@@ -306,34 +296,32 @@ def create_param_table(parameters):
         width=PANEL_WIDTH,
     )
 
-    return param_panel
 
-
-def format_parameter(key, value):
+def format_parameter(key: Any, value: Any) -> tuple[str, str | Text]:
     """Format parameter based on its structure."""
     if isinstance(value, dict) and "label" in value and "value" in value:
         return value["label"], format_parameter_value(value["value"], value.get("type"))
     return key, format_parameter_value(value)
 
 
-def format_parameter_value(value, param_type=None):
+def format_parameter_value(value: Any, param_type: str | None = None) -> str | Text:
+    """Format parameter value based on its type."""
     if isinstance(value, bool):
         return "Yes" if value else "No"
-    elif param_type == "color":
+    if param_type == "color":
         return f"[{value}]■■■■[/]"  # Display a colored square
-    elif isinstance(value, (int, float)):
+    if isinstance(value, int | float):
         return str(value)
-    elif isinstance(value, str):
+    if isinstance(value, str):
         return value
-    elif isinstance(value, dict):
+    if isinstance(value, dict):
         return ", ".join(f"{k}: {v}" for k, v in value.items())
-    elif isinstance(value, list):
+    if isinstance(value, list):
         return ", ".join(map(str, value))
-    else:
-        return str(value)
+    return str(value)  # Default case
 
 
-def create_colorful_table(title: str, headers: List[str], rows: List[List[str]]):
+def create_colorful_table(title: str, headers: list[str], rows: list[list[str]]) -> Table:
     """Create a colorful table with the given title, headers, and rows."""
     table = Table(
         title=color_gradient(title, GRADIENT_COLORS),
@@ -366,13 +354,11 @@ app.add_typer(effect_app, name="effect")
 
 @effect_app.callback(invoke_without_command=True)
 @handle_exceptions
-def effect(ctx: typer.Context, name: Optional[str] = None):
+def effect(ctx: typer.Context, name: str | None = None) -> None:
     """Show details of the current effect or a specific effect."""
     if ctx.invoked_subcommand is None:
         client = get_client(ctx)
-        effect = (
-            client.get_effect_by_name(name) if name else client.get_current_effect()
-        )
+        effect = client.get_effect_by_name(name) if name else client.get_current_effect()
         console.print(create_effect_panel(effect, f"{effect.attributes.name}"))
         if effect.attributes.parameters:
             console.print(create_param_table(effect.attributes.parameters))
@@ -380,21 +366,19 @@ def effect(ctx: typer.Context, name: Optional[str] = None):
 
 @effect_app.command(name="list")
 @handle_exceptions
-def list_effects(ctx: typer.Context):
+def list_effects(ctx: typer.Context) -> None:
     """List all available effects."""
     client = get_client(ctx)
     effects = client.get_effects()
 
     rows = [[e.attributes.name, e.id] for e in effects]
-    table = create_colorful_table(
-        f"{ICONS['effect']} Available Effects", ["Name", "ID"], rows
-    )
+    table = create_colorful_table(f"{ICONS['effect']} Available Effects", ["Name", "ID"], rows)
     console.print(table)
 
 
 @effect_app.command()
 @handle_exceptions
-def search(ctx: typer.Context, query: str):
+def search(ctx: typer.Context, query: str) -> None:
     """Search for effects by name or description."""
     client = get_client(ctx)
     effects = client.get_effects()
@@ -402,66 +386,52 @@ def search(ctx: typer.Context, query: str):
         e
         for e in effects
         if query.lower() in e.attributes.name.lower()
-        or (
-            e.attributes.description
-            and query.lower() in e.attributes.description.lower()
-        )
+        or (e.attributes.description and query.lower() in e.attributes.description.lower())
     ]
-    rows = [
-        [e.attributes.name, e.attributes.description or "N/A"] for e in matched_effects
-    ]
-    table = create_colorful_table(
-        f"{ICONS['effect']} Search Results for '{query}'", ["Name", "Description"], rows
-    )
+    rows = [[e.attributes.name, e.attributes.description or "N/A"] for e in matched_effects]
+    table = create_colorful_table(f"{ICONS['effect']} Search Results for '{query}'", ["Name", "Description"], rows)
     console.print(table)
 
 
 @effect_app.command(name="apply")
 @handle_exceptions
-def apply_effect(ctx: typer.Context, name: str, preset: Optional[str] = None):
+def apply_effect(ctx: typer.Context, name: str, preset: str | None = None) -> None:
     """Apply an effect, optionally with a preset."""
     client = get_client(ctx)
     client.apply_effect_by_name(name)
     if preset:
         client.apply_effect_preset(client.get_effect_by_name(name).id, preset)
     print_rgb(
-        f"{ICONS['effect']} Applied effect: {name}"
-        + (f" with preset: {preset}" if preset else ""),
+        f"{ICONS['effect']} Applied effect: {name}" + (f" with preset: {preset}" if preset else ""),
         "accent",
     )
 
 
-@effect_app.command()
+@effect_app.command(name="next_effect")
 @handle_exceptions
-def next(ctx: typer.Context):
+def next_effect(ctx: typer.Context) -> None:
     """Apply the next effect in history."""
     client = get_client(ctx)
     effect = client.apply_next_effect()
-    print_rgb(
-        f"{ICONS['effect']} Applied next effect: {effect.attributes.name}", "accent"
-    )
+    print_rgb(f"{ICONS['effect']} Applied next effect: {effect.attributes.name}", "accent")
 
 
-@effect_app.command()
+@effect_app.command(name="previous_effect")
 @handle_exceptions
-def previous(ctx: typer.Context):
+def previous_effect(ctx: typer.Context) -> None:
     """Apply the previous effect in history."""
     client = get_client(ctx)
     effect = client.apply_previous_effect()
-    print_rgb(
-        f"{ICONS['effect']} Applied previous effect: {effect.attributes.name}", "accent"
-    )
+    print_rgb(f"{ICONS['effect']} Applied previous effect: {effect.attributes.name}", "accent")
 
 
 @effect_app.command()
 @handle_exceptions
-def random(ctx: typer.Context):
+def random(ctx: typer.Context) -> None:
     """Apply a random effect."""
     client = get_client(ctx)
     effect = client.apply_random_effect()
-    print_rgb(
-        f"{ICONS['effect']} Applied random effect: {effect.attributes.name}", "accent"
-    )
+    print_rgb(f"{ICONS['effect']} Applied random effect: {effect.attributes.name}", "accent")
 
 
 @effect_app.command()
@@ -469,7 +439,7 @@ def random(ctx: typer.Context):
 def cycle(
     ctx: typer.Context,
     duration: int = typer.Option(5, help="Duration to display each effect in seconds"),
-):
+) -> None:
     """Cycle through all effects."""
     client = get_client(ctx)
     effects = client.get_effects()
@@ -478,9 +448,7 @@ def cycle(
         BarColumn(complete_style="green", finished_style="bright_green"),
         TimeRemainingColumn(),
     ) as progress:
-        task = progress.add_task(
-            f"{ICONS['effect']} Cycling effects...", total=len(effects)
-        )
+        task = progress.add_task(f"{ICONS['effect']} Cycling effects...", total=len(effects))
         for effect in effects:
             client.apply_effect(effect.id)
             progress.update(
@@ -494,7 +462,7 @@ def cycle(
 
 @effect_app.command()
 @handle_exceptions
-def refresh(ctx: typer.Context):
+def refresh(ctx: typer.Context) -> None:
     """Refresh the cached effects."""
     client = get_client(ctx)
     client.refresh_effects()
@@ -508,7 +476,7 @@ app.add_typer(preset_app, name="preset")
 
 @preset_app.callback(invoke_without_command=True)
 @handle_exceptions
-def preset(ctx: typer.Context, name: Optional[str] = None):
+def preset(ctx: typer.Context, name: str | None = None) -> None:
     """Show details of the current preset or a specific preset."""
     if ctx.invoked_subcommand is None:
         client = get_client(ctx)
@@ -518,22 +486,22 @@ def preset(ctx: typer.Context, name: Optional[str] = None):
             preset = next((p for p in presets if p.id == name), None)
             if preset:
                 content = f"Preset: {preset.id}"
+                content_display: str | Text = content
                 if FULL_RGB_MODE:
-                    content = apply_gradient_to_text(content, GRADIENT_COLORS)
+                    content_display = apply_gradient_to_text(content, GRADIENT_COLORS)
                 console.print(
                     Panel(
-                        content,
-                        title=color_gradient(
-                            f"{ICONS['preset']} Preset Information", GRADIENT_COLORS
-                        ),
+                        content_display,
+                        title=color_gradient(f"{ICONS['preset']} Preset Information", GRADIENT_COLORS),
                         expand=False,
                         border_style=BORDER_COLOR,
                     )
                 )
 
+
 @preset_app.command(name="list")
 @handle_exceptions
-def list_presets(ctx: typer.Context):
+def list_presets(ctx: typer.Context) -> None:
     """List presets for the current effect."""
     client = get_client(ctx)
     current_effect = client.get_current_effect()
@@ -549,7 +517,7 @@ def list_presets(ctx: typer.Context):
 
 @preset_app.command(name="apply")
 @handle_exceptions
-def apply_preset(ctx: typer.Context, preset_id: str):
+def apply_preset(ctx: typer.Context, preset_id: str) -> None:
     """Apply a preset to the current effect."""
     client = get_client(ctx)
     current_effect = client.get_current_effect()
@@ -567,67 +535,62 @@ app.add_typer(layout_app, name="layout")
 
 @layout_app.callback(invoke_without_command=True)
 @handle_exceptions
-def layout(ctx: typer.Context, name: Optional[str] = None):
+def layout(ctx: typer.Context, name: str | None = None) -> None:
     """Show details of the current layout or a specific layout."""
     if ctx.invoked_subcommand is None:
         client = get_client(ctx)
         if name:
             layouts = client.get_layouts()
-            layout = next((ll for ll in layouts if ll.id == name), None)
-            if layout:
-                content = f"Layout: {layout.id}"
+            layout_obj = next((ll for ll in layouts if ll.id == name), None)
+            if layout_obj:
+                content = f"Layout: {layout_obj.id}"
+                content_display: str | Text = content
                 if FULL_RGB_MODE:
-                    content = apply_gradient_to_text(content, GRADIENT_COLORS)
+                    content_display = apply_gradient_to_text(content, GRADIENT_COLORS)
                 console.print(
                     Panel(
-                        content,
-                        title=color_gradient(
-                            f"{ICONS['layout']} Layout Information", GRADIENT_COLORS
-                        ),
+                        content_display,
+                        title=color_gradient(f"{ICONS['layout']} Layout Information", GRADIENT_COLORS),
                         expand=False,
                         border_style=BORDER_COLOR,
                     )
                 )
             else:
-                print_rgb(
-                    f"{STATUS_EMOJIS['error']} Layout '{name}' not found", "error"
-                )
-                raise typer.Exit(code=1)
+                print_rgb(f"{STATUS_EMOJIS['error']} Layout '{name}' not found", "error")
+                raise typer.Exit(code=1) from None
         else:
             current_layout = client.current_layout
-            content = f"Current Layout: {current_layout.id}"
+            content_current = f"Current Layout: {current_layout.id}"
+            content_display_current: str | Text = content_current
             if FULL_RGB_MODE:
-                content = apply_gradient_to_text(content, GRADIENT_COLORS)
+                content_display_current = apply_gradient_to_text(content_current, GRADIENT_COLORS)
             console.print(
                 Panel(
-                    content,
-                    title=color_gradient(
-                        f"{ICONS['layout']} Layout Information", GRADIENT_COLORS
-                    ),
+                    content_display_current,
+                    title=color_gradient(f"{ICONS['layout']} Layout Information", GRADIENT_COLORS),
                     expand=False,
                     border_style=BORDER_COLOR,
                 )
             )
 
+
 @layout_app.command(name="list")
 @handle_exceptions
-def list_layouts(ctx: typer.Context):
+def list_layouts(ctx: typer.Context) -> None:
     """List all available layouts."""
     client = get_client(ctx)
     layouts = client.get_layouts()
     rows = [[layout.id] for layout in layouts]
-    table = create_colorful_table(
-        f"{ICONS['layout']} Available Layouts", ["Layout ID"], rows
-    )
+    table = create_colorful_table(f"{ICONS['layout']} Available Layouts", ["Layout ID"], rows)
     console.print(table)
 
 
-@layout_app.command()
+@layout_app.command(name="set_layout")
 @handle_exceptions
-def set(ctx: typer.Context, name: str):
+def set_layout(ctx: typer.Context, name: str) -> None:
     """Set the current layout."""
     client = get_client(ctx)
-    client.current_layout = name
+    client.current_layout = name  # type: ignore
     print_rgb(f"{ICONS['layout']} Set current layout to: {name}", "accent")
 
 
@@ -641,7 +604,7 @@ app.add_typer(canvas_app, name="canvas")
 
 @canvas_app.callback(invoke_without_command=True)
 @handle_exceptions
-def canvas(ctx: typer.Context):
+def canvas(ctx: typer.Context) -> None:
     """Show current canvas state."""
     if ctx.invoked_subcommand is None:
         client = get_client(ctx)
@@ -668,9 +631,7 @@ def canvas(ctx: typer.Context):
 
 @canvas_app.command()
 @handle_exceptions
-def brightness(
-    ctx: typer.Context, value: Optional[int] = typer.Argument(None, min=0, max=100)
-):
+def brightness(ctx: typer.Context, value: int | None = typer.Argument(None, min=0, max=100)) -> None:
     """Get or set the brightness level."""
     client = get_client(ctx)
     if value is not None:
@@ -682,7 +643,7 @@ def brightness(
 
 @canvas_app.command()
 @handle_exceptions
-def enable(ctx: typer.Context):
+def enable(ctx: typer.Context) -> None:
     """Enable the canvas."""
     client = get_client(ctx)
     client.enabled = True
@@ -691,18 +652,16 @@ def enable(ctx: typer.Context):
 
 @canvas_app.command()
 @handle_exceptions
-def disable(ctx: typer.Context):
+def disable(ctx: typer.Context) -> None:
     """Disable the canvas."""
     client = get_client(ctx)
     client.enabled = False
-    print_rgb(
-        f"{ICONS['canvas']} Canvas {STATUS_EMOJIS['disabled']} disabled", "accent"
-    )
+    print_rgb(f"{ICONS['canvas']} Canvas {STATUS_EMOJIS['disabled']} disabled", "accent")
 
 
 @canvas_app.command()
 @handle_exceptions
-def toggle(ctx: typer.Context):
+def toggle(ctx: typer.Context) -> None:
     """Toggle the canvas enabled state."""
     client = get_client(ctx)
     client.enabled = not client.enabled
@@ -716,14 +675,33 @@ def main(
     ctx: typer.Context,
     host: str = typer.Option("localhost", help="SignalRGB API host"),
     port: int = typer.Option(16038, help="SignalRGB API port"),
-    full_rgb: bool = typer.Option(
-        False, "--full-rgb", help="Enable full RGB gradient mode for all output"
-    ),
-):
+    full_rgb: bool = typer.Option(False, "--full-rgb", help="Enable full RGB gradient mode for all output"),
+) -> None:
     """Initialize SignalRGB client."""
+    # Store RGB mode in a context variable instead of using global
+    ctx.ensure_object(dict)
+    ctx.obj = SignalRGBClient(host, port)
+    # Store RGB mode in the context
+    ctx.meta["full_rgb_mode"] = full_rgb
+    # Still need to set global for backward compatibility
+    # pylint: disable=global-statement
     global FULL_RGB_MODE
     FULL_RGB_MODE = full_rgb
-    ctx.obj = SignalRGBClient(host, port)
+
+
+# Function to set RGB mode for testing or programmatic use
+def set_rgb_mode(enabled: bool) -> None:
+    """Set the RGB mode programmatically.
+
+    This is useful for testing or when using the CLI programmatically.
+
+    Args:
+        enabled: Whether to enable full RGB mode
+    """
+    # This is a utility function that needs to modify the global state
+    # pylint: disable=global-statement
+    global FULL_RGB_MODE
+    FULL_RGB_MODE = enabled
 
 
 if __name__ == "__main__":

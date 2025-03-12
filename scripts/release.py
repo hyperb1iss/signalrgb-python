@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 """Release management script for SignalRGB Python."""
 
-# ruff: noqa: E501
-# pylint: disable=broad-exception-caught, line-too-long
+# ruff: noqa: E501, T201
 
 import os
 import re
 import shutil
 import subprocess
+from subprocess import CompletedProcess
 import sys
-from typing import List, Tuple
 
 from colorama import Style, init
 from wcwidth import wcswidth
@@ -43,6 +42,10 @@ GRADIENT_COLORS = [
     (255, 0, 0),
 ]
 
+# File paths
+PYPROJECT_TOML = "pyproject.toml"
+DOCS_INDEX = "docs/index.md"
+
 
 def print_colored(message: str, color: str) -> None:
     """Print a message with a specific color."""
@@ -69,7 +72,7 @@ def print_warning(message: str) -> None:
     print_colored(f"⚠️  {message}", COLOR_WARNING)
 
 
-def generate_gradient(colors: List[Tuple[int, int, int]], steps: int) -> List[str]:
+def generate_gradient(colors: list[tuple[int, int, int]], steps: int) -> list[str]:
     """Generate a list of color codes for a smooth multi-color gradient."""
     gradient = []
     segments = len(colors) - 1
@@ -94,12 +97,9 @@ def strip_ansi(text: str) -> str:
     return ansi_escape.sub("", text)
 
 
-def apply_gradient(text: str, gradient: List[str], line_number: int) -> str:
+def apply_gradient(text: str, gradient: list[str], line_number: int) -> str:
     """Apply gradient colors diagonally to text."""
-    return "".join(
-        f"{gradient[(i + line_number) % len(gradient)]}{char}"
-        for i, char in enumerate(text)
-    )
+    return "".join(f"{gradient[(i + line_number) % len(gradient)]}{char}" for i, char in enumerate(text))
 
 
 def center_text(text: str, width: int) -> str:
@@ -109,7 +109,7 @@ def center_text(text: str, width: int) -> str:
     return f"{' ' * padding}{text}{' ' * (width - padding - visible_length)}"
 
 
-def center_block(block: List[str], width: int) -> List[str]:
+def center_block(block: list[str], width: int) -> list[str]:
     """Center a block of text within a given width."""
     return [center_text(line, width) for line in block]
 
@@ -150,9 +150,7 @@ def create_banner() -> str:
                 f"{COLOR_STAR}∴｡　　･ﾟ*｡☆ {release_manager_text}{COLOR_STAR} ☆｡*ﾟ･　 ｡∴",
                 banner_width,
             ),
-            center_text(
-                f"{COLOR_STAR}･ ｡ ☆ ∴｡　　･ﾟ*｡★･ ∴｡　　･ﾟ*｡☆ ･ ｡ ☆ ∴｡", banner_width
-            ),
+            center_text(f"{COLOR_STAR}･ ｡ ☆ ∴｡　　･ﾟ*｡★･ ∴｡　　･ﾟ*｡☆ ･ ｡ ☆ ∴｡", banner_width),
         ]
     )
 
@@ -164,6 +162,73 @@ def print_logo() -> None:
     print(create_banner())
 
 
+def run_command(
+    cmd: list[str], check: bool = False, capture_output: bool = False, text: bool = False
+) -> CompletedProcess[str | bytes]:
+    """
+    Run a command safely with proper error handling.
+
+    Args:
+        cmd: Command and arguments to run
+        check: Whether to check the return code
+        capture_output: Whether to capture stdout/stderr
+        text: Whether to return text instead of bytes
+
+    Returns:
+        CompletedProcess instance with command results
+    """
+    # Ensure the command exists in PATH
+    if not shutil.which(cmd[0]):
+        print_error(f"Command '{cmd[0]}' not found in PATH")
+        sys.exit(1)
+
+    try:
+        # We're validating the command exists and controlling the input, so this is safe
+        return subprocess.run(cmd, check=check, capture_output=capture_output, text=text)  # noqa: S603
+    except subprocess.CalledProcessError as e:
+        if check:
+            print_error(f"Command failed: {' '.join(cmd)}")
+            print_error(f"Error: {e}")
+            sys.exit(1)
+        raise
+
+
+def run_git_command(
+    args: list[str], check: bool = False, capture_output: bool = False, text: bool = False
+) -> CompletedProcess[str | bytes]:
+    """
+    Run a git command safely.
+
+    Args:
+        args: Git subcommand and arguments
+        check: Whether to check the return code
+        capture_output: Whether to capture stdout/stderr
+        text: Whether to return text instead of bytes
+
+    Returns:
+        CompletedProcess instance with command results
+    """
+    return run_command(["git", *args], check, capture_output, text)
+
+
+def run_uv_command(
+    args: list[str], check: bool = False, capture_output: bool = False, text: bool = False
+) -> CompletedProcess[str | bytes]:
+    """
+    Run a uv command safely.
+
+    Args:
+        args: UV subcommand and arguments
+        check: Whether to check the return code
+        capture_output: Whether to capture stdout/stderr
+        text: Whether to return text instead of bytes
+
+    Returns:
+        CompletedProcess instance with command results
+    """
+    return run_command(["uv", *args], check, capture_output, text)
+
+
 def check_tool_installed(tool_name: str) -> None:
     """Check if a tool is installed."""
     if shutil.which(tool_name) is None:
@@ -173,11 +238,8 @@ def check_tool_installed(tool_name: str) -> None:
 
 def check_branch() -> None:
     """Ensure we're on the main branch."""
-    current_branch = (
-        subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"])
-        .decode()
-        .strip()
-    )
+    result = run_git_command(["rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True)
+    current_branch = result.stdout.strip()
     if current_branch != "main":
         print_error("You must be on the main branch to release.")
         sys.exit(1)
@@ -185,68 +247,87 @@ def check_branch() -> None:
 
 def check_uncommitted_changes() -> None:
     """Check for uncommitted changes."""
-    result = subprocess.run(
-        ["git", "diff-index", "--quiet", "HEAD", "--"], capture_output=True
-    )
+    result = run_git_command(["diff-index", "--quiet", "HEAD", "--"], check=False)
     if result.returncode != 0:
-        print_error(
-            "You have uncommitted changes. Please commit or stash them before releasing."
-        )
+        print_error("You have uncommitted changes. Please commit or stash them before releasing.")
         sys.exit(1)
 
 
 def get_current_version() -> str:
     """Get the current version from pyproject.toml."""
-    import tomllib
-    with open("pyproject.toml", "rb") as f:
-        config = tomllib.load(f)
-    return config["project"]["version"]
+    if not os.path.exists(PYPROJECT_TOML):
+        print_error(f"{PYPROJECT_TOML} not found.")
+        sys.exit(1)
+
+    # Use a regex pattern to extract the version from pyproject.toml
+    version_pattern = re.compile(r'^version\s*=\s*"([^"]+)"', re.MULTILINE)
+
+    with open(PYPROJECT_TOML, encoding="utf-8") as f:
+        content = f.read()
+
+    match = version_pattern.search(content)
+    if not match:
+        print_error("Could not find version in pyproject.toml")
+        sys.exit(1)
+
+    return match.group(1)
 
 
 def update_version(new_version: str) -> None:
     """Update the version in pyproject.toml."""
-    import tomllib
-    import re
-    
-    with open("pyproject.toml", "rb") as f:
-        content = tomllib.load(f)
-        
-    with open("pyproject.toml", "r") as f:
-        file_content = f.read()
-    
-    # Replace version with regex to preserve formatting
-    updated_content = re.sub(
-        r'version\s*=\s*"[^"]+"', 
-        f'version = "{new_version}"', 
-        file_content
-    )
-    
-    with open("pyproject.toml", "w") as f:
+    if not os.path.exists(PYPROJECT_TOML):
+        print_error(f"{PYPROJECT_TOML} not found.")
+        sys.exit(1)
+
+    with open(PYPROJECT_TOML, encoding="utf-8") as f:
+        content = f.read()
+
+    # Use a regex pattern to replace only the project version line
+    version_pattern = re.compile(r'^(version\s*=\s*)"([^"]+)"', re.MULTILINE)
+    updated_content = version_pattern.sub(f'\\1"{new_version}"', content)
+
+    if content == updated_content:
+        print_error("Failed to update version in pyproject.toml")
+        sys.exit(1)
+
+    with open(PYPROJECT_TOML, "w", encoding="utf-8") as f:
         f.write(updated_content)
-        
-    print_success(f"Updated version in pyproject.toml to {new_version}")
+
+    print_success(f"Updated version in {PYPROJECT_TOML} to {new_version}")
 
 
-def update_docs_version(current_version: str, new_version: str) -> None:
+def update_docs_version(new_version: str) -> None:
     """Update documentation version."""
-    docs_path = "docs/index.md"
-    if os.path.exists(docs_path):
-        with open(docs_path, "r") as f:
-            content = f.read()
-        updated_content = content.replace(
-            f"version: {current_version}", f"version: {new_version}"
-        )
-        with open(docs_path, "w") as f:
-            f.write(updated_content)
-        print_success(f"Updated version in {docs_path} to {new_version}")
-    else:
-        print_warning(f"{docs_path} not found. Skipping documentation version update.")
+    if not os.path.exists(DOCS_INDEX):
+        print_warning(f"{DOCS_INDEX} not found. Skipping documentation version update.")
+        return
+
+    with open(DOCS_INDEX, encoding="utf-8") as f:
+        content = f.read()
+
+    # Use a more specific pattern to match only the version field
+    version_pattern = re.compile(r"^(version:\s*)([^\s]+)", re.MULTILINE)
+
+    # Use a lambda function for replacement to avoid the group reference issue
+    def replace_version(match):
+        return match.group(1) + new_version
+
+    updated_content = version_pattern.sub(replace_version, content)
+
+    if content == updated_content:
+        print_warning(f"No version field found in {DOCS_INDEX} or version already up to date.")
+        return
+
+    with open(DOCS_INDEX, "w", encoding="utf-8") as f:
+        f.write(updated_content)
+
+    print_success(f"Updated version in {DOCS_INDEX} to {new_version}")
 
 
 def show_changes() -> bool:
     """Show changes and ask for confirmation."""
     print_warning("The following files will be modified:")
-    subprocess.run(["git", "status", "--porcelain"])
+    run_git_command(["status", "--porcelain"])
     confirmation = input(
         f"{COLOR_VERSION_PROMPT}Do you want to proceed with these changes? (y/N): {COLOR_RESET}"
     ).lower()
@@ -257,16 +338,14 @@ def commit_and_push(version: str) -> None:
     """Commit and push changes to the repository."""
     print_step("Committing and pushing changes")
     try:
-        subprocess.run(["git", "add", "pyproject.toml", "docs/index.md"], check=True)
-        subprocess.run(
-            ["git", "commit", "-m", f":rocket: Release version {version}"], check=True
-        )
-        subprocess.run(["git", "push"], check=True)
-        subprocess.run(["git", "tag", f"v{version}"], check=True)
-        subprocess.run(["git", "push", "--tags"], check=True)
+        run_git_command(["add", PYPROJECT_TOML, DOCS_INDEX], check=True)
+        run_git_command(["commit", "-m", f":rocket: Release version {version}"], check=True)
+        run_git_command(["push"], check=True)
+        run_git_command(["tag", f"v{version}"], check=True)
+        run_git_command(["push", "--tags"], check=True)
         print_success(f"Changes committed and pushed for version {version}")
     except subprocess.CalledProcessError as e:
-        print_error(f"Git operations failed: {str(e)}")
+        print_error(f"Git operations failed: {e!s}")
         sys.exit(1)
 
 
@@ -277,38 +356,41 @@ def is_valid_version(version: str) -> bool:
 
 def main() -> None:
     """Main function to handle the release process."""
-    print_logo()
-    print_step(f"Starting release process for {PROJECT_NAME}")
+    try:
+        print_logo()
+        print_step(f"Starting release process for {PROJECT_NAME}")
 
-    for tool in ["git"]:
-        check_tool_installed(tool)
+        for tool in ["git", "uv"]:
+            check_tool_installed(tool)
 
-    check_branch()
-    check_uncommitted_changes()
+        check_branch()
+        check_uncommitted_changes()
 
-    current_version = get_current_version()
-    new_version = input(
-        f"{COLOR_VERSION_PROMPT}Current version is {current_version}. What should the new version be? {COLOR_RESET}"
-    )
-
-    if not is_valid_version(new_version):
-        print_error(
-            "Invalid version format. Please use semantic versioning (e.g., 1.2.3)."
+        current_version = get_current_version()
+        new_version = input(
+            f"{COLOR_VERSION_PROMPT}Current version is {current_version}. What should the new version be? {COLOR_RESET}"
         )
+
+        if not is_valid_version(new_version):
+            print_error("Invalid version format. Please use semantic versioning (e.g., 1.2.3).")
+            sys.exit(1)
+
+        update_version(new_version)
+        update_docs_version(new_version)
+
+        if not show_changes():
+            print_error("Release cancelled.")
+            sys.exit(1)
+
+        commit_and_push(new_version)
+
+        print_success(f"\n🎉✨ {PROJECT_NAME} v{new_version} has been successfully released! ✨🎉")
+    except Exception as e:  # noqa: BLE001
+        print_error(f"An unexpected error occurred: {e}")
+        import traceback
+
+        traceback.print_exc()
         sys.exit(1)
-
-    update_version(new_version)
-    update_docs_version(current_version, new_version)
-
-    if not show_changes():
-        print_error("Release cancelled.")
-        sys.exit(1)
-
-    commit_and_push(new_version)
-
-    print_success(
-        f"\n🎉✨ {PROJECT_NAME} v{new_version} has been successfully released! ✨🎉"
-    )
 
 
 if __name__ == "__main__":

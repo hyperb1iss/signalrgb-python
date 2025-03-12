@@ -6,8 +6,9 @@ used in the SignalRGB API, including effects, responses, and error information.
 These models are used to validate and structure the data received from and sent to the API.
 """
 
-from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
+from typing import Any
+
 from mashumaro import DataClassDictMixin
 from mashumaro.config import BaseConfig
 
@@ -35,11 +36,11 @@ class Attributes(DataClassDictMixin):
     """
 
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     developer_effect: bool = False
-    image: Optional[str] = None
-    parameters: Dict[str, Any] = field(default_factory=dict)
-    publisher: Optional[str] = None
+    image: str | None = None
+    parameters: dict[str, Any] = field(default_factory=dict)
+    publisher: str | None = None
     uses_audio: bool = False
     uses_input: bool = False
     uses_meters: bool = False
@@ -59,8 +60,8 @@ class Links(DataClassDictMixin):
         self_link (Optional[str]): URL of the effect itself, typically for retrieving its details.
     """
 
-    apply: Optional[str] = None
-    self_link: Optional[str] = None
+    apply: str | None = None
+    self_link: str | None = None
 
     class Config(BaseConfig):
         aliases = {"self_link": "self"}
@@ -80,7 +81,7 @@ class CurrentState(DataClassDictMixin):
         global_brightness (int): The global brightness level of the canvas.
     """
 
-    name: Optional[str] = None
+    name: str | None = None
     enabled: bool = False
     global_brightness: int = 0
 
@@ -136,7 +137,7 @@ class EffectList(DataClassDictMixin):
         items (List[Effect]): A list of Effect objects.
     """
 
-    items: List[Effect] = field(default_factory=list)
+    items: list[Effect] = field(default_factory=list)
 
 
 @dataclass
@@ -167,7 +168,7 @@ class LayoutList(DataClassDictMixin):
         items (List[Effect]): A list of Layout objects.
     """
 
-    items: List[Layout] = field(default_factory=list)
+    items: list[Layout] = field(default_factory=list)
 
 
 @dataclass
@@ -208,7 +209,7 @@ class EffectPresetList(DataClassDictMixin):
     """
 
     id: str
-    items: List[EffectPreset] = field(default_factory=list)
+    items: list[EffectPreset] = field(default_factory=list)
 
 
 @dataclass
@@ -226,8 +227,8 @@ class Error(DataClassDictMixin):
     """
 
     title: str
-    code: Optional[str] = None
-    detail: Optional[str] = None
+    code: str | None = None
+    detail: str | None = None
 
 
 @dataclass
@@ -252,8 +253,8 @@ class SignalRGBResponse(DataClassDictMixin):
     id: int
     method: str
     status: str
-    params: Dict[str, Any] = field(default_factory=dict)
-    errors: List[Error] = field(default_factory=list)
+    params: dict[str, Any] = field(default_factory=dict)
+    errors: list[Error] = field(default_factory=list)
 
 
 @dataclass
@@ -268,7 +269,7 @@ class EffectDetailsResponse(SignalRGBResponse):
         data (Optional[Effect]): The details of the requested effect, if available.
     """
 
-    data: Optional[Effect] = None
+    data: Effect | None = None
 
 
 @dataclass
@@ -283,7 +284,7 @@ class CurrentStateResponse(SignalRGBResponse):
         data (Optional[CurrentStateHolder]): The current state of the canvas, if available.
     """
 
-    data: Optional[CurrentStateHolder] = None
+    data: CurrentStateHolder | None = None
 
 
 @dataclass
@@ -298,7 +299,7 @@ class EffectListResponse(SignalRGBResponse):
         data (Optional[EffectList]): The list of effects returned by the API, if available.
     """
 
-    data: Optional[EffectList] = None
+    data: EffectList | None = None
 
 
 @dataclass
@@ -313,7 +314,7 @@ class LayoutListResponse(SignalRGBResponse):
         data (Optional[Dict[str, Any]]): The data containing the list of layouts returned by the API, if available.
     """
 
-    data: Optional[Dict[str, Any]] = None
+    data: dict[str, Any] | None = None
 
 
 @dataclass
@@ -328,7 +329,7 @@ class CurrentLayoutResponse(SignalRGBResponse):
         data (Optional[CurrentLayoutHolder]): The data containing the current layout returned by the API, if available.
     """
 
-    data: Optional[CurrentLayoutHolder] = None
+    data: CurrentLayoutHolder | None = None
 
 
 @dataclass
@@ -340,7 +341,7 @@ class EffectPresetListResponse(SignalRGBResponse):
         data (Optional[EffectPresetList]): The list of effect presets returned by the API, if available.
     """
 
-    data: Optional[EffectPresetList] = None
+    data: EffectPresetList | None = None
 
 
 @dataclass
@@ -352,4 +353,4 @@ class EffectPresetResponse(SignalRGBResponse):
         data (Optional[EffectPreset]): The details of the requested effect preset, if available.
     """
 
-    data: Optional[EffectPreset] = None
+    data: EffectPreset | None = None

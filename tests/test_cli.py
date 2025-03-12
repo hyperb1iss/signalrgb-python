@@ -1,3 +1,4 @@
+# pylint: disable=duplicate-code
 from unittest.mock import patch
 
 import pytest
@@ -194,7 +195,7 @@ def test_next_effect(runner, mock_client):
     )
     mock_client.return_value.apply_next_effect.return_value = mock_effect
 
-    result = runner.invoke(app, ["effect", "next"])
+    result = runner.invoke(app, ["effect", "next_effect"])
     assert result.exit_code == 0
     assert "Applied next effect: Next Effect" in result.output
 
@@ -208,7 +209,7 @@ def test_previous_effect(runner, mock_client):
     )
     mock_client.return_value.apply_previous_effect.return_value = mock_effect
 
-    result = runner.invoke(app, ["effect", "previous"])
+    result = runner.invoke(app, ["effect", "previous_effect"])
     assert result.exit_code == 0
     assert "Applied previous effect: Previous Effect" in result.output
 
@@ -280,7 +281,7 @@ def test_list_layouts(runner, mock_client):
 
 
 def test_set_layout(runner, mock_client):
-    result = runner.invoke(app, ["layout", "set", "layout1"])
+    result = runner.invoke(app, ["layout", "set_layout", "layout1"])
     assert result.exit_code == 0
     assert "Set current layout to: layout1" in result.output
 
