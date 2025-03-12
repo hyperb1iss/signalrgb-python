@@ -6,8 +6,8 @@ This guide will help you set up your development environment for contributing to
 
 Before you begin, ensure you have the following installed on your system:
 
-- Python 3.12 or higher
-- [Poetry](https://python-poetry.org/docs/#installation) for dependency management
+- Python 3.9 or higher
+- [UV](https://github.com/astral-sh/uv) for dependency management
 - Git for version control
 
 ## Setting Up the Development Environment
@@ -18,14 +18,19 @@ Before you begin, ensure you have the following installed on your system:
    cd signalrgb-python
    ```
 
-2. Install the project dependencies using Poetry:
+2. Install the project dependencies using UV:
    ```bash
-   poetry install
+   uv sync --groups dev
    ```
 
-3. Activate the virtual environment:
+3. To run commands in the development environment:
    ```bash
-   poetry shell
+   uv run [command]
+   ```
+   
+   For example, to run a Python script:
+   ```bash
+   uv run python scripts/some_script.py
    ```
 
 ## Running Tests
@@ -33,13 +38,13 @@ Before you begin, ensure you have the following installed on your system:
 We use pytest for our test suite. To run the tests:
 
 ```bash
-poetry run pytest
+uv run pytest
 ```
 
 To run tests with coverage report:
 
 ```bash
-poetry run pytest --cov=signalrgb --cov-report=term-missing
+uv run pytest --cov=signalrgb --cov-report=term-missing
 ```
 
 ## Linting
@@ -47,13 +52,13 @@ poetry run pytest --cov=signalrgb --cov-report=term-missing
 We use Ruff for linting and formatting. To run the linter:
 
 ```bash
-poetry run ruff check .
+uv run ruff check .
 ```
 
 To automatically fix linting issues:
 
 ```bash
-poetry run ruff check --fix .
+uv run ruff check --fix .
 ```
 
 ## Type Checking
@@ -61,7 +66,7 @@ poetry run ruff check --fix .
 We use mypy for static type checking. To run the type checker:
 
 ```bash
-poetry run mypy signalrgb
+uv run mypy signalrgb
 ```
 
 ## Pre-commit Hooks
@@ -70,12 +75,12 @@ We use pre-commit hooks to ensure code quality before committing. To set up pre-
 
 1. Install pre-commit:
    ```bash
-   poetry run pre-commit install
+   uv run pre-commit install
    ```
 
 2. Run pre-commit on all files:
    ```bash
-   poetry run pre-commit run --all-files
+   uv run pre-commit run --all-files
    ```
 
 The pre-commit hooks will now run automatically on `git commit`.
@@ -84,14 +89,14 @@ The pre-commit hooks will now run automatically on `git commit`.
 
 To build the documentation locally:
 
-1. Install the documentation dependencies:
+1. Make sure you've installed the development dependencies:
    ```bash
-   poetry add mkdocs mkdocs-material mkdocstrings[python]
+   uv sync --groups dev
    ```
 
 2. Build and serve the documentation:
    ```bash
-   poetry run mkdocs serve
+   uv run mkdocs serve
    ```
 
 3. Open your browser and navigate to `http://127.0.0.1:8000/` to view the documentation.
@@ -100,7 +105,7 @@ To build the documentation locally:
 
 1. Update the version number in `pyproject.toml`:
    ```bash
-   poetry version patch  # or minor, or major
+   # Edit manually or use a version update script
    ```
 
 2. Update the `CHANGELOG.md` file with the changes for the new version.
@@ -127,10 +132,9 @@ The CI/CD pipeline will handle the rest, including building and publishing the p
 
 If you encounter any issues during development, please check the following:
 
-1. Ensure you're using the correct version of Python (3.12+).
-2. Make sure all dependencies are up to date (`poetry update`).
-3. Check that your virtual environment is activated (`poetry shell`).
-4. Clear any cached files: `find . -name '*.pyc' -delete` and `find . -name '__pycache__' -type d -delete`
+1. Ensure you're using the correct version of Python (3.9+).
+2. Make sure all dependencies are up to date (`uv sync`).
+3. Clear any cached files: `find . -name '*.pyc' -delete` and `find . -name '__pycache__' -type d -delete`
 
 If you're still having problems, please open an issue on the GitHub repository with a detailed description of the problem and steps to reproduce it.
 

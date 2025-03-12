@@ -197,13 +197,33 @@ def check_uncommitted_changes() -> None:
 
 def get_current_version() -> str:
     """Get the current version from pyproject.toml."""
-    result = subprocess.run(["poetry", "version", "-s"], capture_output=True, text=True)
-    return result.stdout.strip()
+    import tomllib
+    with open("pyproject.toml", "rb") as f:
+        config = tomllib.load(f)
+    return config["project"]["version"]
 
 
 def update_version(new_version: str) -> None:
     """Update the version in pyproject.toml."""
-    subprocess.run(["poetry", "version", new_version], check=True)
+    import tomllib
+    import re
+    
+    with open("pyproject.toml", "rb") as f:
+        content = tomllib.load(f)
+        
+    with open("pyproject.toml", "r") as f:
+        file_content = f.read()
+    
+    # Replace version with regex to preserve formatting
+    updated_content = re.sub(
+        r'version\s*=\s*"[^"]+"', 
+        f'version = "{new_version}"', 
+        file_content
+    )
+    
+    with open("pyproject.toml", "w") as f:
+        f.write(updated_content)
+        
     print_success(f"Updated version in pyproject.toml to {new_version}")
 
 
@@ -260,7 +280,7 @@ def main() -> None:
     print_logo()
     print_step(f"Starting release process for {PROJECT_NAME}")
 
-    for tool in ["git", "poetry"]:
+    for tool in ["git"]:
         check_tool_installed(tool)
 
     check_branch()

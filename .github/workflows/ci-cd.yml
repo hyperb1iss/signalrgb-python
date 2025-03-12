@@ -17,14 +17,20 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "0.6.3"
     - name: Install dependencies
+      run: uv sync
+    - name: Run lint checks
       run: |
-        pip install poetry
-        poetry install
+        uv run ruff check .
+        uv run mypy signalrgb
     - name: Run tests
-      run: poetry run pytest
+      run: uv run pytest
     - name: Upload test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test-results
         path: test-results
@@ -38,15 +44,17 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "0.6.3"
     - name: Install dependencies
       run: |
-        pip install poetry
-        poetry install
-        poetry add mkdocs mkdocs-material mkdocstrings[python]
+        uv sync --groups dev
     - name: Build documentation
-      run: poetry run mkdocs build
+      run: uv run mkdocs build
     - name: Upload documentation
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: site
         path: site
@@ -58,7 +66,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Download built site
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: site
         path: site
@@ -94,15 +102,18 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.12'
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "0.6.3"
     - name: Install dependencies
       run: |
-        pip install poetry
-        poetry install
+        uv sync --groups dev
+        uv pip install build twine
     - name: Build package
-      run: poetry build
+      run: uv run python -m build
     - name: Publish to PyPI
       env:
-        PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-      run: |
-        poetry config pypi-token.pypi $PYPI_TOKEN
-        poetry publish
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+      run: uv run twine upload dist/*
