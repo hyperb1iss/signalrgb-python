@@ -895,7 +895,7 @@ wheels = [
 
 [[package]]
 name = "signalrgb"
-version = "0.9.7"
+version = "0.9.8"
 source = { editable = "." }
 dependencies = [
     { name = "mashumaro" },
@@ -918,32 +918,30 @@ dev = [
     { name = "pytest-cov" },
     { name = "semver" },
     { name = "types-setuptools" },
-    { name = "wcwidth" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "mashumaro", specifier = ">=3.13.1" },
-    { name = "pre-commit", specifier = ">=3.7.1" },
+    { name = "mashumaro", specifier = ">=3.15" },
+    { name = "pre-commit", specifier = ">=4.1.0" },
     { name = "requests", specifier = ">=2.32.3" },
-    { name = "rich", specifier = ">=13.7.1" },
-    { name = "ruff", specifier = ">=0.5.4" },
-    { name = "typer", specifier = ">=0.12.3" },
+    { name = "rich", specifier = ">=13.9.4" },
+    { name = "ruff", specifier = ">=0.9.10" },
+    { name = "typer", specifier = ">=0.15.2" },
     { name = "urllib3", specifier = ">=1.26.5,<2" },
     { name = "wcwidth", specifier = ">=0.2.13" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "mkdocs", specifier = ">=1.6.0" },
-    { name = "mkdocs-material", specifier = ">=9.5.29" },
-    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.25.1" },
-    { name = "mypy", specifier = ">=1.11.0" },
-    { name = "pytest", specifier = ">=8.2.2" },
-    { name = "pytest-cov", specifier = ">=5.0.0" },
-    { name = "semver", specifier = ">=3.0.2" },
-    { name = "types-setuptools", specifier = ">=71.1.0.20240724" },
-    { name = "wcwidth", specifier = ">=0.2.13" },
+    { name = "mkdocs", specifier = ">=1.6.1" },
+    { name = "mkdocs-material", specifier = ">=9.6.7" },
+    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.29.0" },
+    { name = "mypy", specifier = ">=1.15.0" },
+    { name = "pytest", specifier = ">=8.3.5" },
+    { name = "pytest-cov", specifier = ">=6.0.0" },
+    { name = "semver", specifier = ">=3.0.4" },
+    { name = "types-setuptools", specifier = ">=75.8.2.20250305" },
 ]
 
 [[package]]
