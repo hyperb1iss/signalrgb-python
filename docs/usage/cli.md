@@ -2,7 +2,7 @@
 
 signalrgb-python provides a user-friendly command-line interface for interacting with your SignalRGB setup. This guide covers the basic usage of the CLI.
 
-## Basic Syntax
+## 🚀 Basic Syntax
 
 The basic syntax for using the SignalRGB CLI is:
 
@@ -16,9 +16,9 @@ You can always use the `--help` option to get more information about available c
 signalrgb --help
 ```
 
-## Available Commands
+## 📋 Available Commands
 
-### Effect Commands
+### 🎨 Effect Commands
 
 #### List Effects
 
@@ -54,7 +54,27 @@ To see which effect is currently active:
 signalrgb effect
 ```
 
-### Preset Commands
+#### Navigate Through Effects
+
+To apply the next effect in history:
+
+```bash
+signalrgb effect next_effect
+```
+
+To apply the previous effect in history:
+
+```bash
+signalrgb effect previous_effect
+```
+
+To apply a random effect:
+
+```bash
+signalrgb effect random
+```
+
+### 💾 Preset Commands
 
 #### List Presets
 
@@ -72,7 +92,7 @@ To apply a preset to the current effect:
 signalrgb preset apply "Preset Name"
 ```
 
-### Layout Commands
+### 📐 Layout Commands
 
 #### List Layouts
 
@@ -90,7 +110,7 @@ To set the current layout:
 signalrgb layout set "Layout Name"
 ```
 
-### Canvas Commands
+### 🎛️ Canvas Commands
 
 #### Control Brightness
 
@@ -120,7 +140,13 @@ To disable the canvas:
 signalrgb canvas disable
 ```
 
-## Global Options
+To toggle the canvas state:
+
+```bash
+signalrgb canvas toggle
+```
+
+## 🌐 Global Options
 
 You can specify a custom host and port for all commands:
 
@@ -128,7 +154,7 @@ You can specify a custom host and port for all commands:
 signalrgb --host my-pc.local --port 16038 effect list
 ```
 
-## Examples
+## 💡 Examples
 
 Here are some example use cases:
 
@@ -150,29 +176,36 @@ Here are some example use cases:
    signalrgb effect > current_effect.txt
    ```
 
-4. Set the brightness to 50%:
+4. Set the brightness to 50% and then disable the canvas:
 
    ```bash
    signalrgb canvas brightness 50
+   signalrgb canvas disable
    ```
 
-5. Enable the canvas:
+5. List layouts and switch to a different one:
 
    ```bash
-   signalrgb canvas enable
-   ```
-
-6. List and apply a preset:
-
-   ```bash
-   signalrgb preset list
-   signalrgb preset apply "Cool Preset"
-   ```
-
-7. Switch to a different layout:
-
-   ```bash
+   signalrgb layout list
    signalrgb layout set "Gaming Setup"
    ```
 
-Remember to refer to the `--help` option for each command to see all available options and arguments.
+6. Create a simple effect cycle script:
+
+   ```bash
+   #!/bin/bash
+   # Cycle through 5 random effects
+   for i in {1..5}; do
+     signalrgb effect random
+     sleep 5  # Wait 5 seconds between effects
+   done
+   ```
+
+Remember to refer to the `--help` option for each command to see all available options and arguments:
+
+```bash
+signalrgb effect --help
+signalrgb preset --help
+signalrgb layout --help
+signalrgb canvas --help
+```

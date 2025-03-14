@@ -1,6 +1,6 @@
 # Installation
 
-## Prerequisites
+## 🧰 Prerequisites
 
 Before installing signalrgb-python, ensure you have the following:
 
@@ -9,7 +9,15 @@ Before installing signalrgb-python, ensure you have the following:
 
 This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-api), which is only available in SignalRGB Pro.
 
-## Installing with pip
+### Additional Requirements for Async Usage
+
+To use the asynchronous client (`AsyncSignalRGBClient`), you will need:
+
+- Python 3.9 or higher (same as above)
+- Basic understanding of Python's asyncio framework
+- For integration with other async frameworks (like Home Assistant), see the [Async Usage](async_usage.md) guide
+
+## 📦 Installing with pip
 
 The easiest way to install signalrgb-python is using pip:
 
@@ -17,7 +25,7 @@ The easiest way to install signalrgb-python is using pip:
 pip install signalrgb
 ```
 
-## Installing with UV
+## 🚀 Installing with UV
 
 For faster, more reliable dependency resolution, you can use [UV](https://github.com/astral-sh/uv) to install signalrgb-python:
 
@@ -29,7 +37,7 @@ pip install uv
 uv pip install signalrgb
 ```
 
-## Development Installation
+## 🔧 Development Installation
 
 If you're working on signalrgb-python development, you can install it with development dependencies:
 
@@ -42,7 +50,7 @@ cd signalrgb-python
 uv sync --groups dev
 ```
 
-## Verifying the Installation
+## ✅ Verifying the Installation
 
 After installation, you can verify that signalrgb-python is correctly installed by running:
 
@@ -52,6 +60,17 @@ signalrgb --version
 
 This should display the version number of the installed client.
 
-## Next Steps
+You can also verify the Python library is working by importing it in a Python shell:
 
-Now that you have installed signalrgb-python, you can start using it. Check out the [CLI Usage](usage/cli.md) guide to learn how to use the command-line interface, or the [Python Library Usage](usage/library.md) guide to learn how to integrate it into your Python projects.
+```python
+import signalrgb
+print(signalrgb.__version__)
+```
+
+## 📚 Next Steps
+
+Now that you have installed signalrgb-python, you can start using it:
+
+- [CLI Usage](usage/cli.md) - Learn how to use the command-line interface
+- [Python Library Usage](usage/library.md) - Learn how to use the synchronous Python library
+- [Async Library Usage](async_usage.md) - Learn how to use the asynchronous Python library

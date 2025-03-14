@@ -1,8 +1,8 @@
 # signalrgb-python
 
-Welcome to the documentation for signalrgb-python. This library provides a powerful and easy-to-use interface for controlling [SignalRGB Pro](https://signalrgb.com) through both a command-line interface (CLI) and a Python library.
+Welcome to the documentation for signalrgb-python! This library provides a powerful and easy-to-use interface for controlling [SignalRGB Pro](https://signalrgb.com) through both a command-line interface (CLI) and Python libraries (both synchronous and asynchronous).
 
-## Features
+## ✨ Features
 
 - 📋 List available lighting effects and presets
 - 🔍 Get detailed information about specific effects
@@ -11,54 +11,89 @@ Welcome to the documentation for signalrgb-python. This library provides a power
 - 🔆 Control brightness levels
 - 🔌 Enable or disable the canvas
 - 🖥️ User-friendly command-line interface with intuitive subcommands
-- 🐍 Python client library for seamless integration into your projects
-- 🔐 Error handling and connection management
+- 🐍 Python client libraries for seamless integration:
+  - Synchronous API for straightforward scripts
+  - Asynchronous API for asyncio-based applications
+- 🔐 Robust error handling and connection management
 - 🔄 Automatic effect caching for improved performance
 
-## Quick Start
+## 🚀 Quick Start
 
-Install signalrgb-python:
+### Installation
 
 ```bash
 pip install signalrgb
 ```
 
-Use the CLI to list available effects:
+### Command-Line Interface
+
+List available effects:
 
 ```bash
 signalrgb effect list
 ```
 
-Or use the Python library in your code:
+Apply a specific effect:
+
+```bash
+signalrgb effect apply "Rainbow Wave"
+```
+
+### Synchronous Python API
 
 ```python
-from signalrgb.client import SignalRGBClient
+from signalrgb import SignalRGBClient
 
+# Initialize the client
 client = SignalRGBClient()
-effects = client.get_effects()
-for effect in effects:
-    print(f"Effect: {effect.attributes.name}")
+
+# Apply an effect
+client.apply_effect_by_name("Rainbow Wave")
 
 # Control brightness
 client.brightness = 75
-print(f"Current brightness: {client.brightness}")
 
 # Enable/disable the canvas
 client.enabled = True
-print(f"Canvas enabled: {client.enabled}")
 
-# List and apply presets
-current_effect = client.get_current_effect()
-presets = client.get_effect_presets(current_effect.id)
-for preset in presets:
-    print(f"Preset: {preset.id}")
-client.apply_effect_preset(current_effect.id, presets[0].id)
-
-# Manage layouts
-layouts = client.get_layouts()
-for layout in layouts:
-    print(f"Layout: {layout.id}")
-client.current_layout = layouts[0].id
+# Get current effect information
+effect = client.get_current_effect()
+print(f"Current effect: {effect.attributes.name}")
 ```
 
-For more detailed information, check out the [Installation](installation.md) and [Usage](usage/cli.md) guides.
+### Asynchronous Python API
+
+```python
+import asyncio
+from signalrgb import AsyncSignalRGBClient
+
+async def main():
+    # Use the async client as a context manager
+    async with AsyncSignalRGBClient() as client:
+        # Apply an effect
+        await client.apply_effect_by_name("Rainbow Wave")
+
+        # Control brightness
+        await client.set_brightness(75)
+
+        # Get current effect information
+        effect = await client.get_current_effect()
+        print(f"Current effect: {effect.attributes.name}")
+
+# Run the async code
+asyncio.run(main())
+```
+
+## 📚 Documentation
+
+- **[Installation](installation.md)** - Detailed installation instructions
+- **Usage Guides**:
+  - [Command-Line Interface](usage/cli.md) - Using the SignalRGB CLI
+  - [Synchronous Library](usage/library.md) - Using the Python library in synchronous code
+  - [Asynchronous Library](async_usage.md) - Using the async Python library with asyncio
+- **API Reference**:
+  - [Client API](api/client.md) - SignalRGBClient reference
+  - [Models](api/models.md) - Data model reference
+- **Development**:
+  - [Contributing](contributing.md) - Guidelines for contributors
+  - [Development Guide](development.md) - Setting up your development environment
