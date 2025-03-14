@@ -2,12 +2,18 @@
 
 from typing import Any, Literal, Optional, Union, cast
 
+from .async_client import AsyncSignalRGBClient
 from .client import (
+    EffectIterator,
+    SignalRGBClient,
+)
+from .exceptions import (
     APIError,
     ConnectionError,
     NotFoundError,
-    SignalRGBClient,
+    SignalConnectionError,
     SignalRGBError,
+    SignalRGBException,
 )
 from .model import (
     Effect,
@@ -15,15 +21,19 @@ from .model import (
     Layout,
 )
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"  # Major version bump for async API
 
 __all__ = [
     "APIError",
+    "AsyncSignalRGBClient",
     "ConnectionError",
     "Effect",
+    "EffectIterator",
     "EffectPreset",
     "Layout",
     "NotFoundError",
+    "SignalConnectionError",
     "SignalRGBClient",
     "SignalRGBError",
+    "SignalRGBException",
 ]

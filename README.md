@@ -6,13 +6,14 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![PyPI version](https://img.shields.io/pypi/v/signalrgb)](https://pypi.org/project/signalrgb)
 
-*A powerful Python client library and CLI for controlling [SignalRGB Pro](https://signalrgb.com)*
+_A powerful Python client library and CLI for controlling [SignalRGB Pro](https://signalrgb.com)_
 
 [Features](#features) • [Installation](#installation) • [Usage](#usage) • [API Reference](#api-reference) • [Development](#development) • [Contributing](#contributing) • [License](#license)
 
 </div>
 
 ## ✨ Features
+
 <a name="features"></a>
 
 - 📋 List available lighting effects and presets
@@ -25,8 +26,10 @@
 - 🐍 Python client library for seamless integration into your projects
 - 🔐 Error handling and connection management
 - 🔄 Automatic effect caching for improved performance
+- ⚡ Native asyncio support for async applications and integrations
 
 ## 💻 Installation
+
 <a name="installation"></a>
 
 You can install signalrgb-python using pip:
@@ -43,12 +46,13 @@ uv add signalrgb
 
 ### Prerequisites
 
-- Python 3.12 or higher
+- Python 3.11 or higher
 - [SignalRGB Pro](https://www.signalrgb.com/pro/) (required for API access)
 
 This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-api), which is only available in SignalRGB Pro.
 
 ## 🚀 Usage
+
 <a name="usage"></a>
 
 ### Command-line Interface
@@ -107,10 +111,12 @@ signalrgb --help
 
 ### Python Library
 
+#### Synchronous API
+
 Integrate signalrgb-python into your own Python projects with ease:
 
 ```python
-from signalrgb.client import SignalRGBClient
+from signalrgb import SignalRGBClient
 
 # Initialize the client
 client = SignalRGBClient(host="hyperia.home", port=16038)
@@ -149,12 +155,51 @@ client.enabled = True
 print(f"Canvas enabled: {client.enabled}")
 ```
 
+#### Asynchronous API ⚡
+
+For async applications like Home Assistant integrations, use the async API:
+
+```python
+import asyncio
+from signalrgb import AsyncSignalRGBClient
+
+async def main():
+    # Initialize the client with context manager for auto-cleanup
+    async with AsyncSignalRGBClient(host="hyperia.home", port=16038) as client:
+        # List all effects
+        effects = await client.get_effects()
+        for effect in effects:
+            print(f"Effect: {effect.attributes.name}")
+
+        # Apply an effect
+        await client.apply_effect_by_name("Rain")
+
+        # Get and update brightness
+        brightness = await client.get_brightness()
+        print(f"Current brightness: {brightness}")
+        await client.set_brightness(75)
+
+        # Enable/disable the canvas
+        is_enabled = await client.get_enabled()
+        print(f"Canvas enabled: {is_enabled}")
+        await client.set_enabled(True)
+
+        # Get current effect
+        current = await client.get_current_effect()
+        print(f"Current effect: {current.attributes.name}")
+
+# Run the async function
+asyncio.run(main())
+```
+
+For more details on the async API, see [docs/async_usage.md](docs/async_usage.md).
+
 ### Error Handling
 
 The client provides custom exceptions for different types of errors:
 
 ```python
-from signalrgb.client import SignalRGBClient, ConnectionError, APIError, NotFoundError
+from signalrgb import SignalRGBClient, ConnectionError, APIError, NotFoundError
 
 client = SignalRGBClient()
 
@@ -168,12 +213,16 @@ except APIError as e:
     print(f"API error occurred: {e}")
 ```
 
+The same error handling pattern works for the async client too.
+
 ## 📘 API Reference
+
 <a name="api-reference"></a>
 
 For detailed information about the available methods and classes, please refer to our [API Documentation](https://hyperb1iss.github.io/signalrgb-python/).
 
 ## 🛠️ Development
+
 <a name="development"></a>
 
 To set up the development environment:
@@ -196,6 +245,7 @@ pytest
 Check out our [Development Guide](https://hyperb1iss.github.io/signalrgb-python/development/) for more information!
 
 ## 👥 Contributing
+
 <a name="contributing"></a>
 
 Have a fix or new feature that you want to add? That's amazing! You're amazing!
@@ -209,10 +259,10 @@ Have a fix or new feature that you want to add? That's amazing! You're amazing!
 Please make sure to update tests as appropriate and adhere to the project's coding standards.
 
 ## 📄 License
+
 <a name="license"></a>
 
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
-
 
 ---
 

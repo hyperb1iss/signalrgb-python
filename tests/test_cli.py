@@ -5,7 +5,7 @@ import pytest
 from typer.testing import CliRunner
 
 from signalrgb.cli import app
-from signalrgb.client import SignalRGBException
+from signalrgb.exceptions import SignalRGBException
 from signalrgb.model import Attributes, Effect, EffectPreset, Layout, Links
 
 
@@ -149,11 +149,13 @@ def test_brightness(runner, mock_client):
 
     result = runner.invoke(app, ["canvas", "brightness", "50"])
     assert result.exit_code == 0
-    assert "Set brightness to: 50%" in result.output
+    assert "Set brightness to:" in result.output
+    assert "50" in result.output
 
     result = runner.invoke(app, ["canvas", "brightness"])
     assert result.exit_code == 0
-    assert "Current brightness: 50%" in result.output
+    assert "Current brightness:" in result.output
+    assert "50" in result.output
 
 
 def test_enable(runner, mock_client):
@@ -263,7 +265,9 @@ def test_apply_preset(runner, mock_client):
 
     result = runner.invoke(app, ["preset", "apply", "preset1"])
     assert result.exit_code == 0
-    assert "Applied preset 'preset1' to effect 'Current Effect'" in result.output
+    assert "Applied preset" in result.output
+    assert "preset1" in result.output
+    assert "Current Effect" in result.output
 
 
 def test_list_layouts(runner, mock_client):

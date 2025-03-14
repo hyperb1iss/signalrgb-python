@@ -12,11 +12,11 @@ from rich.table import Table
 from rich.text import Text
 import typer
 
-from .client import (
+from .client import SignalRGBClient
+from .exceptions import (
     APIError,
     ConnectionError,
     NotFoundError,
-    SignalRGBClient,
     SignalRGBException,
 )
 

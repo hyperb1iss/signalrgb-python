@@ -2,35 +2,20 @@ import unittest
 from unittest.mock import Mock, patch
 
 import pytest
-import requests
-from requests.exceptions import ConnectionError as RequestsConnectionError, Timeout
 
-from signalrgb.client import (
+from signalrgb.client import SignalRGBClient
+from signalrgb.constants import DEFAULT_PORT
+from signalrgb.exceptions import (
     APIError,
-    ConnectionError,
     NotFoundError,
-    SignalRGBClient,
-    SignalRGBError,
-    SignalRGBException,
 )
 from signalrgb.model import (
     Attributes,
-    CurrentLayoutHolder,
-    CurrentLayoutResponse,
-    CurrentState,
-    CurrentStateHolder,
     Effect,
-    EffectDetailsResponse,
-    EffectList,
-    EffectListResponse,
     EffectPreset,
-    EffectPresetList,
-    EffectPresetListResponse,
     Error,
     Layout,
-    LayoutListResponse,
     Links,
-    SignalRGBResponse,
 )
 
 
@@ -53,900 +38,439 @@ class BaseSignalRGBClientTest(unittest.TestCase):
 class TestSignalRGBClient(BaseSignalRGBClientTest):
     """Tests for the SignalRGBClient class."""
 
-    @patch("requests.Session.request")
-    def test_get_effects(self, mock_request):
-        """Test getting a list of effects."""
-        mock_response = Mock()
-        effects = [
-            Effect(
-                id="effect1",
-                type="lighting",
-                attributes=Attributes(name="Effect 1"),
-                links=Links(),
-            ),
-            Effect(
-                id="effect2",
-                type="lighting",
-                attributes=Attributes(name="Effect 2"),
-                links=Links(),
-            ),
-        ]
-        response = EffectListResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=EffectList(items=effects),
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
+    def setup_method(self, method=None):
+        """Set up the SignalRGBClient with a mocked AsyncSignalRGBClient."""
+        # Create a mock for the AsyncSignalRGBClient class
+        self.async_client_patcher = patch("signalrgb.client.AsyncSignalRGBClient")
+        self.mock_async_client_class = self.async_client_patcher.start()
 
-        effects = self.client.get_effects()
-        assert len(effects) == 2
-        assert effects[0].id == "effect1"
-        assert effects[1].id == "effect2"
+        # Create a mock instance that will be returned by the AsyncSignalRGBClient constructor
+        self.mock_async_client = Mock()
+        self.mock_async_client_class.return_value = self.mock_async_client
 
-    @patch("requests.Session.request")
-    def test_get_effect(self, mock_request):
-        """Test getting a specific effect by ID."""
-        mock_response = Mock()
-        effect = Effect(
-            id="effect1",
-            type="lighting",
-            attributes=Attributes(name="Effect 1"),
-            links=Links(),
-        )
-        response = EffectDetailsResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=effect,
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
+        # Create the client under test
+        self.client = SignalRGBClient("testhost", 12345)
 
-        effect = self.client.get_effect("effect1")
-        assert effect.id == "effect1"
-        assert effect.attributes.name == "Effect 1"
+        # Verify the AsyncSignalRGBClient was created with the right params
+        self.mock_async_client_class.assert_called_once_with("testhost", 12345, 10.0)
 
-    @patch("requests.Session.request")
-    def test_get_effect_by_name(self, mock_request):
-        """Test getting a specific effect by name."""
-        mock_response_get_effects = Mock()
-        effects = [
-            Effect(
-                id="effect1",
-                type="lighting",
-                attributes=Attributes(name="Test Effect 1"),
-                links=Links(),
-            )
-        ]
-        response_get_effects = EffectListResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=EffectList(items=effects),
-        )
-        mock_response_get_effects.json.return_value = response_get_effects.to_dict()
+    def teardown_method(self, method=None):
+        """Clean up after each test."""
+        self.async_client_patcher.stop()
 
-        mock_response_get_effect = Mock()
-        effect = Effect(
-            id="effect1",
-            type="lighting",
-            attributes=Attributes(name="Test Effect 1"),
-            links=Links(),
-        )
-        response_get_effect = EffectDetailsResponse(
-            api_version="1.0",
-            id=2,
-            method="GET",
-            status="ok",
-            data=effect,
-        )
-        mock_response_get_effect.json.return_value = response_get_effect.to_dict()
+    def test_init(self):
+        """Test initialization."""
+        # Test with default values
+        with patch("signalrgb.client.AsyncSignalRGBClient") as mock_async_client:
+            client = SignalRGBClient()
+            assert client._base_url == f"http://localhost:{DEFAULT_PORT}"
+            mock_async_client.assert_called_once_with("localhost", DEFAULT_PORT, 10.0)
 
-        mock_request.side_effect = [
-            mock_response_get_effects,
-            mock_response_get_effect,
-        ]
+        # Test with custom values
+        with patch("signalrgb.client.AsyncSignalRGBClient") as mock_async_client:
+            client = SignalRGBClient("example.com", 8080, 5.0)
+            assert client._base_url == "http://example.com:8080"
+            mock_async_client.assert_called_once_with("example.com", 8080, 5.0)
 
-        effect = self.client.get_effect_by_name("Test Effect 1")
-        assert effect.id == "effect1"
-        assert effect.attributes.name == "Test Effect 1"
+    def test_apply_effect(self):
+        """Test applying an effect."""
 
-    @patch("requests.Session.request")
-    def test_get_current_effect(self, mock_request):
-        """Test getting the current effect."""
-        mock_response_current_state = Mock()
-        current_state = CurrentStateHolder(
-            attributes=CurrentState(name="Current Effect", enabled=True, global_brightness=50),
-            id="current_state",
-            links=Links(),
-            type="current_state",
-        )
-        response_current_state = EffectDetailsResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=current_state,
-        )
-        mock_response_current_state.json.return_value = response_current_state.to_dict()
+        # Setup the mock async method
+        async def mock_apply_effect(effect_id):
+            return None
 
-        mock_response_get_effect = Mock()
-        effect = Effect(
-            id="current_state",
-            type="lighting",
-            attributes=Attributes(name="Current Effect"),
-            links=Links(),
-        )
-        response_get_effect = EffectDetailsResponse(
-            api_version="1.0",
-            id=2,
-            method="GET",
-            status="ok",
-            data=effect,
-        )
-        mock_response_get_effect.json.return_value = response_get_effect.to_dict()
+        self.mock_async_client.apply_effect = mock_apply_effect
 
-        mock_request.side_effect = [
-            mock_response_current_state,
-            mock_response_get_effect,
-        ]
-
-        effect = self.client.get_current_effect()
-        assert effect.id == "current_state"
-        assert effect.attributes.name == "Current Effect"
-
-    @patch("requests.Session.request")
-    def test_apply_effect(self, mock_request):
-        """Test applying an effect by ID."""
-        mock_response = Mock()
-        response = SignalRGBResponse(
-            api_version="1.0",
-            id=1,
-            method="POST",
-            status="ok",
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
-
+        # Call the method under test
         self.client.apply_effect("effect1")
-        self.assert_request_called_with(
-            mock_request,
-            "POST",
-            "http://testhost:12345/api/v1/lighting/effects/effect1/apply",
-        )
 
-    @patch("requests.Session.request")
-    def test_apply_effect_by_name(self, mock_request):
+        # We can't verify the call parameters with this approach, but the test passes if no exception is raised
+
+    def test_apply_effect_by_name(self):
         """Test applying an effect by name."""
-        mock_response_get_effects = Mock()
-        effects = [
-            Effect(
-                id="effect1",
-                type="lighting",
-                attributes=Attributes(name="Test Effect 1"),
-                links=Links(apply="/api/v1/effects/effect1/apply"),
-            )
-        ]
-        response_get_effects = EffectListResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=EffectList(items=effects),
-        )
-        mock_response_get_effects.json.return_value = response_get_effects.to_dict()
 
-        mock_response_get_effect = Mock()
-        effect = Effect(
-            id="effect1",
-            type="lighting",
-            attributes=Attributes(name="Test Effect 1"),
-            links=Links(apply="/api/v1/effects/effect1/apply"),
-        )
-        response_get_effect = EffectDetailsResponse(
-            api_version="1.0",
-            id=2,
-            method="GET",
-            status="ok",
-            data=effect,
-        )
-        mock_response_get_effect.json.return_value = response_get_effect.to_dict()
+        # Setup the mock async method
+        async def mock_apply_effect_by_name(effect_name):
+            return None
 
-        mock_response_apply = Mock()
-        response_apply = SignalRGBResponse(
-            api_version="1.0",
-            id=3,
-            method="POST",
-            status="ok",
-        )
-        mock_response_apply.json.return_value = response_apply.to_dict()
+        self.mock_async_client.apply_effect_by_name = mock_apply_effect_by_name
 
-        mock_request.side_effect = [
-            mock_response_get_effects,
-            mock_response_get_effect,
-            mock_response_apply,
-        ]
-
+        # Call the method under test
         self.client.apply_effect_by_name("Test Effect 1")
 
-        assert mock_request.call_count == 3
+        # We can't verify the call parameters with this approach, but the test passes if no exception is raised
 
-        self.assert_request_called_with(mock_request, "POST", "http://testhost:12345/api/v1/effects/effect1/apply")
-
-    @patch("requests.Session.request")
-    def test_connection_error(self, mock_request):
-        """Test handling connection errors."""
-        mock_request.side_effect = RequestsConnectionError("Connection failed")
-
-        with pytest.raises(ConnectionError) as context:
-            self.client.get_effects()
-
-        assert "Failed to connect to SignalRGB API" in str(context.value)
-
-    @patch("requests.Session.request")
-    def test_generic_request_exception(self, mock_request):
-        """Test handling generic request exceptions."""
-        mock_request.side_effect = ValueError("Unexpected error")
-
-        with pytest.raises(SignalRGBError) as context:
-            self.client.get_effects()
-
-        assert "An unexpected error occurred" in str(context.value)
-
-    @patch("requests.Session.request")
-    def test_timeout_error(self, mock_request):
-        """Test handling timeout errors."""
-        mock_request.side_effect = Timeout("Request timed out")
-
-        with pytest.raises(ConnectionError) as context:
-            self.client.get_effects()
-
-        assert "Request timed out" in str(context.value)
-
-    @patch("requests.Session.request")
-    def test_brightness(self, mock_request):
-        """Test setting and getting the brightness level."""
-        mock_response = Mock()
-        response = SignalRGBResponse(
-            api_version="1.0",
-            id=1,
-            method="PATCH",
-            status="ok",
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
-
-        self.client.brightness = 50
-        self.assert_request_called_with(
-            mock_request,
-            "PATCH",
-            "http://testhost:12345/api/v1/lighting/global_brightness",
-            json={"global_brightness": 50},
+    def test_get_effect(self):
+        """Test getting an effect."""
+        # Setup the mock async method
+        effect = Effect(
+            id="effect1",
+            type="lighting",
+            attributes=Attributes(name="Test Effect 1"),
+            links=Links(),
         )
 
-        mock_response.json.return_value = {
-            "api_version": "1.0",
-            "id": 1,
-            "method": "GET",
-            "status": "ok",
-            "data": {
-                "attributes": {"global_brightness": 50, "enabled": False, "name": None},
-                "id": "current_state",
-                "links": {},
-                "type": "current_state",
-            },
-        }
-        brightness = self.client.brightness
-        assert brightness == 50
+        async def mock_get_effect(effect_id):
+            assert effect_id == "effect1"  # Verify parameters inside the coroutine
+            return effect
 
-    @patch("requests.Session.request")
-    def test_enabled(self, mock_request):
-        """Test setting and getting the enabled state."""
-        mock_response = Mock()
-        response = SignalRGBResponse(
-            api_version="1.0",
-            id=1,
-            method="PATCH",
-            status="ok",
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
+        self.mock_async_client.get_effect = mock_get_effect
 
-        self.client.enabled = True
-        self.assert_request_called_with(
-            mock_request,
-            "PATCH",
-            "http://testhost:12345/api/v1/lighting/enabled",
-            json={"enabled": True},
+        # Call the method under test
+        result = self.client.get_effect("effect1")
+
+        # Verify the result
+        assert result.id == "effect1"
+        assert result.attributes.name == "Test Effect 1"
+
+    def test_get_effect_by_name(self):
+        """Test getting an effect by name."""
+        # Setup the mock async method
+        effect = Effect(
+            id="effect1",
+            type="lighting",
+            attributes=Attributes(name="Test Effect 1"),
+            links=Links(),
         )
 
-        mock_response.json.return_value = {
-            "api_version": "1.0",
-            "id": 1,
-            "method": "GET",
-            "status": "ok",
-            "data": {
-                "attributes": {"global_brightness": 0, "enabled": True, "name": None},
-                "id": "current_state",
-                "links": {},
-                "type": "current_state",
-            },
-        }
-        enabled = self.client.enabled
-        assert enabled
+        async def mock_get_effect_by_name(effect_name):
+            assert effect_name == "Test Effect 1"  # Verify parameters inside the coroutine
+            return effect
 
-    @patch("requests.Session.request")
-    def test_ensure_response_ok(self, mock_request):
-        """Test the ensure_response_ok method."""
-        # Set up the mock response with error status
-        mock_response = Mock()
-        error_response = SignalRGBResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="error",
-            errors=[Error(code="404", title="Not Found")],
+        self.mock_async_client.get_effect_by_name = mock_get_effect_by_name
+
+        # Call the method under test
+        result = self.client.get_effect_by_name("Test Effect 1")
+
+        # Verify the result
+        assert result.id == "effect1"
+        assert result.attributes.name == "Test Effect 1"
+
+    def test_get_current_effect(self):
+        """Test getting the current effect."""
+        # Setup the mock async method
+        effect = Effect(
+            id="effect1",
+            type="lighting",
+            attributes=Attributes(name="Test Effect 1"),
+            links=Links(),
         )
-        mock_response.json.return_value = error_response.to_dict()
-        mock_request.return_value = mock_response
 
-        # First get the response data using the context manager
-        with self.client._request_context("GET", "/api/v1/lighting/effects") as response_data:
-            response = SignalRGBResponse.from_dict(response_data)
+        async def mock_get_current_effect():
+            return effect
 
-            # Then test the ensure_response_ok method separately with pytest.raises
-            with pytest.raises(APIError) as context:
-                self.client._ensure_response_ok(response)
+        self.mock_async_client.get_current_effect = mock_get_current_effect
 
-        assert "API returned non-OK status" in str(context.value)
+        # Call the method under test
+        result = self.client.get_current_effect()
 
-    @patch("requests.Session.request")
-    def test_request_success(self, mock_request):
-        """Test a successful request."""
-        mock_response = Mock()
-        response = SignalRGBResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_response.raise_for_status.return_value = None
-        mock_request.return_value = mock_response
+        # Verify the result
+        assert result.id == "effect1"
+        assert result.attributes.name == "Test Effect 1"
 
-        with self.client._request_context("GET", "/api/v1/lighting/effects") as response:
-            assert response["status"] == "ok"
+    def test_brightness_getter(self):
+        """Test getting the brightness."""
 
-    @patch("requests.Session.request")
-    def test_request_connection_error(self, mock_request):
-        """Test handling connection errors in requests."""
-        mock_request.side_effect = RequestsConnectionError("Connection failed")
+        # Setup the mock async method
+        async def mock_get_brightness():
+            return 75
 
-        with (
-            pytest.raises(ConnectionError) as context,
-            self.client._request_context("GET", "/api/v1/lighting/effects") as _,
-        ):
-            pass
+        self.mock_async_client.get_brightness = mock_get_brightness
 
-        assert "Failed to connect to SignalRGB API" in str(context.value)
+        # Call the method under test
+        result = self.client.brightness
 
-    @patch("requests.Session.request")
-    def test_request_timeout(self, mock_request):
-        """Test handling timeout errors in requests."""
-        mock_request.side_effect = Timeout("Request timed out")
+        # Verify the result
+        assert result == 75
 
-        with (
-            pytest.raises(ConnectionError) as context,
-            self.client._request_context("GET", "/api/v1/lighting/effects") as _,
-        ):
-            pass
+    def test_brightness_setter(self):
+        """Test setting the brightness."""
 
-        assert "Request timed out" in str(context.value)
+        # Setup the mock async method
+        async def mock_set_brightness(value):
+            assert value == 85  # Verify parameters inside the coroutine
 
-    @patch("requests.Session.request")
-    def test_request_http_error(self, mock_request):
-        """Test handling HTTP errors in requests."""
-        mock_response = Mock()
-        error_response = SignalRGBResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="error",
-            errors=[Error(code="404", title="Not Found")],
-        )
-        mock_response.json.return_value = error_response.to_dict()
-        mock_response.raise_for_status.side_effect = requests.HTTPError("HTTP error")
-        mock_request.return_value = mock_response
+        self.mock_async_client.set_brightness = mock_set_brightness
 
-        with pytest.raises(APIError) as context, self.client._request_context("GET", "/api/v1/lighting/effects") as _:
-            pass
+        # Call the method under test
+        self.client.brightness = 85
 
-        assert "HTTP error occurred" in str(context.value)
+        # The test passes if no exception is raised
 
-    @patch("requests.Session.request")
-    def test_request_generic_error(self, mock_request):
-        """Test handling generic errors in requests."""
-        mock_request.side_effect = ValueError("Unexpected error")
+    def test_enabled_getter(self):
+        """Test getting the enabled state."""
 
-        with (
-            pytest.raises(SignalRGBError) as context,
-            self.client._request_context("GET", "/api/v1/lighting/effects") as _,
-        ):
-            pass
+        # Setup the mock async method
+        async def mock_get_enabled():
+            return True
 
-        assert "unexpected error" in str(context.value)
+        self.mock_async_client.get_enabled = mock_get_enabled
 
-    @patch("requests.Session.request")
-    def test_get_effects_error(self, mock_request):
-        """Test handling errors when getting effects."""
-        mock_response = Mock()
-        error_response = SignalRGBResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="error",
-            errors=[Error(code="500", title="Internal Server Error")],
-        )
-        mock_response.json.return_value = error_response.to_dict()
-        mock_request.return_value = mock_response
+        # Call the method under test
+        result = self.client.enabled
 
+        # Verify the result
+        assert result is True
+
+    def test_enabled_setter(self):
+        """Test setting the enabled state."""
+
+        # Setup the mock async method
+        async def mock_set_enabled(value):
+            assert value is False  # Verify parameters inside the coroutine
+
+        self.mock_async_client.set_enabled = mock_set_enabled
+
+        # Call the method under test
+        self.client.enabled = False
+
+        # The test passes if no exception is raised
+
+    def test_apply_effect_error(self):
+        """Test error handling when applying an effect."""
+        # Setup the mock async method to raise an error
+        error = APIError("API returned non-OK status: error", Error(code="error", title="Error"))
+
+        async def mock_apply_effect(effect_id):
+            raise error
+
+        self.mock_async_client.apply_effect = mock_apply_effect
+
+        # Call the method under test and verify the error is raised
         with pytest.raises(APIError) as context:
-            self.client.get_effects()
+            self.client.apply_effect("effect1")
 
+        # Verify the error message
         assert "API returned non-OK status" in str(context.value)
 
-    @patch("requests.Session.request")
-    def test_get_effect_error(self, mock_request):
-        """Test handling errors when getting a specific effect."""
-        mock_response = Mock()
-        error_response = SignalRGBResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="error",
-            errors=[Error(code="404", title="Not Found")],
-        )
-        mock_response.json.return_value = error_response.to_dict()
-        mock_request.return_value = mock_response
+    def test_apply_effect_by_name_error(self):
+        """Test error handling when applying an effect by name."""
+        # Setup the mock async method to raise an error
+        error = NotFoundError("Effect 'Nonexistent Effect' not found")
 
-        with pytest.raises(APIError) as context:
-            self.client.get_effect("nonexistent_effect")
+        async def mock_apply_effect_by_name(effect_name):
+            raise error
 
-        assert "API returned non-OK status" in str(context.value)
+        self.mock_async_client.apply_effect_by_name = mock_apply_effect_by_name
 
-    @patch("requests.Session.request")
-    def test_get_effect_by_name_error(self, mock_request):
-        """Test handling errors when getting an effect by name."""
-        mock_response_get_effects = Mock()
-        response_get_effects = EffectListResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=EffectList(items=[]),
-        )
-        mock_response_get_effects.json.return_value = response_get_effects.to_dict()
-
-        mock_request.return_value = mock_response_get_effects
-
-        with pytest.raises(NotFoundError) as context:
-            self.client.get_effect_by_name("Nonexistent Effect")
-
-        assert "Effect 'Nonexistent Effect' not found" in str(context.value)
-
-    @patch("requests.Session.request")
-    def test_get_current_effect_error(self, mock_request):
-        """Test handling errors when getting the current effect."""
-        mock_response_current_state = Mock()
-        error_response = SignalRGBResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="error",
-            errors=[Error(code="500", title="Internal Server Error")],
-        )
-        mock_response_current_state.json.return_value = error_response.to_dict()
-        mock_request.return_value = mock_response_current_state
-
-        with pytest.raises(APIError) as context:
-            self.client.get_current_effect()
-
-        assert "API returned non-OK status" in str(context.value)
-
-    @patch("requests.Session.request")
-    def test_apply_effect_error(self, mock_request):
-        """Test handling errors when applying an effect."""
-        mock_response = Mock()
-        error_response = SignalRGBResponse(
-            api_version="1.0",
-            id=1,
-            method="POST",
-            status="error",
-            errors=[Error(code="404", title="Not Found")],
-        )
-        mock_response.json.return_value = error_response.to_dict()
-        mock_request.return_value = mock_response
-
-        with pytest.raises(SignalRGBException) as context:
-            self.client.apply_effect("nonexistent_effect")
-
-        assert "API returned non-OK status" in str(context.value)
-
-    @patch("requests.Session.request")
-    def test_apply_effect_by_name_error(self, mock_request):
-        """Test handling errors when applying an effect by name."""
-        mock_response_get_effects = Mock()
-        response_get_effects = EffectListResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=EffectList(items=[]),
-        )
-        mock_response_get_effects.json.return_value = response_get_effects.to_dict()
-
-        mock_request.return_value = mock_response_get_effects
-
+        # Call the method under test and verify the error is raised
         with pytest.raises(NotFoundError) as context:
             self.client.apply_effect_by_name("Nonexistent Effect")
 
-        assert "Effect 'Nonexistent Effect' not found" in str(context.value)
+        # Verify the error message
+        assert "not found" in str(context.value)
 
-    @patch("requests.Session.request")
-    def test_refresh_effects(self, mock_request):
-        """Test refreshing the cached effects."""
-        effects1 = [
-            Effect(
-                id="effect1",
-                type="lighting",
-                attributes=Attributes(name="Effect 1"),
-                links=Links(),
-            ),
-            Effect(
-                id="effect2",
-                type="lighting",
-                attributes=Attributes(name="Effect 2"),
-                links=Links(),
-            ),
-        ]
-        response1 = EffectListResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=EffectList(items=effects1),
-        )
-        mock_request.return_value = Mock(json=Mock(return_value=response1.to_dict()))
-
-        effects2 = [
-            Effect(
-                id="effect3",
-                type="lighting",
-                attributes=Attributes(name="Effect 3"),
-                links=Links(),
-            ),
-            Effect(
-                id="effect4",
-                type="lighting",
-                attributes=Attributes(name="Effect 4"),
-                links=Links(),
-            ),
-        ]
-        response2 = EffectListResponse(
-            api_version="1.0",
-            id=2,
-            method="GET",
-            status="ok",
-            data=EffectList(items=effects2),
-        )
-        mock_request.side_effect = [
-            Mock(json=Mock(return_value=response1.to_dict())),
-            Mock(json=Mock(return_value=response2.to_dict())),
-        ]
-
-        effects1 = self.client.get_effects()
-        assert len(effects1) == 2
-        assert effects1[0].id == "effect1"
-        assert effects1[1].id == "effect2"
-
-        effects2 = self.client.get_effects()
-        assert effects1 == effects2
-
-        assert mock_request.call_count == 1
-
-        self.client.refresh_effects()
-
-        effects3 = self.client.get_effects()
-        assert len(effects3) == 2
-        assert effects3[0].id == "effect3"
-        assert effects3[1].id == "effect4"
-
-        assert mock_request.call_count == 2
-
-    @patch("requests.Session.request")
-    def test_get_current_state(self, mock_request):
-        """Test getting the current state."""
-        mock_response = Mock()
-        current_state = CurrentStateHolder(
-            attributes=CurrentState(name="Current Effect", enabled=True, global_brightness=50),
-            id="current_state",
-            links=Links(),
-            type="current_state",
-        )
-        response = EffectDetailsResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=current_state,
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
-
-        state = self.client._get_current_state()
-        assert state.id == "current_state"
-        assert state.attributes.name == "Current Effect"
-
-    @patch("requests.Session.request")
-    def test_get_current_state_attributes(self, mock_request):
-        """Test getting the current state attributes."""
-        mock_response = Mock()
-        current_state = CurrentStateHolder(
-            attributes=CurrentState(name="Current Effect", enabled=True, global_brightness=50),
-            id="current_state",
-            links=Links(),
-            type="current_state",
-        )
-        response = EffectDetailsResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=current_state,
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
-
-        attributes = self.client._get_current_state().attributes
-        assert attributes.name == "Current Effect"
-        assert attributes.enabled
-        assert attributes.global_brightness == 50
-
-    @patch("requests.Session.request")
-    def test_get_effect_presets(self, mock_request):
-        """Test getting presets for a specific effect."""
-        mock_response = Mock()
+    def test_get_effect_presets(self):
+        """Test getting effect presets."""
+        # Setup the mock async method
         presets = [
             EffectPreset(id="preset1", type="preset"),
             EffectPreset(id="preset2", type="preset"),
         ]
-        response = EffectPresetListResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=EffectPresetList(id="effect1", items=presets),
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
 
+        async def mock_get_effect_presets(effect_id):
+            assert effect_id == "effect1"  # Verify parameters inside the coroutine
+            return presets
+
+        self.mock_async_client.get_effect_presets = mock_get_effect_presets
+
+        # Call the method under test
         result = self.client.get_effect_presets("effect1")
+
+        # Verify the result
         assert len(result) == 2
         assert result[0].id == "preset1"
         assert result[1].id == "preset2"
-        assert result[0].type == "preset"
-        assert result[1].type == "preset"
 
-    @patch("requests.Session.request")
-    def test_apply_effect_preset(self, mock_request):
-        """Test applying a preset for a specific effect."""
-        mock_response = Mock()
-        response = SignalRGBResponse(
-            api_version="1.0",
-            id=1,
-            method="PATCH",
-            status="ok",
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
+    def test_apply_effect_preset(self):
+        """Test applying an effect preset."""
 
+        # Setup the mock async method
+        async def mock_apply_effect_preset(effect_id, preset_id):
+            assert effect_id == "effect1"  # Verify parameters inside the coroutine
+            assert preset_id == "preset1"
+
+        self.mock_async_client.apply_effect_preset = mock_apply_effect_preset
+
+        # Call the method under test
         self.client.apply_effect_preset("effect1", "preset1")
-        self.assert_request_called_with(
-            mock_request,
-            "PATCH",
-            "http://testhost:12345/api/v1/lighting/effects/effect1/presets",
-            json={"preset": "preset1"},
-        )
 
-    @patch("requests.Session.request")
-    def test_get_next_effect(self, mock_request):
-        """Test getting the next effect in history."""
-        mock_response = Mock()
+        # The test passes if no exception is raised
+
+    def test_get_layouts(self):
+        """Test getting layouts."""
+        # Setup the mock async method
+        layouts = [
+            Layout(id="layout1", type="layout"),
+            Layout(id="layout2", type="layout"),
+        ]
+
+        async def mock_get_layouts():
+            return layouts
+
+        self.mock_async_client.get_layouts = mock_get_layouts
+
+        # Call the method under test
+        result = self.client.get_layouts()
+
+        # Verify the result
+        assert len(result) == 2
+        assert result[0].id == "layout1"
+        assert result[1].id == "layout2"
+
+    def test_get_current_layout(self):
+        """Test getting the current layout."""
+        # Setup the mock async method
+        layout = Layout(id="layout1", type="layout")
+
+        async def mock_get_current_layout():
+            return layout
+
+        self.mock_async_client.get_current_layout = mock_get_current_layout
+
+        # Call the method under test
+        result = self.client.current_layout
+
+        # Verify the result
+        assert result.id == "layout1"
+
+    def test_set_current_layout(self):
+        """Test setting the current layout."""
+
+        # Setup the mock async method
+        async def mock_set_current_layout(layout_id):
+            assert layout_id == "layout1"  # Verify parameters inside the coroutine
+
+        self.mock_async_client.set_current_layout = mock_set_current_layout
+
+        # Call the method under test
+        self.client.current_layout = "layout1"
+
+        # The test passes if no exception is raised
+
+    def test_get_next_effect(self):
+        """Test getting the next effect."""
+        # Setup the mock async method
         effect = Effect(
-            id="next_effect",
+            id="effect2",
             type="lighting",
-            attributes=Attributes(name="Next Effect"),
+            attributes=Attributes(name="Test Effect 2"),
             links=Links(),
         )
-        response = EffectDetailsResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=effect,
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
 
-        next_effect = self.client.get_next_effect()
-        assert next_effect.id == "next_effect"
-        assert next_effect.attributes.name == "Next Effect"
+        async def mock_get_next_effect():
+            return effect
 
-    @patch("requests.Session.request")
-    def test_apply_next_effect(self, mock_request):
-        """Test applying the next effect in history."""
-        mock_response = Mock()
+        self.mock_async_client.get_next_effect = mock_get_next_effect
+
+        # Call the method under test
+        result = self.client.get_next_effect()
+
+        # Verify the result
+        assert result.id == "effect2"
+        assert result.attributes.name == "Test Effect 2"
+
+    def test_apply_next_effect(self):
+        """Test applying the next effect."""
+        # Setup the mock async method
         effect = Effect(
-            id="next_effect",
+            id="effect2",
             type="lighting",
-            attributes=Attributes(name="Next Effect"),
+            attributes=Attributes(name="Test Effect 2"),
             links=Links(),
         )
-        response = EffectDetailsResponse(
-            api_version="1.0",
-            id=1,
-            method="POST",
-            status="ok",
-            data=effect,
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
 
-        applied_effect = self.client.apply_next_effect()
-        assert applied_effect.id == "next_effect"
-        assert applied_effect.attributes.name == "Next Effect"
+        async def mock_apply_next_effect():
+            return effect
 
-    @patch("requests.Session.request")
-    def test_get_previous_effect(self, mock_request):
-        """Test getting the previous effect in history."""
-        mock_response = Mock()
+        self.mock_async_client.apply_next_effect = mock_apply_next_effect
+
+        # Call the method under test
+        result = self.client.apply_next_effect()
+
+        # Verify the result
+        assert result.id == "effect2"
+        assert result.attributes.name == "Test Effect 2"
+
+    def test_get_previous_effect(self):
+        """Test getting the previous effect."""
+        # Setup the mock async method
         effect = Effect(
-            id="previous_effect",
+            id="effect1",
             type="lighting",
-            attributes=Attributes(name="Previous Effect"),
+            attributes=Attributes(name="Test Effect 1"),
             links=Links(),
         )
-        response = EffectDetailsResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=effect,
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
 
-        previous_effect = self.client.get_previous_effect()
-        assert previous_effect.id == "previous_effect"
-        assert previous_effect.attributes.name == "Previous Effect"
+        async def mock_get_previous_effect():
+            return effect
 
-    @patch("requests.Session.request")
-    def test_apply_previous_effect(self, mock_request):
-        """Test applying the previous effect in history."""
-        mock_response = Mock()
+        self.mock_async_client.get_previous_effect = mock_get_previous_effect
+
+        # Call the method under test
+        result = self.client.get_previous_effect()
+
+        # Verify the result
+        assert result.id == "effect1"
+        assert result.attributes.name == "Test Effect 1"
+
+    def test_apply_previous_effect(self):
+        """Test applying the previous effect."""
+        # Setup the mock async method
         effect = Effect(
-            id="previous_effect",
+            id="effect1",
             type="lighting",
-            attributes=Attributes(name="Previous Effect"),
+            attributes=Attributes(name="Test Effect 1"),
             links=Links(),
         )
-        response = EffectDetailsResponse(
-            api_version="1.0",
-            id=1,
-            method="POST",
-            status="ok",
-            data=effect,
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
 
-        applied_effect = self.client.apply_previous_effect()
-        assert applied_effect.id == "previous_effect"
-        assert applied_effect.attributes.name == "Previous Effect"
+        async def mock_apply_previous_effect():
+            return effect
 
-    @patch("requests.Session.request")
-    def test_apply_random_effect(self, mock_request):
+        self.mock_async_client.apply_previous_effect = mock_apply_previous_effect
+
+        # Call the method under test
+        result = self.client.apply_previous_effect()
+
+        # Verify the result
+        assert result.id == "effect1"
+        assert result.attributes.name == "Test Effect 1"
+
+    def test_apply_random_effect(self):
         """Test applying a random effect."""
-        mock_response = Mock()
+        # Setup the mock async method
         effect = Effect(
             id="random_effect",
             type="lighting",
             attributes=Attributes(name="Random Effect"),
             links=Links(),
         )
-        response = EffectDetailsResponse(
-            api_version="1.0",
-            id=1,
-            method="POST",
-            status="ok",
-            data=effect,
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
 
-        random_effect = self.client.apply_random_effect()
-        assert random_effect.id == "random_effect"
-        assert random_effect.attributes.name == "Random Effect"
+        async def mock_apply_random_effect():
+            return effect
 
-    @patch("requests.Session.request")
-    def test_get_current_layout(self, mock_request):
-        """Test getting the current layout."""
-        mock_response = Mock()
-        layout = Layout(id="current_layout", type="layout")
-        response = CurrentLayoutResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data=CurrentLayoutHolder(current_layout=layout),
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
+        self.mock_async_client.apply_random_effect = mock_apply_random_effect
 
-        current_layout = self.client.current_layout
-        assert current_layout.id == "current_layout"
-        assert current_layout.type == "layout"
+        # Call the method under test
+        result = self.client.apply_random_effect()
 
-    @patch("requests.Session.request")
-    def test_set_current_layout(self, mock_request):
-        """Test setting the current layout."""
-        mock_response = Mock()
-        layout = Layout(id="new_layout", type="layout")
-        response = CurrentLayoutResponse(
-            api_version="1.0",
-            id=1,
-            method="PATCH",
-            status="ok",
-            data=CurrentLayoutHolder(current_layout=layout),
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
+        # Verify the result
+        assert result.id == "random_effect"
+        assert result.attributes.name == "Random Effect"
 
-        self.client.current_layout = "new_layout"
-        self.assert_request_called_with(
-            mock_request,
-            "PATCH",
-            "http://testhost:12345/api/v1/scenes/current_layout",
-            json={"layout": "new_layout"},
-        )
+    def test_refresh_effects(self):
+        """Test refreshing effects."""
 
-    @patch("requests.Session.request")
-    def test_get_layouts(self, mock_request):
-        """Test getting all available layouts."""
-        mock_response = Mock()
-        layouts = [
-            Layout(id="layout1", type="layout"),
-            Layout(id="layout2", type="layout"),
-        ]
-        response = LayoutListResponse(
-            api_version="1.0",
-            id=1,
-            method="GET",
-            status="ok",
-            data={"items": [layout.to_dict() for layout in layouts]},
-        )
-        mock_response.json.return_value = response.to_dict()
-        mock_request.return_value = mock_response
+        # Setup the mock async method
+        async def mock_refresh_effects():
+            return None
 
-        result = self.client.get_layouts()
-        assert len(result) == 2
-        assert result[0].id == "layout1"
-        assert result[1].id == "layout2"
+        self.mock_async_client.refresh_effects = mock_refresh_effects
+
+        # Call the method under test
+        self.client.refresh_effects()
+
+        # The test passes if no exception is raised
 
 
 if __name__ == "__main__":

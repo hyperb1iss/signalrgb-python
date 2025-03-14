@@ -30,11 +30,11 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Usage:
-    - CLI: usage/cli.md
-    - Python Library: usage/library.md
+      - CLI: usage/cli.md
+      - Python Library: usage/library.md
   - API Reference:
-    - Client: api/client.md
-    - Models: api/models.md
+      - Client: api/client.md
+      - Models: api/models.md
   - Development: development.md
   - Contributing: contributing.md
 plugins:
