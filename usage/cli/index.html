@@ -484,7 +484,7 @@
         <li class="md-nav__item">
   <a href="#basic-syntax" class="md-nav__link">
     <span class="md-ellipsis">
-      Basic Syntax
+      🚀 Basic Syntax
     </span>
   </a>
   
@@ -493,21 +493,21 @@
         <li class="md-nav__item">
   <a href="#available-commands" class="md-nav__link">
     <span class="md-ellipsis">
-      Available Commands
+      📋 Available Commands
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Available Commands">
+    <nav class="md-nav" aria-label="📋 Available Commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#effect-commands" class="md-nav__link">
     <span class="md-ellipsis">
-      Effect Commands
+      🎨 Effect Commands
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Effect Commands">
+    <nav class="md-nav" aria-label="🎨 Effect Commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -546,6 +546,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#navigate-through-effects" class="md-nav__link">
+    <span class="md-ellipsis">
+      Navigate Through Effects
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -554,11 +563,11 @@
           <li class="md-nav__item">
   <a href="#preset-commands" class="md-nav__link">
     <span class="md-ellipsis">
-      Preset Commands
+      💾 Preset Commands
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Preset Commands">
+    <nav class="md-nav" aria-label="💾 Preset Commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -587,11 +596,11 @@
           <li class="md-nav__item">
   <a href="#layout-commands" class="md-nav__link">
     <span class="md-ellipsis">
-      Layout Commands
+      📐 Layout Commands
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Layout Commands">
+    <nav class="md-nav" aria-label="📐 Layout Commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -620,11 +629,11 @@
           <li class="md-nav__item">
   <a href="#canvas-commands" class="md-nav__link">
     <span class="md-ellipsis">
-      Canvas Commands
+      🎛️ Canvas Commands
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Canvas Commands">
+    <nav class="md-nav" aria-label="🎛️ Canvas Commands">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -658,7 +667,7 @@
         <li class="md-nav__item">
   <a href="#global-options" class="md-nav__link">
     <span class="md-ellipsis">
-      Global Options
+      🌐 Global Options
     </span>
   </a>
   
@@ -667,7 +676,7 @@
         <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
     <span class="md-ellipsis">
-      Examples
+      💡 Examples
     </span>
   </a>
   
@@ -866,15 +875,15 @@
 
 <h1 id="command-line-interface-cli-usage">Command-Line Interface (CLI) Usage</h1>
 <p>signalrgb-python provides a user-friendly command-line interface for interacting with your SignalRGB setup. This guide covers the basic usage of the CLI.</p>
-<h2 id="basic-syntax">Basic Syntax</h2>
+<h2 id="basic-syntax">🚀 Basic Syntax</h2>
 <p>The basic syntax for using the SignalRGB CLI is:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>signalrgb<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>SUBCOMMAND<span class="o">]</span><span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </code></pre></div>
 <p>You can always use the <code>--help</code> option to get more information about available commands and options:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>signalrgb<span class="w"> </span>--help
 </code></pre></div>
-<h2 id="available-commands">Available Commands</h2>
-<h3 id="effect-commands">Effect Commands</h3>
+<h2 id="available-commands">📋 Available Commands</h2>
+<h3 id="effect-commands">🎨 Effect Commands</h3>
 <h4 id="list-effects">List Effects</h4>
 <p>To list all available lighting effects:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>list
@@ -892,82 +901,101 @@
 <p>To see which effect is currently active:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>signalrgb<span class="w"> </span>effect
 </code></pre></div>
-<h3 id="preset-commands">Preset Commands</h3>
+<h4 id="navigate-through-effects">Navigate Through Effects</h4>
+<p>To apply the next effect in history:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>next_effect
+</code></pre></div>
+<p>To apply the previous effect in history:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>previous_effect
+</code></pre></div>
+<p>To apply a random effect:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>random
+</code></pre></div>
+<h3 id="preset-commands">💾 Preset Commands</h3>
 <h4 id="list-presets">List Presets</h4>
 <p>To list presets for the current effect:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>signalrgb<span class="w"> </span>preset<span class="w"> </span>list
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>signalrgb<span class="w"> </span>preset<span class="w"> </span>list
 </code></pre></div>
 <h4 id="apply-a-preset">Apply a Preset</h4>
 <p>To apply a preset to the current effect:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>signalrgb<span class="w"> </span>preset<span class="w"> </span>apply<span class="w"> </span><span class="s2">&quot;Preset Name&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>signalrgb<span class="w"> </span>preset<span class="w"> </span>apply<span class="w"> </span><span class="s2">&quot;Preset Name&quot;</span>
 </code></pre></div>
-<h3 id="layout-commands">Layout Commands</h3>
+<h3 id="layout-commands">📐 Layout Commands</h3>
 <h4 id="list-layouts">List Layouts</h4>
 <p>To list all available layouts:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>signalrgb<span class="w"> </span>layout<span class="w"> </span>list
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>signalrgb<span class="w"> </span>layout<span class="w"> </span>list
 </code></pre></div>
 <h4 id="set-current-layout">Set Current Layout</h4>
 <p>To set the current layout:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>signalrgb<span class="w"> </span>layout<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="s2">&quot;Layout Name&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>signalrgb<span class="w"> </span>layout<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="s2">&quot;Layout Name&quot;</span>
 </code></pre></div>
-<h3 id="canvas-commands">Canvas Commands</h3>
+<h3 id="canvas-commands">🎛️ Canvas Commands</h3>
 <h4 id="control-brightness">Control Brightness</h4>
 <p>To set the brightness level (0-100):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span>brightness<span class="w"> </span><span class="m">75</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span>brightness<span class="w"> </span><span class="m">75</span>
 </code></pre></div>
 <p>To get the current brightness level:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span>brightness
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span>brightness
 </code></pre></div>
 <h4 id="enabledisable-canvas">Enable/Disable Canvas</h4>
 <p>To enable the canvas:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span><span class="nb">enable</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span><span class="nb">enable</span>
 </code></pre></div>
 <p>To disable the canvas:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span>disable
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span>disable
 </code></pre></div>
-<h2 id="global-options">Global Options</h2>
+<p>To toggle the canvas state:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span>toggle
+</code></pre></div>
+<h2 id="global-options">🌐 Global Options</h2>
 <p>You can specify a custom host and port for all commands:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>signalrgb<span class="w"> </span>--host<span class="w"> </span>my-pc.local<span class="w"> </span>--port<span class="w"> </span><span class="m">16038</span><span class="w"> </span>effect<span class="w"> </span>list
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>signalrgb<span class="w"> </span>--host<span class="w"> </span>my-pc.local<span class="w"> </span>--port<span class="w"> </span><span class="m">16038</span><span class="w"> </span>effect<span class="w"> </span>list
 </code></pre></div>
-<h2 id="examples">Examples</h2>
+<h2 id="examples">💡 Examples</h2>
 <p>Here are some example use cases:</p>
 <ol>
 <li>List all effects and pipe the output to <code>grep</code> to find a specific effect:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Electric Space&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Electric Space&quot;</span>
 </code></pre></div>
 <ol>
 <li>Apply the "Rave Visualizer" effect:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>apply<span class="w"> </span><span class="s2">&quot;Rave Visualizer&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>apply<span class="w"> </span><span class="s2">&quot;Rave Visualizer&quot;</span>
 </code></pre></div>
 <ol>
 <li>Get details of the current effect and save it to a file:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>&gt;<span class="w"> </span>current_effect.txt
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>&gt;<span class="w"> </span>current_effect.txt
 </code></pre></div>
 <ol>
-<li>Set the brightness to 50%:</li>
+<li>Set the brightness to 50% and then disable the canvas:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span>brightness<span class="w"> </span><span class="m">50</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span>brightness<span class="w"> </span><span class="m">50</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span>disable
 </code></pre></div>
 <ol>
-<li>Enable the canvas:</li>
+<li>List layouts and switch to a different one:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span><span class="nb">enable</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>signalrgb<span class="w"> </span>layout<span class="w"> </span>list
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>signalrgb<span class="w"> </span>layout<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="s2">&quot;Gaming Setup&quot;</span>
 </code></pre></div>
 <ol>
-<li>List and apply a preset:</li>
+<li>Create a simple effect cycle script:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>signalrgb<span class="w"> </span>preset<span class="w"> </span>list
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>signalrgb<span class="w"> </span>preset<span class="w"> </span>apply<span class="w"> </span><span class="s2">&quot;Cool Preset&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="ch">#!/bin/bash</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="c1"># Cycle through 5 random effects</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">1</span>..5<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="w">  </span>signalrgb<span class="w"> </span>effect<span class="w"> </span>random
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="w">  </span>sleep<span class="w"> </span><span class="m">5</span><span class="w">  </span><span class="c1"># Wait 5 seconds between effects</span>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="k">done</span>
 </code></pre></div>
-<ol>
-<li>Switch to a different layout:</li>
-</ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>signalrgb<span class="w"> </span>layout<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="s2">&quot;Gaming Setup&quot;</span>
+<p>Remember to refer to the <code>--help</code> option for each command to see all available options and arguments:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>--help
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>signalrgb<span class="w"> </span>preset<span class="w"> </span>--help
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>signalrgb<span class="w"> </span>layout<span class="w"> </span>--help
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>signalrgb<span class="w"> </span>canvas<span class="w"> </span>--help
 </code></pre></div>
-<p>Remember to refer to the <code>--help</code> option for each command to see all available options and arguments.</p>
 
 
 

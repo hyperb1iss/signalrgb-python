@@ -394,7 +394,7 @@
         <li class="md-nav__item">
   <a href="#features" class="md-nav__link">
     <span class="md-ellipsis">
-      Features
+      ✨ Features
     </span>
   </a>
   
@@ -403,7 +403,58 @@
         <li class="md-nav__item">
   <a href="#quick-start" class="md-nav__link">
     <span class="md-ellipsis">
-      Quick Start
+      🚀 Quick Start
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚀 Quick Start">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-line-interface" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command-Line Interface
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#synchronous-python-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Synchronous Python API
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asynchronous-python-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Asynchronous Python API
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      📚 Documentation
     </span>
   </a>
   
@@ -684,8 +735,8 @@
 
 
 <h1 id="signalrgb-python">signalrgb-python</h1>
-<p>Welcome to the documentation for signalrgb-python. This library provides a powerful and easy-to-use interface for controlling <a href="https://signalrgb.com">SignalRGB Pro</a> through both a command-line interface (CLI) and a Python library.</p>
-<h2 id="features">Features</h2>
+<p>Welcome to the documentation for signalrgb-python! This library provides a powerful and easy-to-use interface for controlling <a href="https://signalrgb.com">SignalRGB Pro</a> through both a command-line interface (CLI) and Python libraries (both synchronous and asynchronous).</p>
+<h2 id="features">✨ Features</h2>
 <ul>
 <li>📋 List available lighting effects and presets</li>
 <li>🔍 Get detailed information about specific effects</li>
@@ -694,47 +745,76 @@
 <li>🔆 Control brightness levels</li>
 <li>🔌 Enable or disable the canvas</li>
 <li>🖥️ User-friendly command-line interface with intuitive subcommands</li>
-<li>🐍 Python client library for seamless integration into your projects</li>
-<li>🔐 Error handling and connection management</li>
+<li>🐍 Python client libraries for seamless integration:</li>
+<li>Synchronous API for straightforward scripts</li>
+<li>Asynchronous API for asyncio-based applications</li>
+<li>🔐 Robust error handling and connection management</li>
 <li>🔄 Automatic effect caching for improved performance</li>
 </ul>
-<h2 id="quick-start">Quick Start</h2>
-<p>Install signalrgb-python:</p>
+<h2 id="quick-start">🚀 Quick Start</h2>
+<h3 id="installation">Installation</h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>signalrgb
 </code></pre></div>
-<p>Use the CLI to list available effects:</p>
+<h3 id="command-line-interface">Command-Line Interface</h3>
+<p>List available effects:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>list
 </code></pre></div>
-<p>Or use the Python library in your code:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">signalrgb.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">SignalRGBClient</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">client</span> <span class="o">=</span> <span class="n">SignalRGBClient</span><span class="p">()</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">effects</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_effects</span><span class="p">()</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="k">for</span> <span class="n">effect</span> <span class="ow">in</span> <span class="n">effects</span><span class="p">:</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Effect: </span><span class="si">{</span><span class="n">effect</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># Control brightness</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">client</span><span class="o">.</span><span class="n">brightness</span> <span class="o">=</span> <span class="mi">75</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current brightness: </span><span class="si">{</span><span class="n">client</span><span class="o">.</span><span class="n">brightness</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="c1"># Enable/disable the canvas</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="n">client</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Canvas enabled: </span><span class="si">{</span><span class="n">client</span><span class="o">.</span><span class="n">enabled</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="c1"># List and apply presets</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="n">current_effect</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_current_effect</span><span class="p">()</span>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="n">presets</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_effect_presets</span><span class="p">(</span><span class="n">current_effect</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="k">for</span> <span class="n">preset</span> <span class="ow">in</span> <span class="n">presets</span><span class="p">:</span>
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Preset: </span><span class="si">{</span><span class="n">preset</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="n">client</span><span class="o">.</span><span class="n">apply_effect_preset</span><span class="p">(</span><span class="n">current_effect</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">presets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="c1"># Manage layouts</span>
-<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="n">layouts</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_layouts</span><span class="p">()</span>
-<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="k">for</span> <span class="n">layout</span> <span class="ow">in</span> <span class="n">layouts</span><span class="p">:</span>
-<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Layout: </span><span class="si">{</span><span class="n">layout</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="n">client</span><span class="o">.</span><span class="n">current_layout</span> <span class="o">=</span> <span class="n">layouts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
+<p>Apply a specific effect:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>signalrgb<span class="w"> </span>effect<span class="w"> </span>apply<span class="w"> </span><span class="s2">&quot;Rainbow Wave&quot;</span>
 </code></pre></div>
-<p>For more detailed information, check out the <a href="installation/">Installation</a> and <a href="usage/cli/">Usage</a> guides.</p>
+<h3 id="synchronous-python-api">Synchronous Python API</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">signalrgb</span><span class="w"> </span><span class="kn">import</span> <span class="n">SignalRGBClient</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Initialize the client</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">client</span> <span class="o">=</span> <span class="n">SignalRGBClient</span><span class="p">()</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Apply an effect</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">client</span><span class="o">.</span><span class="n">apply_effect_by_name</span><span class="p">(</span><span class="s2">&quot;Rainbow Wave&quot;</span><span class="p">)</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># Control brightness</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="n">client</span><span class="o">.</span><span class="n">brightness</span> <span class="o">=</span> <span class="mi">75</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># Enable/disable the canvas</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="n">client</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="c1"># Get current effect information</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="n">effect</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_current_effect</span><span class="p">()</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current effect: </span><span class="si">{</span><span class="n">effect</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="asynchronous-python-api">Asynchronous Python API</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">signalrgb</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncSignalRGBClient</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="c1"># Use the async client as a context manager</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">AsyncSignalRGBClient</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>        <span class="c1"># Apply an effect</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">apply_effect_by_name</span><span class="p">(</span><span class="s2">&quot;Rainbow Wave&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>        <span class="c1"># Control brightness</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">set_brightness</span><span class="p">(</span><span class="mi">75</span><span class="p">)</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>        <span class="c1"># Get current effect information</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>        <span class="n">effect</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get_current_effect</span><span class="p">()</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current effect: </span><span class="si">{</span><span class="n">effect</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="c1"># Run the async code</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<h2 id="documentation">📚 Documentation</h2>
+<ul>
+<li><strong><a href="installation/">Installation</a></strong> - Detailed installation instructions</li>
+<li><strong>Usage Guides</strong>:</li>
+<li><a href="usage/cli/">Command-Line Interface</a> - Using the SignalRGB CLI</li>
+<li><a href="usage/library/">Synchronous Library</a> - Using the Python library in synchronous code</li>
+<li><a href="async_usage/">Asynchronous Library</a> - Using the async Python library with asyncio</li>
+<li><strong>API Reference</strong>:</li>
+<li><a href="api/client/">Client API</a> - SignalRGBClient reference</li>
+<li><a href="api/models/">Models</a> - Data model reference</li>
+<li><strong>Development</strong>:</li>
+<li><a href="contributing/">Contributing</a> - Guidelines for contributors</li>
+<li><a href="development/">Development Guide</a> - Setting up your development environment</li>
+</ul>
 
 
 

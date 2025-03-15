@@ -417,16 +417,31 @@
         <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
-      Prerequisites
+      🧰 Prerequisites
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="🧰 Prerequisites">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additional-requirements-for-async-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Requirements for Async Usage
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#installing-with-pip" class="md-nav__link">
     <span class="md-ellipsis">
-      Installing with pip
+      📦 Installing with pip
     </span>
   </a>
   
@@ -435,7 +450,7 @@
         <li class="md-nav__item">
   <a href="#installing-with-uv" class="md-nav__link">
     <span class="md-ellipsis">
-      Installing with UV
+      🚀 Installing with UV
     </span>
   </a>
   
@@ -444,7 +459,7 @@
         <li class="md-nav__item">
   <a href="#development-installation" class="md-nav__link">
     <span class="md-ellipsis">
-      Development Installation
+      🔧 Development Installation
     </span>
   </a>
   
@@ -453,7 +468,7 @@
         <li class="md-nav__item">
   <a href="#verifying-the-installation" class="md-nav__link">
     <span class="md-ellipsis">
-      Verifying the Installation
+      ✅ Verifying the Installation
     </span>
   </a>
   
@@ -462,7 +477,7 @@
         <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
-      Next Steps
+      📚 Next Steps
     </span>
   </a>
   
@@ -722,18 +737,25 @@
 
 
 <h1 id="installation">Installation</h1>
-<h2 id="prerequisites">Prerequisites</h2>
+<h2 id="prerequisites">🧰 Prerequisites</h2>
 <p>Before installing signalrgb-python, ensure you have the following:</p>
 <ul>
 <li>Python 3.9 or higher</li>
 <li><a href="https://www.signalrgb.com/pro/">SignalRGB Pro</a> (required for API access)</li>
 </ul>
 <p>This library uses the <a href="https://docs.signalrgb.com/signalrgb-api">SignalRGB REST API</a>, which is only available in SignalRGB Pro.</p>
-<h2 id="installing-with-pip">Installing with pip</h2>
+<h3 id="additional-requirements-for-async-usage">Additional Requirements for Async Usage</h3>
+<p>To use the asynchronous client (<code>AsyncSignalRGBClient</code>), you will need:</p>
+<ul>
+<li>Python 3.9 or higher (same as above)</li>
+<li>Basic understanding of Python's asyncio framework</li>
+<li>For integration with other async frameworks (like Home Assistant), see the <a href="../async_usage/">Async Usage</a> guide</li>
+</ul>
+<h2 id="installing-with-pip">📦 Installing with pip</h2>
 <p>The easiest way to install signalrgb-python is using pip:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>signalrgb
 </code></pre></div>
-<h2 id="installing-with-uv">Installing with UV</h2>
+<h2 id="installing-with-uv">🚀 Installing with UV</h2>
 <p>For faster, more reliable dependency resolution, you can use <a href="https://github.com/astral-sh/uv">UV</a> to install signalrgb-python:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Install UV if you don&#39;t have it already</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>pip<span class="w"> </span>install<span class="w"> </span>uv
@@ -741,7 +763,7 @@
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Install signalrgb using UV</span>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>signalrgb
 </code></pre></div>
-<h2 id="development-installation">Development Installation</h2>
+<h2 id="development-installation">🔧 Development Installation</h2>
 <p>If you're working on signalrgb-python development, you can install it with development dependencies:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Clone the repository</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/hyperb1iss/signalrgb-python.git
@@ -750,13 +772,22 @@
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Using UV</span>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>uv<span class="w"> </span>sync<span class="w"> </span>--groups<span class="w"> </span>dev
 </code></pre></div>
-<h2 id="verifying-the-installation">Verifying the Installation</h2>
+<h2 id="verifying-the-installation">✅ Verifying the Installation</h2>
 <p>After installation, you can verify that signalrgb-python is correctly installed by running:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>signalrgb<span class="w"> </span>--version
 </code></pre></div>
 <p>This should display the version number of the installed client.</p>
-<h2 id="next-steps">Next Steps</h2>
-<p>Now that you have installed signalrgb-python, you can start using it. Check out the <a href="../usage/cli/">CLI Usage</a> guide to learn how to use the command-line interface, or the <a href="../usage/library/">Python Library Usage</a> guide to learn how to integrate it into your Python projects.</p>
+<p>You can also verify the Python library is working by importing it in a Python shell:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">signalrgb</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">signalrgb</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="next-steps">📚 Next Steps</h2>
+<p>Now that you have installed signalrgb-python, you can start using it:</p>
+<ul>
+<li><a href="../usage/cli/">CLI Usage</a> - Learn how to use the command-line interface</li>
+<li><a href="../usage/library/">Python Library Usage</a> - Learn how to use the synchronous Python library</li>
+<li><a href="../async_usage/">Async Library Usage</a> - Learn how to use the asynchronous Python library</li>
+</ul>
 
 
 

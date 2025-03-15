@@ -622,7 +622,7 @@
         <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
-      Prerequisites
+      🧰 Prerequisites
     </span>
   </a>
   
@@ -631,7 +631,7 @@
         <li class="md-nav__item">
   <a href="#setting-up-the-development-environment" class="md-nav__link">
     <span class="md-ellipsis">
-      Setting Up the Development Environment
+      🚀 Setting Up the Development Environment
     </span>
   </a>
   
@@ -640,7 +640,7 @@
         <li class="md-nav__item">
   <a href="#running-tests" class="md-nav__link">
     <span class="md-ellipsis">
-      Running Tests
+      🧪 Running Tests
     </span>
   </a>
   
@@ -649,7 +649,7 @@
         <li class="md-nav__item">
   <a href="#linting" class="md-nav__link">
     <span class="md-ellipsis">
-      Linting
+      🔍 Linting
     </span>
   </a>
   
@@ -658,7 +658,7 @@
         <li class="md-nav__item">
   <a href="#type-checking" class="md-nav__link">
     <span class="md-ellipsis">
-      Type Checking
+      🔎 Type Checking
     </span>
   </a>
   
@@ -667,7 +667,7 @@
         <li class="md-nav__item">
   <a href="#pre-commit-hooks" class="md-nav__link">
     <span class="md-ellipsis">
-      Pre-commit Hooks
+      🔄 Pre-commit Hooks
     </span>
   </a>
   
@@ -676,7 +676,7 @@
         <li class="md-nav__item">
   <a href="#building-documentation" class="md-nav__link">
     <span class="md-ellipsis">
-      Building Documentation
+      📚 Building Documentation
     </span>
   </a>
   
@@ -685,7 +685,7 @@
         <li class="md-nav__item">
   <a href="#creating-a-new-release" class="md-nav__link">
     <span class="md-ellipsis">
-      Creating a New Release
+      📦 Creating a New Release
     </span>
   </a>
   
@@ -694,7 +694,7 @@
         <li class="md-nav__item">
   <a href="#troubleshooting" class="md-nav__link">
     <span class="md-ellipsis">
-      Troubleshooting
+      🐛 Troubleshooting
     </span>
   </a>
   
@@ -703,7 +703,7 @@
         <li class="md-nav__item">
   <a href="#getting-help" class="md-nav__link">
     <span class="md-ellipsis">
-      Getting Help
+      💬 Getting Help
     </span>
   </a>
   
@@ -759,122 +759,119 @@
 
 <h1 id="development-guide">Development Guide</h1>
 <p>This guide will help you set up your development environment for contributing to signalrgb-python.</p>
-<h2 id="prerequisites">Prerequisites</h2>
+<h2 id="prerequisites">🧰 Prerequisites</h2>
 <p>Before you begin, ensure you have the following installed on your system:</p>
 <ul>
 <li>Python 3.9 or higher</li>
 <li><a href="https://github.com/astral-sh/uv">UV</a> for dependency management</li>
 <li>Git for version control</li>
 </ul>
-<h2 id="setting-up-the-development-environment">Setting Up the Development Environment</h2>
+<h2 id="setting-up-the-development-environment">🚀 Setting Up the Development Environment</h2>
 <ol>
-<li>
-<p>Clone the repository:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/hyperb1iss/signalrgb-python.git
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>signalrgb-python
-</code></pre></div></p>
-</li>
-<li>
-<p>Install the project dependencies using UV:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>sync<span class="w"> </span>--groups<span class="w"> </span>dev
-</code></pre></div></p>
-</li>
-<li>
-<p>To run commands in the development environment:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>uv<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>command<span class="o">]</span>
-</code></pre></div></p>
-</li>
+<li>Clone the repository:</li>
 </ol>
-<p>For example, to run a Python script:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/some_script.py
-</code></pre></div></p>
-<h2 id="running-tests">Running Tests</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/hyperb1iss/signalrgb-python.git
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>signalrgb-python
+</code></pre></div>
+<ol>
+<li>Install the project dependencies using UV:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>sync<span class="w"> </span>--groups<span class="w"> </span>dev
+</code></pre></div>
+<ol>
+<li>To run commands in the development environment:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>uv<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>command<span class="o">]</span>
+</code></pre></div>
+<p>For example, to run a Python script:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/some_script.py
+</code></pre></div>
+<h2 id="running-tests">🧪 Running Tests</h2>
 <p>We use pytest for our test suite. To run the tests:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>uv<span class="w"> </span>run<span class="w"> </span>pytest
 </code></pre></div>
 <p>To run tests with coverage report:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>signalrgb<span class="w"> </span>--cov-report<span class="o">=</span>term-missing
 </code></pre></div>
-<h2 id="linting">Linting</h2>
+<h2 id="linting">🔍 Linting</h2>
 <p>We use Ruff for linting and formatting. To run the linter:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>.
 </code></pre></div>
 <p>To automatically fix linting issues:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>--fix<span class="w"> </span>.
 </code></pre></div>
-<h2 id="type-checking">Type Checking</h2>
+<h2 id="type-checking">🔎 Type Checking</h2>
 <p>We use mypy for static type checking. To run the type checker:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>signalrgb
 </code></pre></div>
-<h2 id="pre-commit-hooks">Pre-commit Hooks</h2>
+<h2 id="pre-commit-hooks">🔄 Pre-commit Hooks</h2>
 <p>We use pre-commit hooks to ensure code quality before committing. To set up pre-commit hooks:</p>
 <ol>
-<li>
-<p>Install pre-commit:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>install
-</code></pre></div></p>
-</li>
-<li>
-<p>Run pre-commit on all files:
+<li>Install pre-commit:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>install
+</code></pre></div>
+<ol>
+<li>Run pre-commit on all files:
    <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
-</code></pre></div></p>
-</li>
+</code></pre></div></li>
 </ol>
 <p>The pre-commit hooks will now run automatically on <code>git commit</code>.</p>
-<h2 id="building-documentation">Building Documentation</h2>
+<h2 id="building-documentation">📚 Building Documentation</h2>
 <p>To build the documentation locally:</p>
 <ol>
-<li>
-<p>Make sure you've installed the development dependencies:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>uv<span class="w"> </span>sync<span class="w"> </span>--groups<span class="w"> </span>dev
-</code></pre></div></p>
-</li>
-<li>
-<p>Build and serve the documentation:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>uv<span class="w"> </span>run<span class="w"> </span>mkdocs<span class="w"> </span>serve
-</code></pre></div></p>
-</li>
-<li>
-<p>Open your browser and navigate to <code>http://127.0.0.1:8000/</code> to view the documentation.</p>
-</li>
+<li>Make sure you've installed the development dependencies:</li>
 </ol>
-<h2 id="creating-a-new-release">Creating a New Release</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>uv<span class="w"> </span>sync<span class="w"> </span>--groups<span class="w"> </span>dev
+</code></pre></div>
 <ol>
-<li>
-<p>Update the version number in <code>pyproject.toml</code>:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Edit manually or use a version update script</span>
-</code></pre></div></p>
-</li>
+<li>Build and serve the documentation:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>uv<span class="w"> </span>run<span class="w"> </span>mkdocs<span class="w"> </span>serve
+</code></pre></div>
+<ol>
+<li>Open your browser and navigate to <code>http://127.0.0.1:8000/</code> to view the documentation.</li>
+</ol>
+<h2 id="creating-a-new-release">📦 Creating a New Release</h2>
+<ol>
+<li>Update the version number in <code>pyproject.toml</code>:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Edit manually or use a version update script</span>
+</code></pre></div>
+<ol>
 <li>
 <p>Update the <code>CHANGELOG.md</code> file with the changes for the new version.</p>
 </li>
 <li>
-<p>Commit the changes:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>git<span class="w"> </span>add<span class="w"> </span>pyproject.toml<span class="w"> </span>CHANGELOG.md
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Bump version to x.y.z&quot;</span>
-</code></pre></div></p>
-</li>
-<li>
-<p>Create a new tag:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>vx.y.z<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Release version x.y.z&quot;</span>
-</code></pre></div></p>
-</li>
-<li>
-<p>Push the changes and the new tag:
-   <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main<span class="w"> </span>--tags
-</code></pre></div></p>
+<p>Commit the changes:</p>
 </li>
 </ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>git<span class="w"> </span>add<span class="w"> </span>pyproject.toml<span class="w"> </span>CHANGELOG.md
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Bump version to x.y.z&quot;</span>
+</code></pre></div>
+<ol>
+<li>Create a new tag:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>vx.y.z<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Release version x.y.z&quot;</span>
+</code></pre></div>
+<ol>
+<li>Push the changes and the new tag:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main<span class="w"> </span>--tags
+</code></pre></div></li>
+</ol>
 <p>The CI/CD pipeline will handle the rest, including building and publishing the package to PyPI and deploying the updated documentation.</p>
-<h2 id="troubleshooting">Troubleshooting</h2>
+<h2 id="troubleshooting">🐛 Troubleshooting</h2>
 <p>If you encounter any issues during development, please check the following:</p>
 <ol>
 <li>Ensure you're using the correct version of Python (3.9+).</li>
 <li>Make sure all dependencies are up to date (<code>uv sync</code>).</li>
-<li>Clear any cached files: <code>find . -name '*.pyc' -delete</code> and <code>find . -name '__pycache__' -type d -delete</code></li>
+<li>Clear any cached files:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.pyc&#39;</span><span class="w"> </span>-delete
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;__pycache__&#39;</span><span class="w"> </span>-type<span class="w"> </span>d<span class="w"> </span>-delete
+</code></pre></div></li>
 </ol>
 <p>If you're still having problems, please open an issue on the GitHub repository with a detailed description of the problem and steps to reproduce it.</p>
-<h2 id="getting-help">Getting Help</h2>
+<h2 id="getting-help">💬 Getting Help</h2>
 <p>If you need help with development, you can:</p>
 <ol>
 <li>Open an issue on the GitHub repository.</li>
