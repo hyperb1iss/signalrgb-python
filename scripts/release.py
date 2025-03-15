@@ -309,7 +309,7 @@ def update_docs_version(new_version: str) -> None:
     version_pattern = re.compile(r"^(version:\s*)([^\s]+)", re.MULTILINE)
 
     # Use a lambda function for replacement to avoid the group reference issue
-    def replace_version(match):
+    def replace_version(match: re.Match[str]) -> str:
         return match.group(1) + new_version
 
     updated_content = version_pattern.sub(replace_version, content)
@@ -322,6 +322,17 @@ def update_docs_version(new_version: str) -> None:
         f.write(updated_content)
 
     print_success(f"Updated version in {DOCS_INDEX} to {new_version}")
+
+
+def update_lockfile() -> None:
+    """Update the uv.lock file to ensure it has the correct version of package."""
+    print_step("Updating dependency lockfile")
+    try:
+        run_uv_command(["lock"], check=True)
+        print_success("Updated uv.lock file")
+    except subprocess.CalledProcessError as e:
+        print_error(f"Failed to update lockfile: {e!s}")
+        sys.exit(1)
 
 
 def show_changes() -> bool:
@@ -338,7 +349,7 @@ def commit_and_push(version: str) -> None:
     """Commit and push changes to the repository."""
     print_step("Committing and pushing changes")
     try:
-        run_git_command(["add", PYPROJECT_TOML, DOCS_INDEX], check=True)
+        run_git_command(["add", PYPROJECT_TOML, DOCS_INDEX, "uv.lock"], check=True)
         run_git_command(["commit", "-m", f":rocket: Release version {version}"], check=True)
         run_git_command(["push"], check=True)
         run_git_command(["tag", f"v{version}"], check=True)
@@ -377,6 +388,7 @@ def main() -> None:
 
         update_version(new_version)
         update_docs_version(new_version)
+        update_lockfile()
 
         if not show_changes():
             print_error("Release cancelled.")
