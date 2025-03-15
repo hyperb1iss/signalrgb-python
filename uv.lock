@@ -828,7 +828,7 @@ wheels = [
 
 [[package]]
 name = "signalrgb"
-version = "0.9.8"
+version = "1.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "httpx" },
