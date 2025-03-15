@@ -57,7 +57,7 @@ class AsyncSignalRGBClient:
         self._base_url = f"http://{host}:{port}"
         self._timeout = timeout
         self._effects_cache: list[Effect] | None = None
-        self._client = httpx.AsyncClient(timeout=timeout)
+        self._client = httpx.AsyncClient(timeout=self._timeout)
 
     async def __aenter__(self) -> AsyncSignalRGBClient:
         """Async context manager entry."""
@@ -65,7 +65,13 @@ class AsyncSignalRGBClient:
 
     async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         """Async context manager exit."""
-        await self._client.aclose()
+        if self._client:
+            await self._client.aclose()
+
+    @property
+    def client(self) -> httpx.AsyncClient:
+        """Get the HTTPX client instance."""
+        return self._client
 
     @asynccontextmanager
     async def _request_context(self, method: str, endpoint: str, **kwargs: Any) -> AsyncIterator[dict[str, Any]]:
@@ -93,7 +99,7 @@ class AsyncSignalRGBClient:
             pass
 
         try:
-            response = await self._client.request(method, url, **kwargs)
+            response = await self.client.request(method, url, **kwargs)
             response.raise_for_status()
 
             if debug:
@@ -114,7 +120,7 @@ class AsyncSignalRGBClient:
                         error = Error.from_dict(json_data["errors"][0])
                     else:
                         error = Error(title=str(e))
-                except Exception: # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     error = Error(title=str(e))
             else:
                 error = Error(title=str(e))
@@ -679,7 +685,8 @@ class AsyncSignalRGBClient:
 
         This method ensures resources are properly released when the client is no longer needed.
         """
-        await self._client.aclose()
+        if self._client:
+            await self._client.aclose()
 
     async def get_effects_cached(self) -> list[Effect]:
         """Get effects with caching.

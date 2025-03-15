@@ -22,7 +22,8 @@ from .model import (
 )
 
 # Define a TypeVar for the return type
-T = TypeVar('T')
+T = TypeVar("T")
+
 
 class SignalRGBClient:
     """Client for interacting with the SignalRGB API.
