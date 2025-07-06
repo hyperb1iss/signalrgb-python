@@ -590,7 +590,7 @@ def list_layouts(ctx: typer.Context) -> None:
 def set_layout(ctx: typer.Context, name: str) -> None:
     """Set the current layout."""
     client = get_client(ctx)
-    client.current_layout = name  # type: ignore
+    client.current_layout = name
     print_rgb(f"{ICONS['layout']} Set current layout to: {name}", "accent")
 
 
