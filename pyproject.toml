@@ -1,6 +1,6 @@
 [project]
 name = "signalrgb"
-version = "1.0.0"
+version = "1.0.1"
 description = "A Python client for SignalRGB"
 readme = "README.md"
 requires-python = ">=3.11"
