@@ -37,7 +37,7 @@ ICONS = {
 }
 
 STATUS_EMOJIS = {
-    "enabled": "✨",
+    "enabled": "⚡",
     "disabled": "🌑",
     "warning": "⚠️",
     "error": "🚫",
