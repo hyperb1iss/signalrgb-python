@@ -1,6 +1,8 @@
-"""Base package for signalrgb-python"""
+"""SignalRGB Python client library and CLI.
 
-from typing import Any, Literal, Optional, Union, cast
+Provides both synchronous and asynchronous clients for the SignalRGB API,
+alongside a Rich-powered Typer CLI.
+"""
 
 from .async_client import AsyncSignalRGBClient
 from .client import (
@@ -21,7 +23,7 @@ from .model import (
     Layout,
 )
 
-__version__ = "1.0.0"  # Major version bump for async API
+__version__ = "1.0.1"
 
 __all__ = [
     "APIError",
@@ -36,4 +38,5 @@ __all__ = [
     "SignalRGBClient",
     "SignalRGBError",
     "SignalRGBException",
+    "__version__",
 ]
