@@ -4,20 +4,20 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version to release (e.g., 1.2.0). Leave empty to auto-bump."
+        description: 'Version to release (e.g., 1.2.0). Leave empty to auto-bump.'
         required: false
         type: string
       bump:
-        description: "Version bump type (if version not specified)"
+        description: 'Version bump type (if version not specified)'
         required: false
         type: choice
-        default: "patch"
+        default: 'patch'
         options:
           - patch
           - minor
           - major
       dry_run:
-        description: "Dry run (skip commit/tag/push)"
+        description: 'Dry run (skip commit/tag/push)'
         required: false
         type: boolean
         default: false
@@ -47,7 +47,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: '3.13'
 
       - name: Determine version
         id: version

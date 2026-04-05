@@ -1,6 +1,7 @@
 # Command-Line Interface
 
-signalrgb-python ships with a Rich + Typer CLI for interacting with your SignalRGB instance. This guide covers every command.
+signalrgb-python ships with a Rich + Typer CLI for interacting with your SignalRGB instance. This
+guide covers every command.
 
 ## 🎯 Basic syntax
 

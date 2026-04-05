@@ -3,7 +3,7 @@ name: Docs
 on:
   push:
     tags:
-      - "v*"
+      - 'v*'
   workflow_dispatch:
 
 jobs:
@@ -11,6 +11,6 @@ jobs:
     uses: hyperb1iss/shared-workflows/.github/workflows/docs-deploy.yml@v1
     with:
       engine: mkdocs
-      docs-dir: "."
-      python-version: "3.13"
+      docs-dir: '.'
+      python-version: '3.13'
     secrets: inherit

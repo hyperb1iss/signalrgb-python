@@ -1,6 +1,7 @@
 # signalrgb-python
 
-A Python client library and CLI for controlling [SignalRGB Pro](https://signalrgb.com) through synchronous and asynchronous APIs.
+A Python client library and CLI for controlling [SignalRGB Pro](https://signalrgb.com) through
+synchronous and asynchronous APIs.
 
 ## 🌟 Features
 

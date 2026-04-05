@@ -29,11 +29,11 @@ install-dev:
     uv sync
 
 # Run every check — lint, format, typecheck, tests
-verify: lint fmt-check typecheck test
+verify: lint fmt-check prose-check typecheck test
     @echo '\033[38;2;80;250;123m✅ All checks passed\033[0m'
 
 # Fast local loop — lint + typecheck + tests, auto-fixing what it can
-check: lint-fix fmt typecheck test
+check: lint-fix fmt prose typecheck test
 
 # ─── Testing ──────────────────────────────────────────────
 
@@ -72,13 +72,21 @@ lint-fix *args='':
 lint-fix-unsafe:
     uv run ruff check --fix --unsafe-fixes .
 
-# Format all code
+# Format all Python code
 fmt:
     uv run ruff format .
 
-# Check formatting without modifying
+# Check Python formatting without modifying
 fmt-check:
     uv run ruff format --check .
+
+# Format Markdown, YAML, and JSON with prettier
+prose:
+    pnpm dlx prettier --write "**/*.{md,yml,yaml,json}"
+
+# Check Markdown/YAML/JSON formatting without modifying
+prose-check:
+    pnpm dlx prettier --check "**/*.{md,yml,yaml,json}"
 
 # Explain a ruff rule (e.g. `just rule PLR0913`)
 rule code:

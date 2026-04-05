@@ -5,15 +5,19 @@
 - **Python 3.13 or higher**
 - [SignalRGB Pro](https://www.signalrgb.com/pro/) — required for API access
 
-This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-api), which is only available in SignalRGB Pro.
+This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-api), which is only
+available in SignalRGB Pro.
 
 ### Async client requirements
 
-The `AsyncSignalRGBClient` has no extra dependencies beyond the base install — httpx is already required. For integration with Home Assistant or other asyncio frameworks, see the [Async Usage](async_usage.md) guide.
+The `AsyncSignalRGBClient` has no extra dependencies beyond the base install — httpx is already
+required. For integration with Home Assistant or other asyncio frameworks, see the
+[Async Usage](async_usage.md) guide.
 
 ## 💎 Installing with uv
 
-[uv](https://github.com/astral-sh/uv) is the recommended way to manage Python projects and dependencies.
+[uv](https://github.com/astral-sh/uv) is the recommended way to manage Python projects and
+dependencies.
 
 ```bash
 # Add signalrgb to an existing uv project

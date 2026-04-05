@@ -9,7 +9,9 @@
 
 _A Python client library and CLI for controlling [SignalRGB Pro](https://signalrgb.com)_
 
-[Features](#features) • [Installation](#installation) • [Usage](#usage) • [API Reference](#api-reference) • [Development](#development) • [Contributing](#contributing) • [License](#license)
+[Features](#features) • [Installation](#installation) • [Usage](#usage) •
+[API Reference](#api-reference) • [Development](#development) • [Contributing](#contributing) •
+[License](#license)
 
 </div>
 
@@ -42,7 +44,8 @@ pip install signalrgb
 - Python **3.13+**
 - [SignalRGB Pro](https://www.signalrgb.com/pro/) — required for API access
 
-This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-api), which is only available in SignalRGB Pro.
+This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-api), which is only
+available in SignalRGB Pro.
 
 ## 🎯 Usage
 
@@ -50,7 +53,8 @@ This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-
 
 ### Command-line interface
 
-The CLI is a Rich + Typer app with category subcommands for effects, presets, layouts, and canvas control.
+The CLI is a Rich + Typer app with category subcommands for effects, presets, layouts, and canvas
+control.
 
 ```bash
 # Effects
@@ -112,7 +116,8 @@ client.enabled = True
 
 ### Asynchronous client
 
-For async apps and Home Assistant integrations, use `AsyncSignalRGBClient` as an async context manager:
+For async apps and Home Assistant integrations, use `AsyncSignalRGBClient` as an async context
+manager:
 
 ```python
 import asyncio
@@ -164,7 +169,8 @@ Full API docs are published at **<https://hyperb1iss.github.io/signalrgb-python/
 
 <a name="development"></a>
 
-The project uses the Astral stack: **uv** for packaging, **ruff** for lint + format, **ty** for type checking, and **pytest** for tests. All common tasks are wired up in the `justfile`.
+The project uses the Astral stack: **uv** for packaging, **ruff** for lint + format, **ty** for type
+checking, and **pytest** for tests. All common tasks are wired up in the `justfile`.
 
 ```bash
 # Clone and set up
@@ -190,7 +196,8 @@ just run effect list   # run the CLI
 just --list            # see everything
 ```
 
-See the [Development Guide](https://hyperb1iss.github.io/signalrgb-python/development/) for the full workflow.
+See the [Development Guide](https://hyperb1iss.github.io/signalrgb-python/development/) for the full
+workflow.
 
 ## 🦋 Contributing
 
@@ -203,7 +210,8 @@ Contributions are welcome. Fork, branch, and open a PR:
 3. `just verify` should pass before you push
 4. Open a pull request
 
-Please include tests for new functionality and follow the existing code style (ruff + ty will tell you if anything's off).
+Please include tests for new functionality and follow the existing code style (ruff + ty will tell
+you if anything's off).
 
 ## 📄 License
 
@@ -215,13 +223,16 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 
 <div align="center">
 
-[Documentation](https://hyperb1iss.github.io/signalrgb-python/) • [Report a bug](https://github.com/hyperb1iss/signalrgb-python/issues) • [Request a feature](https://github.com/hyperb1iss/signalrgb-python/issues)
+[Documentation](https://hyperb1iss.github.io/signalrgb-python/) •
+[Report a bug](https://github.com/hyperb1iss/signalrgb-python/issues) •
+[Request a feature](https://github.com/hyperb1iss/signalrgb-python/issues)
 
 </div>
 
 ## 💜 Acknowledgements
 
-This project is not officially associated with SignalRGB. It is an independent community client — please do not report client issues to the SignalRGB team.
+This project is not officially associated with SignalRGB. It is an independent community client —
+please do not report client issues to the SignalRGB team.
 
 ---
 
@@ -229,6 +240,7 @@ This project is not officially associated with SignalRGB. It is an independent c
 
 Created by [Stefanie Jane](https://github.com/hyperb1iss)
 
-If you find this project useful, consider [buying me a Monster Ultra Violet](https://ko-fi.com/hyperb1iss).
+If you find this project useful, consider
+[buying me a Monster Ultra Violet](https://ko-fi.com/hyperb1iss).
 
 </div>

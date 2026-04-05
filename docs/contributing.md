@@ -37,8 +37,10 @@ When filing a bug report:
 
 Good starting points:
 
-- [Good first issues](https://github.com/hyperb1iss/signalrgb-python/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) — small, well-scoped issues
-- [Help wanted](https://github.com/hyperb1iss/signalrgb-python/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) — issues that need attention
+- [Good first issues](https://github.com/hyperb1iss/signalrgb-python/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+  — small, well-scoped issues
+- [Help wanted](https://github.com/hyperb1iss/signalrgb-python/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+  — issues that need attention
 
 ### 📥 Pull requests
 
@@ -84,17 +86,17 @@ Good starting points:
 
 ## 📋 Issue labels
 
-| Label | Meaning |
-| --- | --- |
-| `bug` | Something is broken |
-| `enhancement` | Feature request or improvement |
-| `question` | Needs discussion |
-| `duplicate` | Already tracked elsewhere |
-| `good first issue` | Good for newcomers |
-| `help wanted` | Community help appreciated |
-| `documentation` | Docs-only change |
-| `performance` | Performance-related |
-| `security` | Security-related |
+| Label              | Meaning                        |
+| ------------------ | ------------------------------ |
+| `bug`              | Something is broken            |
+| `enhancement`      | Feature request or improvement |
+| `question`         | Needs discussion               |
+| `duplicate`        | Already tracked elsewhere      |
+| `good first issue` | Good for newcomers             |
+| `help wanted`      | Community help appreciated     |
+| `documentation`    | Docs-only change               |
+| `performance`      | Performance-related            |
+| `security`         | Security-related               |
 
 ## Thanks 💜
 

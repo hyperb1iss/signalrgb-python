@@ -1,6 +1,7 @@
 # Python Library Usage (Synchronous)
 
-This guide covers the synchronous `SignalRGBClient`. For asyncio-based applications, see the [Async Client guide](../async_usage.md).
+This guide covers the synchronous `SignalRGBClient`. For asyncio-based applications, see the
+[Async Client guide](../async_usage.md).
 
 ## 🎯 Initializing the client
 
@@ -149,7 +150,8 @@ The shape varies per effect — inspect the dict to see what's available.
 
 ## 🔄 Using the sync client from async code
 
-Prefer `AsyncSignalRGBClient` for async code. If you must call the sync client from an async context, delegate to a thread pool:
+Prefer `AsyncSignalRGBClient` for async code. If you must call the sync client from an async
+context, delegate to a thread pool:
 
 ```python
 import asyncio
@@ -209,4 +211,5 @@ if __name__ == "__main__":
 2. **Catch specific exceptions** before falling back to `SignalRGBError`.
 3. **Refresh the cache** before listing effects when freshness matters.
 4. **Throttle requests** in loops — SignalRGB is local but still has overhead.
-5. **Prefer the async client** for asyncio apps — it's the primary implementation, and the sync client wraps it.
+5. **Prefer the async client** for asyncio apps — it's the primary implementation, and the sync
+   client wraps it.

@@ -30,7 +30,8 @@ just test-one test_get_effects # run a single test by name
 just test-cov                  # HTML coverage report in htmlcov/
 ```
 
-Under the hood this runs `uv run pytest` with the config in `pyproject.toml` (asyncio auto mode, strict markers, branch coverage).
+Under the hood this runs `uv run pytest` with the config in `pyproject.toml` (asyncio auto mode,
+strict markers, branch coverage).
 
 ## 🔍 Linting and formatting
 
@@ -53,7 +54,8 @@ just typecheck              # ty check
 just ty-rule unresolved-import   # explain a specific rule
 ```
 
-ty is currently in beta (0.0.x) — it's faster than mypy and integrates with the same `[tool.ty]` section of `pyproject.toml`.
+ty is currently in beta (0.0.x) — it's faster than mypy and integrates with the same `[tool.ty]`
+section of `pyproject.toml`.
 
 ## 🎯 The verify loop
 
@@ -116,14 +118,18 @@ The workflow (`release.yml`) will:
 3. Run `uv build` as a smoke test
 4. Commit, tag `v<version>`, and push
 
-Pushing the tag automatically triggers `publish.yml` (PyPI via OIDC trusted publishing) and `docs.yml` (MkDocs → GitHub Pages).
+Pushing the tag automatically triggers `publish.yml` (PyPI via OIDC trusted publishing) and
+`docs.yml` (MkDocs → GitHub Pages).
 
 ## 🐛 Troubleshooting
 
-- **Dependency issues**: `uv lock` out of sync with `pyproject.toml`? Run `uv sync --all-groups` or `just install`.
-- **Stale caches**: `just clean` removes build artifacts, coverage, `__pycache__`, and ruff/ty caches.
+- **Dependency issues**: `uv lock` out of sync with `pyproject.toml`? Run `uv sync --all-groups` or
+  `just install`.
+- **Stale caches**: `just clean` removes build artifacts, coverage, `__pycache__`, and ruff/ty
+  caches.
 - **Broken venv**: `just reset` nukes `.venv` and reinstalls from scratch.
-- **Ruff/ty version mismatch**: `uv lock --upgrade` pulls the latest, or `just upgrade-package ruff`.
+- **Ruff/ty version mismatch**: `uv lock --upgrade` pulls the latest, or
+  `just upgrade-package ruff`.
 
 ## 💬 Getting help
 

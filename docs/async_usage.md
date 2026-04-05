@@ -1,8 +1,10 @@
 # Asynchronous Client
 
-`AsyncSignalRGBClient` is the native asyncio client for signalrgb-python. It's built on httpx and is particularly useful for Home Assistant integrations and other async applications.
+`AsyncSignalRGBClient` is the native asyncio client for signalrgb-python. It's built on httpx and is
+particularly useful for Home Assistant integrations and other async applications.
 
-Since version 1.0.0, the async client is the **primary** implementation — the synchronous `SignalRGBClient` wraps it behind a blocking event loop.
+Since version 1.0.0, the async client is the **primary** implementation — the synchronous
+`SignalRGBClient` wraps it behind a blocking event loop.
 
 ## 🎯 Basic usage
 
@@ -29,12 +31,12 @@ asyncio.run(main())
 
 ## 📊 Sync vs async — side by side
 
-| Synchronous                    | Asynchronous                          |
-| ------------------------------ | ------------------------------------- |
-| `client.get_effects()`         | `await client.get_effects()`          |
-| `client.apply_effect(id)`      | `await client.apply_effect(id)`       |
-| `client.brightness = 50`       | `await client.set_brightness(50)`     |
-| `client.enabled = True`        | `await client.set_enabled(True)`      |
+| Synchronous               | Asynchronous                      |
+| ------------------------- | --------------------------------- |
+| `client.get_effects()`    | `await client.get_effects()`      |
+| `client.apply_effect(id)` | `await client.apply_effect(id)`   |
+| `client.brightness = 50`  | `await client.set_brightness(50)` |
+| `client.enabled = True`   | `await client.set_enabled(True)`  |
 
 ## 🔄 Properties vs methods
 
@@ -51,7 +53,9 @@ Properties can't be async in Python, so the async client uses explicit getter an
 
 ## 🏠 Home Assistant integration
 
-The async client is a natural fit for Home Assistant. See [signalrgb-homeassistant](https://github.com/hyperb1iss/signalrgb-homeassistant) for the full integration; here's a minimal `LightEntity`:
+The async client is a natural fit for Home Assistant. See
+[signalrgb-homeassistant](https://github.com/hyperb1iss/signalrgb-homeassistant) for the full
+integration; here's a minimal `LightEntity`:
 
 ```python
 from homeassistant.components.light import LightEntity
@@ -120,7 +124,8 @@ async with AsyncSignalRGBClient() as client:
 
 ## 🔄 Mixing sync and async code
 
-If most of your code is sync but a few paths need async, the cleanest approach is to use `AsyncSignalRGBClient` directly in those paths:
+If most of your code is sync but a few paths need async, the cleanest approach is to use
+`AsyncSignalRGBClient` directly in those paths:
 
 ```python
 from signalrgb import SignalRGBClient, AsyncSignalRGBClient
@@ -137,7 +142,8 @@ async def async_function():
 
 ## 🎯 Performance considerations
 
-The async client avoids blocking the event loop while waiting for API responses. That's particularly valuable when:
+The async client avoids blocking the event loop while waiting for API responses. That's particularly
+valuable when:
 
 - Making multiple concurrent requests (`asyncio.gather`)
 - Integrating with other async code (Home Assistant, aiohttp servers, etc.)
