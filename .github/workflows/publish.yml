@@ -21,7 +21,7 @@ permissions:
   actions: read
 
 concurrency:
-  group: release
+  group: publish
   cancel-in-progress: false
 
 jobs:
