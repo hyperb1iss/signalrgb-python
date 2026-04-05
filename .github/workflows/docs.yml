@@ -5,6 +5,11 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref to build docs from (empty = default branch)'
+        required: false
+        type: string
 
 jobs:
   deploy:

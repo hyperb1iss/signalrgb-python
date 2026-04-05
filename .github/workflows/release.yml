@@ -109,6 +109,21 @@ jobs:
           git push origin HEAD
           git push origin "v${{ steps.version.outputs.version }}"
 
+      # GITHUB_TOKEN pushes don't trigger other workflows, so dispatch them explicitly
+      - name: Trigger publish workflow
+        if: ${{ !inputs.dry_run }}
+        run: |
+          gh workflow run publish.yml -f tag=v${{ steps.version.outputs.version }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger docs workflow
+        if: ${{ !inputs.dry_run }}
+        run: |
+          gh workflow run docs.yml
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Summary
         run: |
           {

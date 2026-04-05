@@ -4,10 +4,18 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to publish (e.g., v1.2.0)'
+        required: true
+        type: string
 
 jobs:
   publish:
     uses: hyperb1iss/shared-workflows/.github/workflows/python-publish.yml@v1
+    with:
+      checkout-ref: ${{ inputs.tag || github.ref }}
     secrets: inherit
 
   release:
