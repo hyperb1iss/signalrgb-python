@@ -91,7 +91,7 @@ jobs:
         run: |
           sed -i 's/^__version__ = .*/__version__ = "${{ steps.version.outputs.version }}"/' signalrgb/__init__.py
 
-      - name: Verify build still works
+      - name: Verify build
         if: ${{ !inputs.dry_run }}
         run: uv build
 
@@ -109,18 +109,37 @@ jobs:
           git push origin HEAD
           git push origin "v${{ steps.version.outputs.version }}"
 
+      - name: Generate release notes
+        if: ${{ !inputs.dry_run }}
+        uses: hyperb1iss/git-iris@v2
+        with:
+          command: release-notes
+          version-name: v${{ steps.version.outputs.version }}
+          provider: anthropic
+          model: claude-opus-4-6
+          api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          output-file: RELEASE_NOTES.md
+
+      - name: Upload release notes
+        if: ${{ !inputs.dry_run }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-notes
+          path: RELEASE_NOTES.md
+
       # GITHUB_TOKEN pushes don't trigger other workflows, so dispatch them explicitly
       - name: Trigger publish workflow
         if: ${{ !inputs.dry_run }}
         run: |
-          gh workflow run publish.yml -f tag=v${{ steps.version.outputs.version }}
+          gh workflow run publish.yml \
+            -f tag=v${{ steps.version.outputs.version }} \
+            -f release_run_id=${{ github.run_id }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Trigger docs workflow
         if: ${{ !inputs.dry_run }}
-        run: |
-          gh workflow run docs.yml
+        run: gh workflow run docs.yml
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -132,10 +151,15 @@ jobs:
             if [ "${{ inputs.dry_run }}" = "true" ]; then
               echo "**Dry run — no changes committed.**"
             else
-              echo "**Tag pushed. Downstream workflows will handle publish & release notes:**"
-              echo "- \`publish.yml\` → PyPI via OIDC trusted publishing"
-              echo "- \`docs.yml\`    → MkDocs site → GitHub Pages"
+              echo "✅ Tag pushed and downstream workflows triggered:"
               echo ""
-              echo "📦 [PyPI](https://pypi.org/project/signalrgb/)"
+              echo "| Workflow | Purpose |"
+              echo "| --- | --- |"
+              echo "| \`publish.yml\` | PyPI via OIDC trusted publishing |"
+              echo "| \`docs.yml\` | VitePress docs → GitHub Pages |"
+              echo ""
+              echo "📝 AI-generated release notes uploaded as artifact"
+              echo ""
+              echo "📦 [PyPI](https://pypi.org/project/signalrgb/) · 📄 [Docs](https://hyperb1iss.github.io/signalrgb-python/)"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
