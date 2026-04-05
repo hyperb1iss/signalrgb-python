@@ -138,7 +138,7 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-See [docs/async_usage.md](docs/async_usage.md) for the full async guide.
+See the [Async Client reference](https://hyperb1iss.github.io/signalrgb-python/reference/async) for the full async guide.
 
 ### Error handling
 
