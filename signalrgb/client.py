@@ -5,11 +5,9 @@ This module provides a synchronous client class for interacting with the SignalR
 allowing users to retrieve, apply, and manage lighting effects and layouts.
 """
 
-from __future__ import annotations
-
 import asyncio
 from collections.abc import Awaitable, Iterator
-from typing import Any, TypeVar
+from typing import Any, Self
 
 from .async_client import AsyncSignalRGBClient
 from .constants import DEFAULT_HOST, DEFAULT_PORT, DEFAULT_TIMEOUT
@@ -18,9 +16,6 @@ from .model import (
     EffectPreset,
     Layout,
 )
-
-# Define a TypeVar for the return type
-T = TypeVar("T")
 
 
 class SignalRGBClient:
@@ -55,7 +50,7 @@ class SignalRGBClient:
         # Create and manage an event loop for running async code
         self._loop = asyncio.new_event_loop()
 
-    def __enter__(self) -> SignalRGBClient:
+    def __enter__(self) -> Self:
         """Context manager entry."""
         return self
 
@@ -70,7 +65,7 @@ class SignalRGBClient:
             # The loop might already be closed, just ignore
             pass
 
-    def _run_async(self, coro: Awaitable[T]) -> T:
+    def _run_async[T](self, coro: Awaitable[T]) -> T:
         """Run an asynchronous coroutine in a synchronous context.
 
         Args:

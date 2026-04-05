@@ -7,12 +7,10 @@ This module provides an asynchronous client class for interacting with the Signa
 allowing users to retrieve, apply, and manage lighting effects and layouts.
 """
 
-from __future__ import annotations
-
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 import os
-from typing import Any
+from typing import Any, Self
 
 import httpx
 
@@ -68,7 +66,7 @@ class AsyncSignalRGBClient:
         self._effects_cache: list[Effect] | None = None
         self._client = httpx.AsyncClient(timeout=self._timeout)
 
-    async def __aenter__(self) -> AsyncSignalRGBClient:
+    async def __aenter__(self) -> Self:
         """Async context manager entry."""
         return self
 

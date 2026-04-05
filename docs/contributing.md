@@ -73,7 +73,7 @@ Good starting points:
 - Follow [PEP 8](https://peps.python.org/pep-0008/) (ruff enforces this)
 - Use Google-style docstrings for public API
 - Add type hints to all public functions and methods
-- Target Python 3.11+
+- Target Python 3.13+
 
 ### Documentation style
 

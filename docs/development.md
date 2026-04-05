@@ -4,7 +4,7 @@ This guide covers setting up your development environment for signalrgb-python.
 
 ## 🧰 Prerequisites
 
-- **Python 3.11 or higher**
+- **Python 3.13 or higher**
 - [uv](https://github.com/astral-sh/uv) for packaging and dependency management
 - [just](https://github.com/casey/just) for task running (optional but recommended)
 - Git

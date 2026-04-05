@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from functools import wraps
 import time
-from typing import Any, TypeVar, cast
+from typing import Any, cast
 
 from rich import box
 from rich.columns import Columns
@@ -156,10 +156,7 @@ def get_client(ctx: typer.Context) -> SignalRGBClient:
     return cast(SignalRGBClient, ctx.obj)
 
 
-F = TypeVar("F", bound=Callable[..., Any])
-
-
-def handle_exceptions(func: F) -> F:
+def handle_exceptions[F: Callable[..., Any]](func: F) -> F:
     """Decorator to handle exceptions in CLI commands."""
 
     @wraps(func)

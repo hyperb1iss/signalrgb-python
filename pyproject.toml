@@ -8,7 +8,7 @@ version = "1.0.1"
 description = "A Python client library and CLI for controlling SignalRGB Pro"
 readme = "README.md"
 license = "Apache-2.0"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 authors = [{ name = "Stefanie Jane", email = "stef@hyperbliss.tech" }]
 keywords = ["signalrgb", "rgb", "lighting", "api", "client", "cli", "async", "httpx"]
 classifiers = [
@@ -20,8 +20,6 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Topic :: Multimedia",
@@ -80,7 +78,7 @@ include = [
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py313"
 src = ["signalrgb", "tests"]
 extend-exclude = [".venv", "docs", "site"]
 
@@ -202,7 +200,7 @@ docstring-code-line-length = 80
 # ============================================================================
 
 [tool.ty.environment]
-python-version = "3.11"
+python-version = "3.13"
 
 [tool.ty.src]
 include = ["signalrgb"]

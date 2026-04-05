@@ -39,7 +39,7 @@ pip install signalrgb
 
 ### Prerequisites
 
-- Python **3.11+**
+- Python **3.13+**
 - [SignalRGB Pro](https://www.signalrgb.com/pro/) — required for API access
 
 This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-api), which is only available in SignalRGB Pro.

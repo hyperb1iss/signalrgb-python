@@ -2,7 +2,7 @@
 
 ## 🧰 Prerequisites
 
-- **Python 3.11 or higher**
+- **Python 3.13 or higher**
 - [SignalRGB Pro](https://www.signalrgb.com/pro/) — required for API access
 
 This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-api), which is only available in SignalRGB Pro.
