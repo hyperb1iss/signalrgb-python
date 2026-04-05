@@ -1,0 +1,16 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    uses: hyperb1iss/shared-workflows/.github/workflows/python-publish.yml@v1
+    secrets: inherit
+
+  release:
+    needs: publish
+    uses: hyperb1iss/shared-workflows/.github/workflows/github-release.yml@v1
+    secrets: inherit
