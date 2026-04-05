@@ -58,11 +58,6 @@ docs = [
     "mkdocs-material>=9.6",
     "mkdocstrings[python]>=0.29",
 ]
-release = [
-    "colorama>=0.4.6",
-    "wcwidth>=0.2.13",
-    "semver>=3.0",
-]
 
 # ============================================================================
 # Hatch Build Configuration
@@ -184,11 +179,6 @@ ignore = [
     "S108",    # Temp file usage in tests
     "SLF001",  # Private member access in tests
 ]
-"scripts/**/*.py" = [
-    "T20",     # print is fine in scripts
-    "S603",    # subprocess.run with validated input is intentional
-    "PLW0603", # Scripts may use globals
-]
 "examples/**/*.py" = [
     "ASYNC250", # Demo scripts with interactive input() in async context
     "T20",      # print is expected in examples
@@ -216,7 +206,7 @@ python-version = "3.11"
 
 [tool.ty.src]
 include = ["signalrgb"]
-exclude = ["docs", "site", "scripts", "examples"]
+exclude = ["docs", "site", "examples"]
 
 [tool.ty.rules]
 # Pragmatic defaults — warn on things we want to fix over time but don't
