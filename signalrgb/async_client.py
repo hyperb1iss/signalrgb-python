@@ -16,7 +16,14 @@ from typing import Any
 
 import httpx
 
-from .constants import DEBUG_ENV_VAR, DEFAULT_HOST, DEFAULT_PORT, DEFAULT_TIMEOUT, LIGHTING_V1, SCENES_V1
+from .constants import (
+    DEBUG_ENV_VAR,
+    DEFAULT_HOST,
+    DEFAULT_PORT,
+    DEFAULT_TIMEOUT,
+    LIGHTING_V1,
+    SCENES_V1,
+)
 from .exceptions import APIError, ConnectionError, NotFoundError, SignalRGBError
 from .model import (
     CurrentLayoutResponse,
@@ -42,7 +49,9 @@ class AsyncSignalRGBClient:
     to retrieve, apply, and manage lighting effects and layouts.
     """
 
-    def __init__(self, host: str = DEFAULT_HOST, port: int = DEFAULT_PORT, timeout: float = DEFAULT_TIMEOUT):
+    def __init__(
+        self, host: str = DEFAULT_HOST, port: int = DEFAULT_PORT, timeout: float = DEFAULT_TIMEOUT
+    ):
         """Initialize the AsyncSignalRGBClient.
 
         Args:
@@ -74,7 +83,9 @@ class AsyncSignalRGBClient:
         return self._client
 
     @asynccontextmanager
-    async def _request_context(self, method: str, endpoint: str, **kwargs: Any) -> AsyncIterator[dict[str, Any]]:
+    async def _request_context(
+        self, method: str, endpoint: str, **kwargs: Any
+    ) -> AsyncIterator[dict[str, Any]]:
         """Async context manager for making API requests.
 
         This method handles common exception cases and debug logging.
@@ -107,7 +118,9 @@ class AsyncSignalRGBClient:
 
             yield response.json()
         except httpx.ConnectError as e:
-            raise ConnectionError(f"Failed to connect to SignalRGB API: {e}", Error(title=str(e))) from e
+            raise ConnectionError(
+                f"Failed to connect to SignalRGB API: {e}", Error(title=str(e))
+            ) from e
         except httpx.TimeoutException as e:
             raise ConnectionError("Request timed out", Error(title="Request Timeout")) from e
         except httpx.HTTPStatusError as e:
@@ -116,7 +129,11 @@ class AsyncSignalRGBClient:
             if e.response is not None and hasattr(e.response, "json"):
                 try:
                     json_data = e.response.json()
-                    if "errors" in json_data and json_data["errors"] and isinstance(json_data["errors"], list):
+                    if (
+                        "errors" in json_data
+                        and json_data["errors"]
+                        and isinstance(json_data["errors"], list)
+                    ):
                         error = Error.from_dict(json_data["errors"][0])
                     else:
                         error = Error(title=str(e))
@@ -336,7 +353,9 @@ class AsyncSignalRGBClient:
             >>>     await client.set_enabled(False)
             >>>     print("Canvas disabled")
         """
-        async with self._request_context("PATCH", f"{LIGHTING_V1}/enabled", json={"enabled": value}):
+        async with self._request_context(
+            "PATCH", f"{LIGHTING_V1}/enabled", json={"enabled": value}
+        ):
             pass
 
     async def apply_effect(self, effect_id: str) -> None:
@@ -355,7 +374,9 @@ class AsyncSignalRGBClient:
             >>>     await client.apply_effect("example_effect_id")
             >>>     print("Effect applied successfully")
         """
-        async with self._request_context("POST", f"{LIGHTING_V1}/effects/{effect_id}/apply") as data:
+        async with self._request_context(
+            "POST", f"{LIGHTING_V1}/effects/{effect_id}/apply"
+        ) as data:
             response = SignalRGBResponse.from_dict(data)
             self._ensure_response_ok(response)
 
@@ -407,7 +428,9 @@ class AsyncSignalRGBClient:
             >>>         print(f"Preset ID: {preset.id}")
         """
         try:
-            async with self._request_context("GET", f"{LIGHTING_V1}/effects/{effect_id}/presets") as data:
+            async with self._request_context(
+                "GET", f"{LIGHTING_V1}/effects/{effect_id}/presets"
+            ) as data:
                 response = EffectPresetListResponse.from_dict(data)
                 self._ensure_response_ok(response)
                 if response.data is None:
@@ -619,7 +642,9 @@ class AsyncSignalRGBClient:
             >>>     current = await client.get_current_layout()
             >>>     print(f"New current layout: {current.id}")
         """
-        async with self._request_context("PATCH", f"{SCENES_V1}/current_layout", json={"layout": layout_id}) as data:
+        async with self._request_context(
+            "PATCH", f"{SCENES_V1}/current_layout", json={"layout": layout_id}
+        ) as data:
             response = CurrentLayoutResponse.from_dict(data)
             self._ensure_response_ok(response)
             if response.data is None or response.data.current_layout is None:

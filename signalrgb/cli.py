@@ -225,19 +225,27 @@ def create_effect_panel(effect: Any, title: str) -> Panel:
         [
             (
                 "Uses Audio",
-                STATUS_EMOJIS["enabled"] if effect.attributes.uses_audio else STATUS_EMOJIS["disabled"],
+                STATUS_EMOJIS["enabled"]
+                if effect.attributes.uses_audio
+                else STATUS_EMOJIS["disabled"],
             ),
             (
                 "Uses Video",
-                STATUS_EMOJIS["enabled"] if effect.attributes.uses_video else STATUS_EMOJIS["disabled"],
+                STATUS_EMOJIS["enabled"]
+                if effect.attributes.uses_video
+                else STATUS_EMOJIS["disabled"],
             ),
             (
                 "Uses Input",
-                STATUS_EMOJIS["enabled"] if effect.attributes.uses_input else STATUS_EMOJIS["disabled"],
+                STATUS_EMOJIS["enabled"]
+                if effect.attributes.uses_input
+                else STATUS_EMOJIS["disabled"],
             ),
             (
                 "Uses Meters",
-                STATUS_EMOJIS["enabled"] if effect.attributes.uses_meters else STATUS_EMOJIS["disabled"],
+                STATUS_EMOJIS["enabled"]
+                if effect.attributes.uses_meters
+                else STATUS_EMOJIS["disabled"],
             ),
         ],
         (PANEL_WIDTH // 2) - 5,
@@ -389,7 +397,9 @@ def search(ctx: typer.Context, query: str) -> None:
         or (e.attributes.description and query.lower() in e.attributes.description.lower())
     ]
     rows = [[e.attributes.name, e.attributes.description or "N/A"] for e in matched_effects]
-    table = create_colorful_table(f"{ICONS['effect']} Search Results for '{query}'", ["Name", "Description"], rows)
+    table = create_colorful_table(
+        f"{ICONS['effect']} Search Results for '{query}'", ["Name", "Description"], rows
+    )
     console.print(table)
 
 
@@ -492,7 +502,9 @@ def preset(ctx: typer.Context, name: str | None = None) -> None:
                 console.print(
                     Panel(
                         content_display,
-                        title=color_gradient(f"{ICONS['preset']} Preset Information", GRADIENT_COLORS),
+                        title=color_gradient(
+                            f"{ICONS['preset']} Preset Information", GRADIENT_COLORS
+                        ),
                         expand=False,
                         border_style=BORDER_COLOR,
                     )
@@ -550,7 +562,9 @@ def layout(ctx: typer.Context, name: str | None = None) -> None:
                 console.print(
                     Panel(
                         content_display,
-                        title=color_gradient(f"{ICONS['layout']} Layout Information", GRADIENT_COLORS),
+                        title=color_gradient(
+                            f"{ICONS['layout']} Layout Information", GRADIENT_COLORS
+                        ),
                         expand=False,
                         border_style=BORDER_COLOR,
                     )
@@ -631,7 +645,9 @@ def canvas(ctx: typer.Context) -> None:
 
 @canvas_app.command()
 @handle_exceptions
-def brightness(ctx: typer.Context, value: int | None = typer.Argument(None, min=0, max=100)) -> None:
+def brightness(
+    ctx: typer.Context, value: int | None = typer.Argument(None, min=0, max=100)
+) -> None:
     """Get or set the brightness level."""
     client = get_client(ctx)
     if value is not None:
@@ -675,7 +691,9 @@ def main(
     ctx: typer.Context,
     host: str = typer.Option("localhost", help="SignalRGB API host"),
     port: int = typer.Option(16038, help="SignalRGB API port"),
-    full_rgb: bool = typer.Option(False, "--full-rgb", help="Enable full RGB gradient mode for all output"),
+    full_rgb: bool = typer.Option(
+        False, "--full-rgb", help="Enable full RGB gradient mode for all output"
+    ),
 ) -> None:
     """Initialize SignalRGB client."""
     # Store RGB mode in a context variable instead of using global

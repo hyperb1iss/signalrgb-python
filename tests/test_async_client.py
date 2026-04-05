@@ -99,7 +99,9 @@ async def test_get_effect(async_client):
 
         result = await async_client.get_effect("effect1")
 
-        mock_request.assert_called_once_with("GET", "http://testhost:12345/api/v1/lighting/effects/effect1")
+        mock_request.assert_called_once_with(
+            "GET", "http://testhost:12345/api/v1/lighting/effects/effect1"
+        )
         assert result.id == "effect1"
         assert result.attributes.name == "Effect 1"
 
@@ -122,7 +124,9 @@ async def test_apply_effect(async_client):
 
         await async_client.apply_effect("effect1")
 
-        mock_request.assert_called_once_with("POST", "http://testhost:12345/api/v1/lighting/effects/effect1/apply")
+        mock_request.assert_called_once_with(
+            "POST", "http://testhost:12345/api/v1/lighting/effects/effect1/apply"
+        )
 
 
 @pytest.mark.asyncio
@@ -206,7 +210,9 @@ async def test_timeout_error_handling(async_client):
 @pytest.mark.asyncio
 async def test_http_error_handling(async_client):
     """Test handling of HTTP errors."""
-    error_response = {"errors": [{"code": "404", "title": "Not Found", "detail": "Effect not found"}]}
+    error_response = {
+        "errors": [{"code": "404", "title": "Not Found", "detail": "Effect not found"}]
+    }
 
     with patch.object(async_client._client, "request") as mock_request:
         mock_response = Mock(spec=Response)
@@ -214,7 +220,9 @@ async def test_http_error_handling(async_client):
         mock_response.raise_for_status.side_effect = httpx.HTTPStatusError(
             "HTTP Error", request=Mock(), response=mock_response
         )
-        mock_request.side_effect = httpx.HTTPStatusError("HTTP Error", request=Mock(), response=mock_response)
+        mock_request.side_effect = httpx.HTTPStatusError(
+            "HTTP Error", request=Mock(), response=mock_response
+        )
 
         with pytest.raises(APIError) as exc_info:
             await async_client.get_effects()

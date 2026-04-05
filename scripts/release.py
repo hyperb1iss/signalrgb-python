@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Release management script for SignalRGB Python."""
 
-# ruff: noqa: T201
-
 import os
 import re
 import shutil
@@ -101,8 +99,7 @@ def strip_ansi(text: str) -> str:
 def apply_gradient(text: str, gradient: list[str], line_number: int) -> str:
     """Apply gradient colors diagonally to text."""
     return "".join(
-        f"{gradient[(i + line_number) % len(gradient)]}{char}"
-        for i, char in enumerate(text)
+        f"{gradient[(i + line_number) % len(gradient)]}{char}" for i, char in enumerate(text)
     )
 
 
@@ -137,9 +134,7 @@ def create_banner() -> str:
     centered_logo = center_block(logo, content_width)
 
     banner = [
-        center_text(
-            f"{COLOR_STAR}･ ｡ ☆ ∴｡　　･ﾟ*｡★･ ∴｡　　･ﾟ*｡☆ ･ ｡ ☆ ∴｡", banner_width
-        ),
+        center_text(f"{COLOR_STAR}･ ｡ ☆ ∴｡　　･ﾟ*｡★･ ∴｡　　･ﾟ*｡☆ ･ ｡ ☆ ∴｡", banner_width),
         f"{COLOR_BORDER}╭{'─' * (banner_width - 2)}╮",
     ]
 
@@ -156,9 +151,7 @@ def create_banner() -> str:
                 f"{COLOR_STAR}∴｡　　･ﾟ*｡☆ {release_manager_text}{COLOR_STAR} ☆｡*ﾟ･　 ｡∴",
                 banner_width,
             ),
-            center_text(
-                f"{COLOR_STAR}･ ｡ ☆ ∴｡　　･ﾟ*｡★･ ∴｡　　･ﾟ*｡☆ ･ ｡ ☆ ∴｡", banner_width
-            ),
+            center_text(f"{COLOR_STAR}･ ｡ ☆ ∴｡　　･ﾟ*｡★･ ∴｡　　･ﾟ*｡☆ ･ ｡ ☆ ∴｡", banner_width),
         ]
     )
 
@@ -195,9 +188,7 @@ def run_command(
 
     try:
         # We're validating the command exists and controlling the input, so this is safe
-        return subprocess.run(  # noqa: S603
-            cmd, check=check, capture_output=capture_output, text=text
-        )
+        return subprocess.run(cmd, check=check, capture_output=capture_output, text=text)
     except subprocess.CalledProcessError as e:
         if check:
             print_error(f"Command failed: {' '.join(cmd)}")
@@ -257,9 +248,7 @@ def check_tool_installed(tool_name: str) -> None:
 
 def check_branch() -> None:
     """Ensure we're on the main branch."""
-    result = run_git_command(
-        ["rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True
-    )
+    result = run_git_command(["rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True)
     current_branch = result.stdout.strip()
     if current_branch != "main":
         print_error("You must be on the main branch to release.")
@@ -270,9 +259,7 @@ def check_uncommitted_changes() -> None:
     """Check for uncommitted changes."""
     result = run_git_command(["diff-index", "--quiet", "HEAD", "--"], check=False)
     if result.returncode != 0:
-        print_error(
-            "You have uncommitted changes. Please commit or stash them before releasing."
-        )
+        print_error("You have uncommitted changes. Please commit or stash them before releasing.")
         sys.exit(1)
 
 
@@ -338,9 +325,7 @@ def update_docs_version(new_version: str) -> None:
     updated_content = version_pattern.sub(replace_version, content)
 
     if content == updated_content:
-        print_warning(
-            f"No version field found in {DOCS_INDEX} or version already up to date."
-        )
+        print_warning(f"No version field found in {DOCS_INDEX} or version already up to date.")
         return
 
     with open(DOCS_INDEX, "w", encoding="utf-8") as f:
@@ -375,9 +360,7 @@ def commit_and_push(version: str) -> None:
     print_step("Committing and pushing changes")
     try:
         run_git_command(["add", PYPROJECT_TOML, DOCS_INDEX, "uv.lock"], check=True)
-        run_git_command(
-            ["commit", "-m", f":rocket: Release version {version}"], check=True
-        )
+        run_git_command(["commit", "-m", f":rocket: Release version {version}"], check=True)
         run_git_command(["push"], check=True)
         run_git_command(["tag", f"v{version}"], check=True)
         run_git_command(["push", "--tags"], check=True)
@@ -410,9 +393,7 @@ def main() -> None:
         )
 
         if not is_valid_version(new_version):
-            print_error(
-                "Invalid version format. Please use semantic versioning (e.g., 1.2.3)."
-            )
+            print_error("Invalid version format. Please use semantic versioning (e.g., 1.2.3).")
             sys.exit(1)
 
         update_version(new_version)
@@ -425,9 +406,7 @@ def main() -> None:
 
         commit_and_push(new_version)
 
-        print_success(
-            f"\n🎉✨ {PROJECT_NAME} v{new_version} has been successfully released! ✨🎉"
-        )
+        print_success(f"\n🎉✨ {PROJECT_NAME} v{new_version} has been successfully released! ✨🎉")
     except Exception as e:  # noqa: BLE001
         print_error(f"An unexpected error occurred: {e}")
 
