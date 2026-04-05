@@ -137,13 +137,10 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
+# VitePress docs
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+docs/node_modules/
 
 # Pyre type checker
 .pyre/

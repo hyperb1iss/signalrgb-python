@@ -5,5 +5,5 @@ build/
 htmlcov/
 *.egg-info/
 uv.lock
-# mkdocstrings ::: directives use indented YAML that prettier collapses
-docs/api/
+docs/.vitepress/dist/
+docs/.vitepress/cache/

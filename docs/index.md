@@ -1,77 +1,31 @@
-# signalrgb-python
+---
+layout: home
 
-A Python client library and CLI for controlling [SignalRGB Pro](https://signalrgb.com) through
-synchronous and asynchronous APIs.
+hero:
+  name: signalrgb-python
+  text: Control your RGB from Python
+  tagline: A client library and CLI for SignalRGB Pro — sync or async, your call.
+  actions:
+    - theme: brand
+      text: Get Started
+      link: /guide/
+    - theme: alt
+      text: View on GitHub
+      link: https://github.com/hyperb1iss/signalrgb-python
 
-## 🌟 Features
-
-- List available lighting effects, presets, and layouts
-- Apply effects, presets, and layouts
-- Control canvas brightness and enabled state
-- Synchronous client for scripts and tools
-- Asynchronous client (httpx) for asyncio applications and Home Assistant integrations
-- Rich-powered CLI with `effect`, `preset`, `layout`, and `canvas` subcommands
-- Effect caching and typed exceptions for connection, API, and not-found errors
-
-## 🎯 Quick Start
-
-### Installation
-
-```bash
-uv add signalrgb    # or: pip install signalrgb
-```
-
-### Command-line interface
-
-```bash
-signalrgb effect list
-signalrgb effect apply "Rainbow Wave"
-signalrgb canvas brightness 75
-signalrgb canvas enable
-```
-
-### Synchronous Python API
-
-```python
-from signalrgb import SignalRGBClient
-
-client = SignalRGBClient()
-
-client.apply_effect_by_name("Rainbow Wave")
-client.brightness = 75
-client.enabled = True
-
-effect = client.get_current_effect()
-print(f"Current effect: {effect.attributes.name}")
-```
-
-### Asynchronous Python API
-
-```python
-import asyncio
-from signalrgb import AsyncSignalRGBClient
-
-async def main() -> None:
-    async with AsyncSignalRGBClient() as client:
-        await client.apply_effect_by_name("Rainbow Wave")
-        await client.set_brightness(75)
-
-        effect = await client.get_current_effect()
-        print(f"Current effect: {effect.attributes.name}")
-
-asyncio.run(main())
-```
-
-## 📚 Documentation
-
-- **[Installation](installation.md)** — detailed installation instructions
-- **Usage guides**
-  - [Command-Line Interface](usage/cli.md) — using the SignalRGB CLI
-  - [Synchronous Library](usage/library.md) — using the Python library in sync code
-  - [Asynchronous Library](async_usage.md) — using the async client with asyncio
-- **API reference**
-  - [Client API](api/client.md) — `SignalRGBClient` and `AsyncSignalRGBClient`
-  - [Models](api/models.md) — data model reference
-- **Development**
-  - [Contributing](contributing.md) — contribution guidelines
-  - [Development Guide](development.md) — dev environment setup
+features:
+  - title: 🌈 Full API Coverage
+    details:
+      Effects, presets, layouts, canvas brightness, and enabled state — everything the SignalRGB
+      REST API exposes.
+  - title: ⚡ Async-First
+    details:
+      Native httpx async client with a sync wrapper. Built for Home Assistant integrations and
+      asyncio apps.
+  - title: 🎛️ Rich CLI
+    details:
+      Typer + Rich powered CLI with effect search, cycling, random, and full RGB gradient output
+      mode.
+  - title: 🧪 Typed & Tested
+    details: Mashumaro dataclasses, ty type-checked, 58 tests with coverage. Python 3.13+.
+---

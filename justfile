@@ -20,11 +20,12 @@ alias v := verify
 
 # ─── Core ─────────────────────────────────────────────────
 
-# Install all dependencies (dev + docs groups)
+# Install all dependencies (Python + docs)
 install:
-    uv sync --all-groups
+    uv sync
+    cd docs && pnpm install
 
-# Install only runtime + dev (skip docs/release for faster CI loops)
+# Install only Python deps (skip docs for faster CI loops)
 install-dev:
     uv sync
 
@@ -121,17 +122,21 @@ example-async:
 
 # ─── Documentation ───────────────────────────────────────
 
-# Serve docs locally with hot reload (http://127.0.0.1:8000)
+# Serve docs locally with hot reload (http://localhost:5173)
 docs-serve:
-    uv run --group docs mkdocs serve
+    cd docs && pnpm dev
 
-# Build docs into ./site
+# Build docs into docs/.vitepress/dist
 docs-build:
-    uv run --group docs mkdocs build
+    cd docs && pnpm build
 
-# Deploy docs to gh-pages branch (CI does this automatically)
-docs-deploy:
-    uv run --group docs mkdocs gh-deploy --force
+# Preview the built docs
+docs-preview:
+    cd docs && pnpm preview
+
+# Install docs dependencies (first time / CI)
+docs-install:
+    cd docs && pnpm install --frozen-lockfile
 
 # ─── Build & Release ─────────────────────────────────────
 
