@@ -2,75 +2,63 @@
 
 ## 🧰 Prerequisites
 
-Before installing signalrgb-python, ensure you have the following:
-
-- Python 3.9 or higher
-- [SignalRGB Pro](https://www.signalrgb.com/pro/) (required for API access)
+- **Python 3.11 or higher**
+- [SignalRGB Pro](https://www.signalrgb.com/pro/) — required for API access
 
 This library uses the [SignalRGB REST API](https://docs.signalrgb.com/signalrgb-api), which is only available in SignalRGB Pro.
 
-### Additional Requirements for Async Usage
+### Async client requirements
 
-To use the asynchronous client (`AsyncSignalRGBClient`), you will need:
+The `AsyncSignalRGBClient` has no extra dependencies beyond the base install — httpx is already required. For integration with Home Assistant or other asyncio frameworks, see the [Async Usage](async_usage.md) guide.
 
-- Python 3.9 or higher (same as above)
-- Basic understanding of Python's asyncio framework
-- For integration with other async frameworks (like Home Assistant), see the [Async Usage](async_usage.md) guide
+## 💎 Installing with uv
+
+[uv](https://github.com/astral-sh/uv) is the recommended way to manage Python projects and dependencies.
+
+```bash
+# Add signalrgb to an existing uv project
+uv add signalrgb
+
+# Or install it as a global tool (CLI only)
+uv tool install signalrgb
+```
 
 ## 📦 Installing with pip
-
-The easiest way to install signalrgb-python is using pip:
 
 ```bash
 pip install signalrgb
 ```
 
-## 🚀 Installing with UV
+## 🧪 Development installation
 
-For faster, more reliable dependency resolution, you can use [UV](https://github.com/astral-sh/uv) to install signalrgb-python:
-
-```bash
-# Install UV if you don't have it already
-pip install uv
-
-# Install signalrgb using UV
-uv pip install signalrgb
-```
-
-## 🔧 Development Installation
-
-If you're working on signalrgb-python development, you can install it with development dependencies:
+If you're working on signalrgb-python itself:
 
 ```bash
-# Clone the repository
 git clone https://github.com/hyperb1iss/signalrgb-python.git
 cd signalrgb-python
 
-# Using UV
-uv sync --groups dev
+# Install runtime + dev + docs dependency groups
+uv sync --all-groups
+
+# Or use the justfile shortcut
+just install
 ```
 
-## ✅ Verifying the Installation
-
-After installation, you can verify that signalrgb-python is correctly installed by running:
+## ✅ Verifying the installation
 
 ```bash
-signalrgb --version
+signalrgb --help
 ```
 
-This should display the version number of the installed client.
-
-You can also verify the Python library is working by importing it in a Python shell:
+And from a Python shell:
 
 ```python
 import signalrgb
 print(signalrgb.__version__)
 ```
 
-## 📚 Next Steps
+## 📚 Next steps
 
-Now that you have installed signalrgb-python, you can start using it:
-
-- [CLI Usage](usage/cli.md) - Learn how to use the command-line interface
-- [Python Library Usage](usage/library.md) - Learn how to use the synchronous Python library
-- [Async Library Usage](async_usage.md) - Learn how to use the asynchronous Python library
+- [CLI Usage](usage/cli.md) — command-line interface guide
+- [Python Library Usage](usage/library.md) — synchronous API
+- [Async Library Usage](async_usage.md) — asynchronous API

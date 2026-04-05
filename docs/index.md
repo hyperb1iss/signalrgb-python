@@ -1,42 +1,32 @@
 # signalrgb-python
 
-Welcome to the documentation for signalrgb-python! This library provides a powerful and easy-to-use interface for controlling [SignalRGB Pro](https://signalrgb.com) through both a command-line interface (CLI) and Python libraries (both synchronous and asynchronous).
+A Python client library and CLI for controlling [SignalRGB Pro](https://signalrgb.com) through synchronous and asynchronous APIs.
 
-## ✨ Features
+## 🌟 Features
 
-- 📋 List available lighting effects and presets
-- 🔍 Get detailed information about specific effects
-- 🎨 Apply effects and presets to your devices with ease
-- 🖼️ Manage and switch between different layouts
-- 🔆 Control brightness levels
-- 🔌 Enable or disable the canvas
-- 🖥️ User-friendly command-line interface with intuitive subcommands
-- 🐍 Python client libraries for seamless integration:
-  - Synchronous API for straightforward scripts
-  - Asynchronous API for asyncio-based applications
-- 🔐 Robust error handling and connection management
-- 🔄 Automatic effect caching for improved performance
+- List available lighting effects, presets, and layouts
+- Apply effects, presets, and layouts
+- Control canvas brightness and enabled state
+- Synchronous client for scripts and tools
+- Asynchronous client (httpx) for asyncio applications and Home Assistant integrations
+- Rich-powered CLI with `effect`, `preset`, `layout`, and `canvas` subcommands
+- Effect caching and typed exceptions for connection, API, and not-found errors
 
-## 🚀 Quick Start
+## 🎯 Quick Start
 
 ### Installation
 
 ```bash
-pip install signalrgb
+uv add signalrgb    # or: pip install signalrgb
 ```
 
-### Command-Line Interface
-
-List available effects:
+### Command-line interface
 
 ```bash
 signalrgb effect list
-```
-
-Apply a specific effect:
-
-```bash
 signalrgb effect apply "Rainbow Wave"
+signalrgb canvas brightness 75
+signalrgb canvas enable
 ```
 
 ### Synchronous Python API
@@ -44,19 +34,12 @@ signalrgb effect apply "Rainbow Wave"
 ```python
 from signalrgb import SignalRGBClient
 
-# Initialize the client
 client = SignalRGBClient()
 
-# Apply an effect
 client.apply_effect_by_name("Rainbow Wave")
-
-# Control brightness
 client.brightness = 75
-
-# Enable/disable the canvas
 client.enabled = True
 
-# Get current effect information
 effect = client.get_current_effect()
 print(f"Current effect: {effect.attributes.name}")
 ```
@@ -67,33 +50,27 @@ print(f"Current effect: {effect.attributes.name}")
 import asyncio
 from signalrgb import AsyncSignalRGBClient
 
-async def main():
-    # Use the async client as a context manager
+async def main() -> None:
     async with AsyncSignalRGBClient() as client:
-        # Apply an effect
         await client.apply_effect_by_name("Rainbow Wave")
-
-        # Control brightness
         await client.set_brightness(75)
 
-        # Get current effect information
         effect = await client.get_current_effect()
         print(f"Current effect: {effect.attributes.name}")
 
-# Run the async code
 asyncio.run(main())
 ```
 
 ## 📚 Documentation
 
-- **[Installation](installation.md)** - Detailed installation instructions
-- **Usage Guides**:
-  - [Command-Line Interface](usage/cli.md) - Using the SignalRGB CLI
-  - [Synchronous Library](usage/library.md) - Using the Python library in synchronous code
-  - [Asynchronous Library](async_usage.md) - Using the async Python library with asyncio
-- **API Reference**:
-  - [Client API](api/client.md) - SignalRGBClient reference
-  - [Models](api/models.md) - Data model reference
-- **Development**:
-  - [Contributing](contributing.md) - Guidelines for contributors
-  - [Development Guide](development.md) - Setting up your development environment
+- **[Installation](installation.md)** — detailed installation instructions
+- **Usage guides**
+  - [Command-Line Interface](usage/cli.md) — using the SignalRGB CLI
+  - [Synchronous Library](usage/library.md) — using the Python library in sync code
+  - [Asynchronous Library](async_usage.md) — using the async client with asyncio
+- **API reference**
+  - [Client API](api/client.md) — `SignalRGBClient` and `AsyncSignalRGBClient`
+  - [Models](api/models.md) — data model reference
+- **Development**
+  - [Contributing](contributing.md) — contribution guidelines
+  - [Development Guide](development.md) — dev environment setup

@@ -1,119 +1,101 @@
 # Contributing to signalrgb-python
 
-Thank you for your interest in contributing to signalrgb-python! This guide will help you get started with contributing to the project.
+Contributions are welcome. This guide covers how to get involved.
 
-## 🧐 What should I know before I get started?
+## 🧐 Before you start
 
-### Project Structure
+### Project structure
 
-- `signalrgb/` - This directory contains the main source code for the project.
-- `tests/` - This directory contains all the tests.
-- `docs/` - This directory contains the project documentation.
-- `examples/` - This directory contains example scripts demonstrating how to use the library.
+- `signalrgb/` — library source (client, async_client, cli, model, exceptions, constants)
+- `tests/` — pytest suite (unit tests for client, async client, CLI, and models)
+- `docs/` — MkDocs documentation (published to GitHub Pages on tag push)
+- `examples/` — example scripts
+- `.github/workflows/` — CI, publish, docs, and release workflows
 
-## 🤝 How Can I Contribute?
+See the [Development Guide](development.md) for environment setup and the task runner.
 
-### 🐛 Reporting Bugs
+## 🤝 How to contribute
 
-This section guides you through submitting a bug report for signalrgb-python. Following these guidelines helps maintainers and the community understand your report, reproduce the behavior, and find related reports.
+### 🐛 Reporting bugs
 
-- Use a clear and descriptive title for the issue to identify the problem.
-- Describe the exact steps which reproduce the problem in as many details as possible.
-- Provide specific examples to demonstrate the steps.
-- Describe the behavior you observed after following the steps and point out what exactly is the problem with that behavior.
-- Explain which behavior you expected to see instead and why.
-- Include screenshots and animated GIFs which show you following the described steps and clearly demonstrate the problem.
+When filing a bug report:
 
-### 💡 Suggesting Enhancements
+- Use a clear, descriptive title
+- Describe the exact steps to reproduce
+- Include the SignalRGB version, signalrgb-python version, and Python version
+- Paste any relevant tracebacks or error messages
+- Describe what you expected vs. what happened
 
-This section guides you through submitting an enhancement suggestion for signalrgb-python, including completely new features and minor improvements to existing functionality.
+### 💡 Suggesting enhancements
 
-- Use a clear and descriptive title for the issue to identify the suggestion.
-- Provide a step-by-step description of the suggested enhancement in as many details as possible.
-- Provide specific examples to demonstrate the steps.
-- Describe the current behavior and explain which behavior you expected to see instead and why.
-- Explain why this enhancement would be useful to most signalrgb-python users.
-- List some other text editors or applications where this enhancement exists.
+- Use a clear, descriptive title
+- Explain the motivation — what problem does this solve?
+- Describe the proposed API or behavior
+- Mention any alternatives you considered
 
-### 🚀 Your First Code Contribution
+### 🎯 Your first code contribution
 
-Unsure where to begin contributing to signalrgb-python? You can start by looking through these `beginner` and `help-wanted` issues:
+Good starting points:
 
-- [Beginner issues](https://github.com/hyperb1iss/signalrgb-python/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) - issues which should only require a few lines of code, and a test or two.
-- [Help wanted issues](https://github.com/hyperb1iss/signalrgb-python/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) - issues which should be a bit more involved than `beginner` issues.
+- [Good first issues](https://github.com/hyperb1iss/signalrgb-python/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) — small, well-scoped issues
+- [Help wanted](https://github.com/hyperb1iss/signalrgb-python/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) — issues that need attention
 
-### 📥 Pull Requests
+### 📥 Pull requests
 
-- Fill in [the required template](PULL_REQUEST_TEMPLATE.md)
-- Do not include issue numbers in the PR title
-- Follow the [Python style guide](https://www.python.org/dev/peps/pep-0008/)
-- Include thoughtfully-worded, well-structured tests in the `./tests` folder. Run them using `pytest`.
-- Document new code based on the [Documentation Styleguide](#documentation-styleguide)
-- End all files with a newline
+- Branch from `main` and open the PR against `main`
+- Run `just verify` before pushing — CI runs the same checks
+- Include tests for new functionality in `tests/`
+- Write Google-style docstrings for public functions and methods
+- Keep commits focused and descriptive
 
-## 📝 Styleguides
+## 📝 Style guide
 
-### Git Commit Messages
+### Git commit messages
 
-- Use the present tense ("Add feature" not "Added feature")
-- Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
-- Limit the first line to 72 characters or less
-- Reference issues and pull requests liberally after the first line
-- Consider starting the commit message with an applicable emoji:
-  - :art: `:art:` when improving the format/structure of the code
-  - :racehorse: `:racehorse:` when improving performance
-  - :non-potable_water: `:non-potable_water:` when plugging memory leaks
-  - :memo: `:memo:` when writing docs
-  - :penguin: `:penguin:` when fixing something on Linux
-  - :apple: `:apple:` when fixing something on macOS
-  - :checkered_flag: `:checkered_flag:` when fixing something on Windows
-  - :bug: `:bug:` when fixing a bug
-  - :fire: `:fire:` when removing code or files
-  - :green_heart: `:green_heart:` when fixing the CI build
-  - :white_check_mark: `:white_check_mark:` when adding tests
-  - :lock: `:lock:` when dealing with security
-  - :arrow_up: `:arrow_up:` when upgrading dependencies
-  - :arrow_down: `:arrow_down:` when downgrading dependencies
-  - :shirt: `:shirt:` when removing linter warnings
+- Use imperative mood ("Add feature" not "Added feature")
+- Limit the first line to ~72 characters
+- Use [gitmoji](https://gitmoji.dev/) prefixes if you like — common examples:
+  - `:art:` — code structure / formatting
+  - `:bug:` — bug fix
+  - `:sparkles:` (reserved — we don't use ✨ per style guide)
+  - `:fire:` — removing code or files
+  - `:memo:` — docs
+  - `:white_check_mark:` — tests
+  - `:lock:` — security
+  - `:arrow_up:` — upgrade deps
+  - `:wrench:` — config change
+  - `:rocket:` (reserved — we don't use 🚀 per style guide)
 
-### Python Styleguide
+### Python style
 
-All Python code must adhere to [PEP 8](https://www.python.org/dev/peps/pep-0008/).
+- **ruff** handles formatting and linting — `just fmt` + `just lint-fix`
+- **ty** handles type checking — `just typecheck`
+- Follow [PEP 8](https://peps.python.org/pep-0008/) (ruff enforces this)
+- Use Google-style docstrings for public API
+- Add type hints to all public functions and methods
+- Target Python 3.11+
 
-### Documentation Styleguide
+### Documentation style
 
-- Use [Markdown](https://daringfireball.net/projects/markdown/).
-- Use [Google-style docstrings](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for Python code.
+- Markdown for all docs
+- One emoji per heading max (the SilkCircuit style guide bans 🚀 ✨ 💯 🙏 🎉 👀 👍)
+- Use emoji in headings for visual scanning, not in body text
+- Keep docs in sync with code — update `docs/` alongside feature PRs
 
-## 📋 Additional Notes
+## 📋 Issue labels
 
-### Issue and Pull Request Labels
+| Label | Meaning |
+| --- | --- |
+| `bug` | Something is broken |
+| `enhancement` | Feature request or improvement |
+| `question` | Needs discussion |
+| `duplicate` | Already tracked elsewhere |
+| `good first issue` | Good for newcomers |
+| `help wanted` | Community help appreciated |
+| `documentation` | Docs-only change |
+| `performance` | Performance-related |
+| `security` | Security-related |
 
-This section lists the labels we use to help us track and manage issues and pull requests.
+## Thanks 💜
 
-[GitHub search](https://help.github.com/articles/searching-issues/) makes it easy to use labels for finding groups of issues or pull requests you're interested in.
-
-#### Type of Issue and Issue State
-
-- `bug` - Issues that are bugs.
-- `enhancement` - Issues that are feature requests.
-- `question` - Issues that are questions.
-- `duplicate` - Issues that are duplicates of other issues.
-- `good first issue` - Issues that are good for newcomers.
-- `help wanted` - Issues that need assistance from the community.
-
-#### Topic Categories
-
-- `documentation` - Issues related to documentation.
-- `performance` - Issues related to performance.
-- `security` - Issues related to security.
-
-#### Pull Request Labels
-
-- `work-in-progress` - Pull requests that are still being worked on, more changes will follow.
-- `needs-review` - Pull requests that need code review and approval from maintainers.
-- `under-review` - Pull requests being reviewed by maintainers.
-- `requires-changes` - Pull requests that need to be updated based on review comments and then reviewed again.
-- `needs-testing` - Pull requests that need manual testing.
-
-Thank you for your contributions to signalrgb-python!
+Thanks for contributing. Every bug report, suggestion, and PR helps.

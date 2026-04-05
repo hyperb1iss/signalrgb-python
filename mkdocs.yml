@@ -31,7 +31,8 @@ nav:
   - Installation: installation.md
   - Usage:
       - CLI: usage/cli.md
-      - Python Library: usage/library.md
+      - Python Library (Sync): usage/library.md
+      - Async Client: async_usage.md
   - API Reference:
       - Client: api/client.md
       - Models: api/models.md

@@ -1,8 +1,8 @@
-# SignalRGB Models API Reference
+# Data Models Reference
 
-This page provides detailed API documentation for the data models used in the SignalRGB Python client. These models represent various data structures used in the SignalRGB API, including effects, responses, and error information.
+This page documents the data models used by the SignalRGB Python client. They're [mashumaro](https://github.com/Fatal1ty/mashumaro) dataclasses that represent effects, responses, and error information exchanged with the SignalRGB API.
 
-## 🔍 Core Models
+## 🎯 Core models
 
 ### Attributes
 
@@ -32,7 +32,7 @@ This page provides detailed API documentation for the data models used in the Si
       show_root_heading: true
       show_source: true
 
-## 🛠️ State Models
+## 🔮 State models
 
 ### CurrentState
 
@@ -48,7 +48,7 @@ This page provides detailed API documentation for the data models used in the Si
       show_root_heading: true
       show_source: true
 
-## 📐 Layout Models
+## 📐 Layout models
 
 ### Layout
 
@@ -71,7 +71,7 @@ This page provides detailed API documentation for the data models used in the Si
       show_root_heading: true
       show_source: true
 
-## 💾 Preset Models
+## 💾 Preset models
 
 ### EffectPreset
 
@@ -87,7 +87,7 @@ This page provides detailed API documentation for the data models used in the Si
       show_root_heading: true
       show_source: true
 
-## ⚠️ Error Models
+## ⚠️ Error model
 
 ### Error
 
@@ -96,7 +96,7 @@ This page provides detailed API documentation for the data models used in the Si
       show_root_heading: true
       show_source: true
 
-## 🔄 Response Models
+## 🔄 Response models
 
 ### SignalRGBResponse
 
@@ -154,46 +154,25 @@ This page provides detailed API documentation for the data models used in the Si
       show_root_heading: true
       show_source: true
 
-## 💡 Usage Example
-
-Here's a basic example of how to work with these models:
+## 💡 Usage example
 
 ```python
 from signalrgb import SignalRGBClient
-from signalrgb.model import Effect, Attributes
+from signalrgb.model import Effect
 
-# Initialize the client
 client = SignalRGBClient()
 
-# Get an effect
 effect: Effect = client.get_effect_by_name("Sakura")
+print(f"Name: {effect.attributes.name}")
+print(f"Description: {effect.attributes.description}")
+print(f"Uses audio: {effect.attributes.uses_audio}")
 
-# Access effect attributes
-print(f"Effect name: {effect.attributes.name}")
-print(f"Effect description: {effect.attributes.description}")
-print(f"Effect uses audio: {effect.attributes.uses_audio}")
-
-# Extract parameters
-parameters = effect.attributes.parameters
-for param_name, param_data in parameters.items():
-    print(f"Parameter: {param_name}")
-    print(f"  Type: {param_data.get('type', 'Unknown')}")
-    print(f"  Value: {param_data.get('value')}")
-
-# Working with async client
-import asyncio
-from signalrgb import AsyncSignalRGBClient
-
-async def get_effect_info():
-    async with AsyncSignalRGBClient() as client:
-        effect = await client.get_effect_by_name("Rainbow Wave")
-        return effect.attributes.name, effect.id
-
-# Run the async code
-name, effect_id = asyncio.run(get_effect_info())
-print(f"Got effect: {name} with ID: {effect_id}")
+# Explore effect parameters
+for name, param in effect.attributes.parameters.items():
+    print(f"{name}: type={param.get('type', 'unknown')} value={param.get('value')}")
 ```
 
-For more detailed usage examples, please refer to:
+For more examples, see:
+
 - [Python Library Usage](../usage/library.md) for the synchronous client
-- [Asynchronous Library Usage](../async_usage.md) for the async client
+- [Async Library Usage](../async_usage.md) for the asynchronous client

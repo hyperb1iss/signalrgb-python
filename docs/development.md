@@ -1,160 +1,131 @@
 # Development Guide
 
-This guide will help you set up your development environment for contributing to signalrgb-python.
+This guide covers setting up your development environment for signalrgb-python.
 
 ## 🧰 Prerequisites
 
-Before you begin, ensure you have the following installed on your system:
+- **Python 3.11 or higher**
+- [uv](https://github.com/astral-sh/uv) for packaging and dependency management
+- [just](https://github.com/casey/just) for task running (optional but recommended)
+- Git
 
-- Python 3.9 or higher
-- [UV](https://github.com/astral-sh/uv) for dependency management
-- Git for version control
-
-## 🚀 Setting Up the Development Environment
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/hyperb1iss/signalrgb-python.git
-   cd signalrgb-python
-   ```
-
-2. Install the project dependencies using UV:
-
-   ```bash
-   uv sync --groups dev
-   ```
-
-3. To run commands in the development environment:
-
-   ```bash
-   uv run [command]
-   ```
-
-   For example, to run a Python script:
-
-   ```bash
-   uv run python scripts/some_script.py
-   ```
-
-## 🧪 Running Tests
-
-We use pytest for our test suite. To run the tests:
+## 🎯 Setup
 
 ```bash
-uv run pytest
+git clone https://github.com/hyperb1iss/signalrgb-python.git
+cd signalrgb-python
+
+# Install runtime + dev + docs groups
+just install            # or: uv sync --all-groups
 ```
 
-To run tests with coverage report:
+All development tasks are wired up in the `justfile`. Run `just --list` to see everything.
+
+## 🧪 Running tests
 
 ```bash
-uv run pytest --cov=signalrgb --cov-report=term-missing
+just test                      # pytest with coverage (default)
+just test-fast                 # skip coverage for speed
+just test-one test_get_effects # run a single test by name
+just test-cov                  # HTML coverage report in htmlcov/
 ```
 
-## 🔍 Linting
+Under the hood this runs `uv run pytest` with the config in `pyproject.toml` (asyncio auto mode, strict markers, branch coverage).
 
-We use Ruff for linting and formatting. To run the linter:
+## 🔍 Linting and formatting
+
+We use [ruff](https://github.com/astral-sh/ruff) for both linting and formatting.
 
 ```bash
-uv run ruff check .
+just lint            # ruff check
+just lint-fix        # ruff check --fix
+just fmt             # ruff format
+just fmt-check       # ruff format --check
+just rule PLR0913    # explain a specific ruff rule
 ```
 
-To automatically fix linting issues:
+## 🧪 Type checking
+
+We use [ty](https://github.com/astral-sh/ty), Astral's Rust-based type checker.
 
 ```bash
-uv run ruff check --fix .
+just typecheck              # ty check
+just ty-rule unresolved-import   # explain a specific rule
 ```
 
-## 🔎 Type Checking
+ty is currently in beta (0.0.x) — it's faster than mypy and integrates with the same `[tool.ty]` section of `pyproject.toml`.
 
-We use mypy for static type checking. To run the type checker:
+## 🎯 The verify loop
+
+Before pushing, run the full check suite:
 
 ```bash
-uv run mypy signalrgb
+just verify            # lint + fmt-check + typecheck + test
 ```
 
-## 🔄 Pre-commit Hooks
+`just verify` is exactly what CI runs, so if it passes locally, CI should pass too.
 
-We use pre-commit hooks to ensure code quality before committing. To set up pre-commit hooks:
+For a fast local iteration loop that auto-fixes what it can:
 
-1. Install pre-commit:
+```bash
+just check             # lint-fix + fmt + typecheck + test
+```
 
-   ```bash
-   uv run pre-commit install
-   ```
+## 🔄 Pre-commit hooks
 
-2. Run pre-commit on all files:
-   ```bash
-   uv run pre-commit run --all-files
-   ```
+```bash
+just hooks-install     # install hooks
+just hooks-run         # run on all files
+just hooks-update      # bump hook versions
+```
 
-The pre-commit hooks will now run automatically on `git commit`.
+The hooks run ruff (check + format) and ty on every commit.
 
-## 📚 Building Documentation
+## 📚 Building the docs
 
-To build the documentation locally:
+```bash
+just docs-serve        # live-reloading mkdocs on http://127.0.0.1:8000
+just docs-build        # build into ./site
+```
 
-1. Make sure you've installed the development dependencies:
+## 💎 Creating a new release
 
-   ```bash
-   uv sync --groups dev
-   ```
+Releases run through GitHub Actions — no local script needed.
 
-2. Build and serve the documentation:
+Trigger the release workflow via the `just` helper or the GitHub UI:
 
-   ```bash
-   uv run mkdocs serve
-   ```
+```bash
+# Auto-bump patch version
+just release
 
-3. Open your browser and navigate to `http://127.0.0.1:8000/` to view the documentation.
+# Bump minor or major
+just release minor
+just release major
 
-## 📦 Creating a New Release
+# Explicit version
+just release-version 1.2.0
 
-1. Update the version number in `pyproject.toml`:
+# Dry run (no commit/tag/push)
+just release patch true
+```
 
-   ```bash
-   # Edit manually or use a version update script
-   ```
+The workflow (`release.yml`) will:
 
-2. Update the `CHANGELOG.md` file with the changes for the new version.
+1. Compute the new version (from `bump` or explicit `version` input)
+2. Run `uv version` + `uv lock` + patch `__version__` in `signalrgb/__init__.py`
+3. Run `uv build` as a smoke test
+4. Commit, tag `v<version>`, and push
 
-3. Commit the changes:
-
-   ```bash
-   git add pyproject.toml CHANGELOG.md
-   git commit -m "Bump version to x.y.z"
-   ```
-
-4. Create a new tag:
-
-   ```bash
-   git tag -a vx.y.z -m "Release version x.y.z"
-   ```
-
-5. Push the changes and the new tag:
-   ```bash
-   git push origin main --tags
-   ```
-
-The CI/CD pipeline will handle the rest, including building and publishing the package to PyPI and deploying the updated documentation.
+Pushing the tag automatically triggers `publish.yml` (PyPI via OIDC trusted publishing) and `docs.yml` (MkDocs → GitHub Pages).
 
 ## 🐛 Troubleshooting
 
-If you encounter any issues during development, please check the following:
+- **Dependency issues**: `uv lock` out of sync with `pyproject.toml`? Run `uv sync --all-groups` or `just install`.
+- **Stale caches**: `just clean` removes build artifacts, coverage, `__pycache__`, and ruff/ty caches.
+- **Broken venv**: `just reset` nukes `.venv` and reinstalls from scratch.
+- **Ruff/ty version mismatch**: `uv lock --upgrade` pulls the latest, or `just upgrade-package ruff`.
 
-1. Ensure you're using the correct version of Python (3.9+).
-2. Make sure all dependencies are up to date (`uv sync`).
-3. Clear any cached files:
-   ```bash
-   find . -name '*.pyc' -delete
-   find . -name '__pycache__' -type d -delete
-   ```
+## 💬 Getting help
 
-If you're still having problems, please open an issue on the GitHub repository with a detailed description of the problem and steps to reproduce it.
-
-## 💬 Getting Help
-
-If you need help with development, you can:
-
-1. Open an issue on the GitHub repository.
-2. Reach out to the maintainers directly (contact information can be found in the `README.md` file).
+- Open an issue on the [GitHub repository](https://github.com/hyperb1iss/signalrgb-python/issues)
+- Check existing docs under `docs/` or the published site

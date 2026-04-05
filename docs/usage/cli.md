@@ -1,211 +1,157 @@
-# Command-Line Interface (CLI) Usage
+# Command-Line Interface
 
-signalrgb-python provides a user-friendly command-line interface for interacting with your SignalRGB setup. This guide covers the basic usage of the CLI.
+signalrgb-python ships with a Rich + Typer CLI for interacting with your SignalRGB instance. This guide covers every command.
 
-## 🚀 Basic Syntax
-
-The basic syntax for using the SignalRGB CLI is:
+## 🎯 Basic syntax
 
 ```bash
 signalrgb [OPTIONS] COMMAND [SUBCOMMAND] [ARGS]...
 ```
 
-You can always use the `--help` option to get more information about available commands and options:
+Get help at any level:
 
 ```bash
 signalrgb --help
+signalrgb effect --help
+signalrgb canvas --help
 ```
 
-## 📋 Available Commands
+## 📋 Commands
 
-### 🎨 Effect Commands
+### 🎨 Effect commands
 
-#### List Effects
-
-To list all available lighting effects:
+List all effects:
 
 ```bash
 signalrgb effect list
 ```
 
-#### Get Effect Details
-
-To get detailed information about a specific effect:
+Inspect a specific effect by name (or the current effect with no argument):
 
 ```bash
-signalrgb effect "Effect Name"
+signalrgb effect "Psychedelic Dream"
+signalrgb effect                         # show current effect
 ```
 
-Replace "Effect Name" with the name of the effect you want to inspect.
-
-#### Apply an Effect
-
-To apply a specific effect:
+Apply an effect, optionally with a preset:
 
 ```bash
-signalrgb effect apply "Effect Name"
+signalrgb effect apply "Rave Visualizer"
+signalrgb effect apply "Rave Visualizer" --preset "Chill"
 ```
 
-#### Get Current Effect
-
-To see which effect is currently active:
+Search effects by name or description:
 
 ```bash
-signalrgb effect
+signalrgb effect search "ocean"
 ```
 
-#### Navigate Through Effects
-
-To apply the next effect in history:
+Navigate through history or apply a random effect:
 
 ```bash
 signalrgb effect next_effect
-```
-
-To apply the previous effect in history:
-
-```bash
 signalrgb effect previous_effect
-```
-
-To apply a random effect:
-
-```bash
 signalrgb effect random
 ```
 
-### 💾 Preset Commands
+Cycle through every effect with a configurable duration (seconds per effect):
 
-#### List Presets
+```bash
+signalrgb effect cycle --duration 10
+```
 
-To list presets for the current effect:
+Refresh the effects cache (force a re-fetch from the API):
+
+```bash
+signalrgb effect refresh
+```
+
+### 💾 Preset commands
+
+List presets for the current effect:
 
 ```bash
 signalrgb preset list
 ```
 
-#### Apply a Preset
-
-To apply a preset to the current effect:
+Apply a preset to the current effect:
 
 ```bash
-signalrgb preset apply "Preset Name"
+signalrgb preset apply "My Fancy Preset"
 ```
 
-### 📐 Layout Commands
+### 📐 Layout commands
 
-#### List Layouts
-
-To list all available layouts:
+List all available layouts:
 
 ```bash
 signalrgb layout list
 ```
 
-#### Set Current Layout
-
-To set the current layout:
+Inspect or set the current layout:
 
 ```bash
-signalrgb layout set "Layout Name"
+signalrgb layout                    # show current layout
+signalrgb layout set_layout "My Gaming Layout"
 ```
 
-### 🎛️ Canvas Commands
+### 🎛️ Canvas commands
 
-#### Control Brightness
-
-To set the brightness level (0-100):
+Show canvas state (enabled + brightness):
 
 ```bash
-signalrgb canvas brightness 75
+signalrgb canvas
 ```
 
-To get the current brightness level:
+Read or set brightness (0–100):
 
 ```bash
-signalrgb canvas brightness
+signalrgb canvas brightness           # read
+signalrgb canvas brightness 75        # set
 ```
 
-#### Enable/Disable Canvas
-
-To enable the canvas:
+Enable, disable, or toggle the canvas:
 
 ```bash
 signalrgb canvas enable
-```
-
-To disable the canvas:
-
-```bash
 signalrgb canvas disable
-```
-
-To toggle the canvas state:
-
-```bash
 signalrgb canvas toggle
 ```
 
-## 🌐 Global Options
+## 🌐 Global options
 
-You can specify a custom host and port for all commands:
+Point at a remote SignalRGB instance:
 
 ```bash
-signalrgb --host my-pc.local --port 16038 effect list
+signalrgb --host hyperia.home --port 16038 effect list
+```
+
+Enable the full-RGB gradient output mode:
+
+```bash
+signalrgb --full-rgb effect list
 ```
 
 ## 💡 Examples
 
-Here are some example use cases:
-
-1. List all effects and pipe the output to `grep` to find a specific effect:
-
-   ```bash
-   signalrgb effect list | grep "Electric Space"
-   ```
-
-2. Apply the "Rave Visualizer" effect:
-
-   ```bash
-   signalrgb effect apply "Rave Visualizer"
-   ```
-
-3. Get details of the current effect and save it to a file:
-
-   ```bash
-   signalrgb effect > current_effect.txt
-   ```
-
-4. Set the brightness to 50% and then disable the canvas:
-
-   ```bash
-   signalrgb canvas brightness 50
-   signalrgb canvas disable
-   ```
-
-5. List layouts and switch to a different one:
-
-   ```bash
-   signalrgb layout list
-   signalrgb layout set "Gaming Setup"
-   ```
-
-6. Create a simple effect cycle script:
-
-   ```bash
-   #!/bin/bash
-   # Cycle through 5 random effects
-   for i in {1..5}; do
-     signalrgb effect random
-     sleep 5  # Wait 5 seconds between effects
-   done
-   ```
-
-Remember to refer to the `--help` option for each command to see all available options and arguments:
+Find an effect by keyword and pipe it:
 
 ```bash
-signalrgb effect --help
-signalrgb preset --help
-signalrgb layout --help
-signalrgb canvas --help
+signalrgb effect list | grep "Electric Space"
+```
+
+Dim and disable the canvas:
+
+```bash
+signalrgb canvas brightness 25
+signalrgb canvas disable
+```
+
+Cycle through 5 random effects every 5 seconds:
+
+```bash
+for i in {1..5}; do
+  signalrgb effect random
+  sleep 5
+done
 ```
