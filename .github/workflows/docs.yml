@@ -1,15 +1,18 @@
-name: Docs
+name: Deploy Docs
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 jobs:
-  deploy:
+  docs:
     uses: hyperb1iss/shared-workflows/.github/workflows/docs-deploy.yml@v1
-    with:
-      engine: vitepress
-      docs-dir: 'docs'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     secrets: inherit
