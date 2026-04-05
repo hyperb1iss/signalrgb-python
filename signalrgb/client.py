@@ -11,8 +11,6 @@ import asyncio
 from collections.abc import Awaitable, Iterator
 from typing import Any, TypeVar
 
-import requests
-
 from .async_client import AsyncSignalRGBClient
 from .constants import DEFAULT_HOST, DEFAULT_PORT, DEFAULT_TIMEOUT
 from .model import (
@@ -35,7 +33,9 @@ class SignalRGBClient:
     interface to the API. Most methods simply delegate to the async client.
     """
 
-    def __init__(self, host: str = DEFAULT_HOST, port: int = DEFAULT_PORT, timeout: float = DEFAULT_TIMEOUT):
+    def __init__(
+        self, host: str = DEFAULT_HOST, port: int = DEFAULT_PORT, timeout: float = DEFAULT_TIMEOUT
+    ):
         """Initialize the SignalRGBClient.
 
         Args:
@@ -50,8 +50,6 @@ class SignalRGBClient:
         self._base_url = f"http://{host}:{port}"
         self._timeout = timeout
         self._effects_cache: list[Effect] | None = None
-        # For backward compatibility, we still maintain the session
-        self._session = requests.Session()
         # Create an AsyncSignalRGBClient for internal use
         self._async_client = AsyncSignalRGBClient(host, port, timeout)
         # Create and manage an event loop for running async code
@@ -63,7 +61,6 @@ class SignalRGBClient:
 
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         """Context manager exit."""
-        self._session.close()
         try:
             # Close the async client if the loop is still running
             if not self._loop.is_closed():
