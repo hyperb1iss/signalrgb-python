@@ -132,6 +132,7 @@ jobs:
         if: ${{ !inputs.dry_run }}
         run: |
           gh workflow run publish.yml \
+            --ref v${{ steps.version.outputs.version }} \
             -f tag=v${{ steps.version.outputs.version }} \
             -f release_run_id=${{ github.run_id }}
         env:
